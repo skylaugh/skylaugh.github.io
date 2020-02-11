@@ -1,0 +1,2625 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://github.com/skylaugh/skylaugh.github.io.git</id>
+    <title>跬步</title>
+    <updated>2020-02-11T10:02:52.325Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://github.com/skylaugh/skylaugh.github.io.git"/>
+    <link rel="self" href="https://github.com/skylaugh/skylaugh.github.io.git/atom.xml"/>
+    <subtitle>不积跬步，无以至千里</subtitle>
+    <logo>https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png</logo>
+    <icon>https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico</icon>
+    <rights>All rights reserved 2020, 跬步</rights>
+    <entry>
+        <title type="html"><![CDATA[Java知识图谱（2019.12）]]></title>
+        <id>https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912</id>
+        <link href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912">
+        </link>
+        <updated>2019-12-29T09:52:51.000Z</updated>
+        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/1581414810811.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Java指令集]]></title>
+        <id>https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji</id>
+        <link href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji">
+        </link>
+        <updated>2019-12-17T09:49:52.000Z</updated>
+        <content type="html"><![CDATA[<p>举个例子:</p>
+<pre><code>public class HelloWorld {
+    public static void main(String[] args){
+        String a = &quot;Hello&quot;;
+        String b = &quot;World&quot;;
+        System.out.println(a+b);
+    }
+}
+</code></pre>
+<p>编译、查看指令集：</p>
+<pre><code>javac HelloWorld.java
+javap -c HelloWorld.class
+</code></pre>
+<p>结果：</p>
+<pre><code>Compiled from &quot;HelloWorld.java&quot;
+public class Study20191104.HelloWorld {
+  public Study20191104.HelloWorld();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V
+       4: return
+
+  public static void main(java.lang.String[]);
+    Code:
+       0: ldc           #2                  // String Hello
+       2: astore_1
+       3: ldc           #3                  // String World
+       5: astore_2
+       6: getstatic     #4                  // Field java/lang/System.out:Ljava/io/PrintStream;
+       9: new           #5                  // class java/lang/StringBuilder
+      12: dup
+      13: invokespecial #6                  // Method java/lang/StringBuilder.&quot;&lt;init&gt;&quot;:()V
+      16: aload_1
+      17: invokevirtual #7                  // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      20: aload_2
+      21: invokevirtual #7                  // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      24: invokevirtual #8                  // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+      27: invokevirtual #9                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+      30: return
+}
+</code></pre>
+<p>可以对照下边的指令集表看看每一步都做了什么。以上其实还可以看出一个有意思的地方，String的拼接实现其实是调用了StringBuffer的append方法。</p>
+<hr>
+<table>
+<thead>
+<tr>
+<th>指令码</th>
+<th>助记符</th>
+<th>操作数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x00</td>
+<td>nop</td>
+<td>无</td>
+<td>什么都不做</td>
+</tr>
+<tr>
+<td>0x01</td>
+<td>aconst_null</td>
+<td>无</td>
+<td>将null推送至栈顶</td>
+</tr>
+<tr>
+<td>0x02</td>
+<td>iconst_m1</td>
+<td>无</td>
+<td>将int型-1推送至栈顶</td>
+</tr>
+<tr>
+<td>0x03</td>
+<td>iconst_0</td>
+<td>无</td>
+<td>将int常量0推送至栈顶</td>
+</tr>
+<tr>
+<td>0x04</td>
+<td>iconst_1</td>
+<td>无</td>
+<td>将int常量1推送至栈顶</td>
+</tr>
+<tr>
+<td>0x05</td>
+<td>iconst_2</td>
+<td>无</td>
+<td>将int常量2推送至栈顶</td>
+</tr>
+<tr>
+<td>0x06</td>
+<td>iconst_3</td>
+<td>无</td>
+<td>将int常量3推送至栈顶</td>
+</tr>
+<tr>
+<td>0x07</td>
+<td>iconst_4</td>
+<td>无</td>
+<td>将int常量4推送至栈顶</td>
+</tr>
+<tr>
+<td>0x08</td>
+<td>iconst_5</td>
+<td>无</td>
+<td>将int常量5推送至栈顶</td>
+</tr>
+<tr>
+<td>0x09</td>
+<td>lconst_0</td>
+<td>无</td>
+<td>将long常量0推送至栈顶</td>
+</tr>
+<tr>
+<td>0x0a</td>
+<td>lconst_1</td>
+<td>无</td>
+<td>将long常量1推送至栈顶</td>
+</tr>
+<tr>
+<td>0x0b</td>
+<td>fconst_0</td>
+<td>无</td>
+<td>将float常量0推送至栈顶</td>
+</tr>
+<tr>
+<td>0x0c</td>
+<td>fconst_1</td>
+<td>无</td>
+<td>将float常量1推送至栈顶</td>
+</tr>
+<tr>
+<td>0x0d</td>
+<td>fconst_2</td>
+<td>无</td>
+<td>将float常量2推送至栈顶</td>
+</tr>
+<tr>
+<td>0x0e</td>
+<td>dconst_0</td>
+<td>无</td>
+<td>将double常量0推送至栈顶</td>
+</tr>
+<tr>
+<td>0x0f</td>
+<td>dconst_1</td>
+<td>无</td>
+<td>将double常量1推送至栈顶</td>
+</tr>
+<tr>
+<td>0x10</td>
+<td>bipush</td>
+<td>byte类型操作数</td>
+<td>将单字节的常量值(-128~127)推送至栈顶</td>
+</tr>
+<tr>
+<td>0x11</td>
+<td>sipush</td>
+<td>int类型操作数</td>
+<td>将一个短整型常量值(-32768~32767)推送至栈顶</td>
+</tr>
+<tr>
+<td>0x12</td>
+<td>ldc</td>
+<td>常量编号</td>
+<td>将int, float或String型常量值从常量池中推送至栈顶</td>
+</tr>
+<tr>
+<td>0x13</td>
+<td>ldc_w</td>
+<td>常量编号</td>
+<td>将int, float或String型常量值从常量池中推送至栈顶（宽索引）</td>
+</tr>
+<tr>
+<td>0x14</td>
+<td>ldc2_w</td>
+<td>常量编号</td>
+<td>将long或double型常量值从常量池中推送至栈顶（宽索引）</td>
+</tr>
+<tr>
+<td>0x15</td>
+<td>iload</td>
+<td>vindex</td>
+<td>将位置为vindex的int类型的局部变量压入栈</td>
+</tr>
+<tr>
+<td>0x16</td>
+<td>lload</td>
+<td>vindex</td>
+<td>将位置为vindex和(vindex+1)的long类型的局部变量压入栈</td>
+</tr>
+<tr>
+<td>0x17</td>
+<td>fload</td>
+<td>vindex</td>
+<td>将位置为vindex的float类型的局部变量压入栈</td>
+</tr>
+<tr>
+<td>0x18</td>
+<td>dload</td>
+<td>vindex</td>
+<td>将位置为vindex和(vindex+1)的double类型的局部变量压入栈</td>
+</tr>
+<tr>
+<td>0x19</td>
+<td>aload</td>
+<td>vindex</td>
+<td>将位置为vindex的对象引用局部变量压入栈</td>
+</tr>
+<tr>
+<td>0x1a</td>
+<td>iload_0</td>
+<td>无</td>
+<td>将位置为0的int类型的局部变量压入栈</td>
+</tr>
+<tr>
+<td>0x1b</td>
+<td>iload_1</td>
+<td>无</td>
+<td>将位置为1的int类型的局部变量压入栈</td>
+</tr>
+<tr>
+<td>0x1c</td>
+<td>iload_2</td>
+<td>无</td>
+<td>将位置为2的int类型的局部变量压入栈</td>
+</tr>
+<tr>
+<td>0x1d</td>
+<td>iload_3</td>
+<td>无</td>
+<td>将位置为3的int类型的局部变量压入栈</td>
+</tr>
+<tr>
+<td>0x1e</td>
+<td>lload_0</td>
+<td>无</td>
+<td>将位置为0和1的long类型的局部变量压入栈</td>
+</tr>
+<tr>
+<td>0x1f</td>
+<td>lload_1</td>
+<td>无</td>
+<td>将位置为1和2的long类型的局部变量压入栈</td>
+</tr>
+<tr>
+<td>0x20</td>
+<td>lload_2</td>
+<td>无</td>
+<td>将位置为2和3的long类型的局部变量压入栈</td>
+</tr>
+<tr>
+<td>0x21</td>
+<td>lload_3</td>
+<td>无</td>
+<td>将位置为3和4的long类型的局部变量压入栈</td>
+</tr>
+<tr>
+<td>0x22</td>
+<td>fload_0</td>
+<td>无</td>
+<td>将本地变量表的第一个float型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x23</td>
+<td>fload_1</td>
+<td>无</td>
+<td>将本地变量表的第二个float型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x24</td>
+<td>fload_2</td>
+<td>无</td>
+<td>将本地变量表的第三个float型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x25</td>
+<td>fload_3</td>
+<td>无</td>
+<td>将本地变量表的第四个float型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x26</td>
+<td>dload_0</td>
+<td>无</td>
+<td>将本地变量表的第一个double型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x27</td>
+<td>dload_1</td>
+<td>无</td>
+<td>将本地变量表的第二个double型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x28</td>
+<td>dload_2</td>
+<td>无</td>
+<td>将本地变量表的第三个double型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x29</td>
+<td>dload_3</td>
+<td>无</td>
+<td>将本地变量表的第四个double型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x2a</td>
+<td>aload_0</td>
+<td>无</td>
+<td>将引用类型变量推送至栈顶,非静态方法中 表示对this的操作，静态方法中表示对方法的第一参数的操作</td>
+</tr>
+<tr>
+<td>0x2b</td>
+<td>aload_1</td>
+<td>无</td>
+<td>将本地变量表的第二个引用类型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x2c</td>
+<td>aload_2</td>
+<td>无</td>
+<td>将本地变量表的第三个引用类型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x2d</td>
+<td>aload_3</td>
+<td>无</td>
+<td>将本地变量表的第四个引用类型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x2e</td>
+<td>iaload</td>
+<td>无</td>
+<td>将int型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x2f</td>
+<td>laload</td>
+<td>无</td>
+<td>将long型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x30</td>
+<td>faload</td>
+<td>无</td>
+<td>将float型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x31</td>
+<td>daload</td>
+<td>无</td>
+<td>将double型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x32</td>
+<td>aaload</td>
+<td>无</td>
+<td>将引用型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x33</td>
+<td>baload</td>
+<td>无</td>
+<td>将boolean或byte型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x34</td>
+<td>caload</td>
+<td>无</td>
+<td>将char型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x35</td>
+<td>saload</td>
+<td>无</td>
+<td>将short型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x36</td>
+<td>istore</td>
+<td>无</td>
+<td>将栈顶int型数值存入指定本地变量</td>
+</tr>
+<tr>
+<td>0x37</td>
+<td>lstore</td>
+<td>无</td>
+<td>将栈顶long型数值存入指定本地变量</td>
+</tr>
+<tr>
+<td>0x38</td>
+<td>fstore</td>
+<td>无</td>
+<td>将栈顶float型数值存入指定本地变量</td>
+</tr>
+<tr>
+<td>0x39</td>
+<td>dstore</td>
+<td>无</td>
+<td>将栈顶double型数值存入指定本地变量</td>
+</tr>
+<tr>
+<td>0x3a</td>
+<td>astore</td>
+<td>无</td>
+<td>将栈顶引用型数值存入指定本地变量</td>
+</tr>
+<tr>
+<td>0x3b</td>
+<td>istore_0</td>
+<td>无</td>
+<td>将栈顶int型数值存入第一个本地变量</td>
+</tr>
+<tr>
+<td>0x3c</td>
+<td>istore_1</td>
+<td>无</td>
+<td>将栈顶int型数值存入第二个本地变量</td>
+</tr>
+<tr>
+<td>0x3d</td>
+<td>istore_2</td>
+<td>无</td>
+<td>将栈顶int型数值存入第三个本地变量</td>
+</tr>
+<tr>
+<td>0x3e</td>
+<td>istore_3</td>
+<td>无</td>
+<td>将栈顶int型数值存入第四个本地变量</td>
+</tr>
+<tr>
+<td>0x3f</td>
+<td>lstore_0</td>
+<td>无</td>
+<td>将栈顶long型数值存入第一个本地变量</td>
+</tr>
+<tr>
+<td>0x40</td>
+<td>lstore_1</td>
+<td>无</td>
+<td>将栈顶long型数值存入第二个本地变量</td>
+</tr>
+<tr>
+<td>0x41</td>
+<td>lstore_2</td>
+<td>无</td>
+<td>将栈顶long型数值存入第三个本地变量</td>
+</tr>
+<tr>
+<td>0x42</td>
+<td>lstore_3</td>
+<td>无</td>
+<td>将栈顶long型数值存入第四个本地变量</td>
+</tr>
+<tr>
+<td>0x43</td>
+<td>fstore_0</td>
+<td>无</td>
+<td>将栈顶float型数值存入第一个本地变量</td>
+</tr>
+<tr>
+<td>0x44</td>
+<td>fstore_1</td>
+<td>无</td>
+<td>将栈顶float型数值存入第二个本地变量</td>
+</tr>
+<tr>
+<td>0x45</td>
+<td>fstore_2</td>
+<td>无</td>
+<td>将栈顶float型数值存入第三个本地变量</td>
+</tr>
+<tr>
+<td>0x46</td>
+<td>fstore_3</td>
+<td>无</td>
+<td>将栈顶float型数值存入第四个本地变量</td>
+</tr>
+<tr>
+<td>0x47</td>
+<td>dstore_0</td>
+<td>无</td>
+<td>将栈顶double型数值存入第一个本地变量</td>
+</tr>
+<tr>
+<td>0x48</td>
+<td>dstore_1</td>
+<td>无</td>
+<td>将栈顶double型数值存入第二个本地变量</td>
+</tr>
+<tr>
+<td>0x49</td>
+<td>dstore_2</td>
+<td>无</td>
+<td>将栈顶double型数值存入第三个本地变量</td>
+</tr>
+<tr>
+<td>0x4a</td>
+<td>dstore_3</td>
+<td>无</td>
+<td>将栈顶double型数值存入第四个本地变量</td>
+</tr>
+<tr>
+<td>0x4b</td>
+<td>astore_0</td>
+<td>无</td>
+<td>将栈顶引用型数值存入第一个本地变量</td>
+</tr>
+<tr>
+<td>0x4c</td>
+<td>astore_1</td>
+<td>无</td>
+<td>将栈顶引用型数值存入第二个本地变量</td>
+</tr>
+<tr>
+<td>0x4d</td>
+<td>astore_2</td>
+<td>无</td>
+<td>将栈顶引用型数值存入第三个本地变量</td>
+</tr>
+<tr>
+<td>0x4e</td>
+<td>astore_3</td>
+<td>无</td>
+<td>将栈顶引用型数值存入第四个本地变量</td>
+</tr>
+<tr>
+<td>0x4f</td>
+<td>iastore</td>
+<td>无</td>
+<td>将栈顶int型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x50</td>
+<td>lastore</td>
+<td>无</td>
+<td>将栈顶long型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x51</td>
+<td>fastore</td>
+<td>无</td>
+<td>将栈顶float型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x52</td>
+<td>dastore</td>
+<td>无</td>
+<td>将栈顶double型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x53</td>
+<td>aastore</td>
+<td>无</td>
+<td>将栈顶引用型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x54</td>
+<td>bastore</td>
+<td>无</td>
+<td>将栈顶boolean或byte型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x55</td>
+<td>castore</td>
+<td>无</td>
+<td>将栈顶char型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x56</td>
+<td>sastore</td>
+<td>无</td>
+<td>将栈顶short型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x57</td>
+<td>pop</td>
+<td>无</td>
+<td>将栈顶数值弹出 (数值不能是long或double类型的)</td>
+</tr>
+<tr>
+<td>0x58</td>
+<td>pop2</td>
+<td>无</td>
+<td>将栈顶的一个（long或double类型的)或两个数值弹出（其它）</td>
+</tr>
+<tr>
+<td>0x59</td>
+<td>dup</td>
+<td>无</td>
+<td>复制栈顶数值并将复制值压入栈顶</td>
+</tr>
+<tr>
+<td>0x5a</td>
+<td>dup_x1</td>
+<td>无</td>
+<td>复制栈顶数值并将两个复制值压入栈顶</td>
+</tr>
+<tr>
+<td>0x5b</td>
+<td>dup_x2</td>
+<td>无</td>
+<td>复制栈顶数值并将三个（或两个）复制值压入栈顶</td>
+</tr>
+<tr>
+<td>0x5c</td>
+<td>dup2</td>
+<td>无</td>
+<td>复制栈顶一个（long或double类型的)或两个（其它）数值并将复制值压入栈顶</td>
+</tr>
+<tr>
+<td>0x5d</td>
+<td>dup2_x1</td>
+<td>无</td>
+<td>&lt;待补充&gt;</td>
+</tr>
+<tr>
+<td>0x5e</td>
+<td>dup2_x2</td>
+<td>无</td>
+<td>&lt;待补充&gt;</td>
+</tr>
+<tr>
+<td>0x5f</td>
+<td>swap</td>
+<td>无</td>
+<td>将栈最顶端的两个数值互换(数值不能是long或double类型的)</td>
+</tr>
+<tr>
+<td>0x60</td>
+<td>iadd</td>
+<td>无</td>
+<td>将栈顶两int型数值相加并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x61</td>
+<td>ladd</td>
+<td>无</td>
+<td>将栈顶两long型数值相加并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x62</td>
+<td>fadd</td>
+<td>无</td>
+<td>将栈顶两float型数值相加并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x63</td>
+<td>dadd</td>
+<td>无</td>
+<td>将栈顶两double型数值相加并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x64</td>
+<td>isub</td>
+<td>无</td>
+<td>将栈顶两int型数值相减并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x65</td>
+<td>lsub</td>
+<td>无</td>
+<td>将栈顶两long型数值相减并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x66</td>
+<td>fsub</td>
+<td>无</td>
+<td>将栈顶两float型数值相减并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x67</td>
+<td>dsub</td>
+<td>无</td>
+<td>将栈顶两double型数值相减并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x68</td>
+<td>imul</td>
+<td>无</td>
+<td>将栈顶两int型数值相乘并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x69</td>
+<td>lmul</td>
+<td>无</td>
+<td>将栈顶两long型数值相乘并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x6a</td>
+<td>fmul</td>
+<td>无</td>
+<td>将栈顶两float型数值相乘并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x6b</td>
+<td>dmul</td>
+<td>无</td>
+<td>将栈顶两double型数值相乘并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x6c</td>
+<td>idiv</td>
+<td>无</td>
+<td>将栈顶两int型数值相除并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x6d</td>
+<td>ldiv</td>
+<td>无</td>
+<td>将栈顶两long型数值相除并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x6e</td>
+<td>fdiv</td>
+<td>无</td>
+<td>将栈顶两float型数值相除并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x6f</td>
+<td>ddiv</td>
+<td>无</td>
+<td>将栈顶两double型数值相除并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x70</td>
+<td>irem</td>
+<td>无</td>
+<td>将栈顶两int型数值作取模运算并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x71</td>
+<td>lrem</td>
+<td>无</td>
+<td>将栈顶两long型数值作取模运算并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x72</td>
+<td>frem</td>
+<td>无</td>
+<td>将栈顶两float型数值作取模运算并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x73</td>
+<td>drem</td>
+<td>无</td>
+<td>将栈顶两double型数值作取模运算并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x74</td>
+<td>ineg</td>
+<td>无</td>
+<td>将栈顶int型数值取负并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x75</td>
+<td>lneg</td>
+<td>无</td>
+<td>将栈顶long型数值取负并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x76</td>
+<td>fneg</td>
+<td>无</td>
+<td>将栈顶float型数值取负并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x77</td>
+<td>dneg</td>
+<td>无</td>
+<td>将栈顶double型数值取负并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x78</td>
+<td>ishl</td>
+<td>无</td>
+<td>将int型数值左移位指定位数并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x79</td>
+<td>lshl</td>
+<td>无</td>
+<td>将long型数值左移位指定位数并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x7a</td>
+<td>ishr</td>
+<td>无</td>
+<td>将int型数值右（符号）移位指定位数并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x7b</td>
+<td>lshr</td>
+<td>无</td>
+<td>将long型数值右（符号）移位指定位数并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x7c</td>
+<td>iushr</td>
+<td>无</td>
+<td>将int型数值右（无符号）移位指定位数并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x7d</td>
+<td>lushr</td>
+<td>无</td>
+<td>将long型数值右（无符号）移位指定位数并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x7e</td>
+<td>iand</td>
+<td>无</td>
+<td>将栈顶两int型数值作“按位与”并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x7f</td>
+<td>land</td>
+<td>无</td>
+<td>将栈顶两long型数值作“按位与”并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x80</td>
+<td>ior</td>
+<td>无</td>
+<td>将栈顶两int型数值作“按位或”并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x81</td>
+<td>lor</td>
+<td>无</td>
+<td>将栈顶两long型数值作“按位或”并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x82</td>
+<td>ixor</td>
+<td>无</td>
+<td>将栈顶两int型数值作“按位异或”并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x83</td>
+<td>lxor</td>
+<td>无</td>
+<td>将栈顶两long型数值作“按位异或”并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x84</td>
+<td>iinc</td>
+<td>无</td>
+<td>将指定int型变量增加指定值（i++, i--, i+=2）</td>
+</tr>
+<tr>
+<td>0x85</td>
+<td>i2l</td>
+<td>无</td>
+<td>将栈顶int型数值强制转换成long型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x86</td>
+<td>i2f</td>
+<td>无</td>
+<td>将栈顶int型数值强制转换成float型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x87</td>
+<td>i2d</td>
+<td>无</td>
+<td>将栈顶int型数值强制转换成double型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x88</td>
+<td>l2i</td>
+<td>无</td>
+<td>将栈顶long型数值强制转换成int型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x89</td>
+<td>l2f</td>
+<td>无</td>
+<td>将栈顶long型数值强制转换成float型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x8a</td>
+<td>l2d</td>
+<td>无</td>
+<td>将栈顶long型数值强制转换成double型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x8b</td>
+<td>f2i</td>
+<td>无</td>
+<td>将栈顶float型数值强制转换成int型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x8c</td>
+<td>f2l</td>
+<td>无</td>
+<td>将栈顶float型数值强制转换成long型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x8d</td>
+<td>f2d</td>
+<td>无</td>
+<td>将栈顶float型数值强制转换成double型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x8e</td>
+<td>d2i</td>
+<td>无</td>
+<td>将栈顶double型数值强制转换成int型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x8f</td>
+<td>d2l</td>
+<td>无</td>
+<td>将栈顶double型数值强制转换成long型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x90</td>
+<td>d2f</td>
+<td>无</td>
+<td>将栈顶double型数值强制转换成float型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x91</td>
+<td>i2b</td>
+<td>无</td>
+<td>将栈顶int型数值强制转换成byte型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x92</td>
+<td>i2c</td>
+<td>无</td>
+<td>将栈顶int型数值强制转换成char型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x93</td>
+<td>i2s</td>
+<td>无</td>
+<td>将栈顶int型数值强制转换成short型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x94</td>
+<td>lcmp</td>
+<td></td>
+<td>比较栈顶两long型数值大小，并将结果（1，0，-1）压入栈顶</td>
+</tr>
+<tr>
+<td>0x95</td>
+<td>fcmpl</td>
+<td></td>
+<td>比较栈顶两float型数值大小，并将结果（1，0，-1）压入栈顶；当其中一个数值为NaN时，将-1压入栈顶</td>
+</tr>
+<tr>
+<td>0x96</td>
+<td>fcmpg</td>
+<td></td>
+<td>比较栈顶两float型数值大小，并将结果（1，0，-1）压入栈顶；当其中一个数值为NaN时，将1压入栈顶</td>
+</tr>
+<tr>
+<td>0x97</td>
+<td>dcmpl</td>
+<td></td>
+<td>比较栈顶两double型数值大小，并将结果（1，0，-1）压入栈顶；当其中一个数值为NaN时，将-1压入栈顶</td>
+</tr>
+<tr>
+<td>0x98</td>
+<td>dcmpg</td>
+<td></td>
+<td>比较栈顶两double型数值大小，并将结果（1，0，-1）压入栈顶；当其中一个数值为NaN时，将1压入栈顶</td>
+</tr>
+<tr>
+<td>0x99</td>
+<td>ifeq</td>
+<td></td>
+<td>当栈顶int型数值等于0时跳转</td>
+</tr>
+<tr>
+<td>0x9a</td>
+<td>ifne</td>
+<td></td>
+<td>当栈顶int型数值不等于0时跳转</td>
+</tr>
+<tr>
+<td>0x9b</td>
+<td>iflt</td>
+<td></td>
+<td>当栈顶int型数值小于0时跳转</td>
+</tr>
+<tr>
+<td>0x9c</td>
+<td>ifge</td>
+<td></td>
+<td>当栈顶int型数值大于等于0时跳转</td>
+</tr>
+<tr>
+<td>0x9d</td>
+<td>ifgt</td>
+<td></td>
+<td>当栈顶int型数值大于0时跳转</td>
+</tr>
+<tr>
+<td>0x9e</td>
+<td>ifle</td>
+<td></td>
+<td>当栈顶int型数值小于等于0时跳转</td>
+</tr>
+<tr>
+<td>0x9f</td>
+<td>if_icmpeq</td>
+<td></td>
+<td>比较栈顶两int型数值大小，当结果等于0时跳转</td>
+</tr>
+<tr>
+<td>0xa0</td>
+<td>if_icmpne</td>
+<td></td>
+<td>比较栈顶两int型数值大小，当结果不等于0时跳转</td>
+</tr>
+<tr>
+<td>0xa1</td>
+<td>if_icmplt</td>
+<td></td>
+<td>比较栈顶两int型数值大小，当结果小于0时跳转</td>
+</tr>
+<tr>
+<td>0xa2</td>
+<td>if_icmpge</td>
+<td></td>
+<td>比较栈顶两int型数值大小，当结果大于等于0时跳转</td>
+</tr>
+<tr>
+<td>0xa3</td>
+<td>if_icmpgt</td>
+<td></td>
+<td>比较栈顶两int型数值大小，当结果大于0时跳转</td>
+</tr>
+<tr>
+<td>0xa4</td>
+<td>if_icmple</td>
+<td></td>
+<td>比较栈顶两int型数值大小，当结果小于等于0时跳转</td>
+</tr>
+<tr>
+<td>0xa5</td>
+<td>if_acmpeq</td>
+<td></td>
+<td>比较栈顶两引用型数值，当结果相等时跳转</td>
+</tr>
+<tr>
+<td>0xa6</td>
+<td>if_acmpne</td>
+<td></td>
+<td>比较栈顶两引用型数值，当结果不相等时跳转</td>
+</tr>
+<tr>
+<td>0xa7</td>
+<td>goto</td>
+<td></td>
+<td>无条件跳转</td>
+</tr>
+<tr>
+<td>0xa8</td>
+<td>jsr</td>
+<td></td>
+<td>跳转至指定16位offset位置，并将jsr下一条指令地址压入栈顶</td>
+</tr>
+<tr>
+<td>0xa9</td>
+<td>ret</td>
+<td></td>
+<td>返回至本地变量指定的index的指令位置（一般与jsr, jsr_w联合使用）</td>
+</tr>
+<tr>
+<td>0xaa</td>
+<td>tableswitch</td>
+<td></td>
+<td>用于switch条件跳转，case值连续（可变长度指令）</td>
+</tr>
+<tr>
+<td>0xab</td>
+<td>lookupswitch</td>
+<td></td>
+<td>用于switch条件跳转，case值不连续（可变长度指令）</td>
+</tr>
+<tr>
+<td>0xac</td>
+<td>ireturn</td>
+<td></td>
+<td>从当前方法返回int</td>
+</tr>
+<tr>
+<td>0xad</td>
+<td>lreturn</td>
+<td></td>
+<td>从当前方法返回long</td>
+</tr>
+<tr>
+<td>0xae</td>
+<td>freturn</td>
+<td></td>
+<td>从当前方法返回float</td>
+</tr>
+<tr>
+<td>0xaf</td>
+<td>dreturn</td>
+<td></td>
+<td>从当前方法返回double</td>
+</tr>
+<tr>
+<td>0xb0</td>
+<td>areturn</td>
+<td></td>
+<td>从当前方法返回对象引用</td>
+</tr>
+<tr>
+<td>0xb1</td>
+<td>return</td>
+<td></td>
+<td>从当前方法返回void</td>
+</tr>
+<tr>
+<td>0xb2</td>
+<td>getstatic</td>
+<td></td>
+<td>获取指定类的静态域，并将其值压入栈顶</td>
+</tr>
+<tr>
+<td>0xb3</td>
+<td>putstatic</td>
+<td></td>
+<td>为指定的类的静态域赋值</td>
+</tr>
+<tr>
+<td>0xb4</td>
+<td>getfield</td>
+<td></td>
+<td>获取指定类的实例变量，并将其值压入栈顶</td>
+</tr>
+<tr>
+<td>0xb5</td>
+<td>putfield</td>
+<td></td>
+<td>为指定的类的实例变量赋值</td>
+</tr>
+<tr>
+<td>0xb6</td>
+<td>invokevirtual</td>
+<td></td>
+<td>调用实例方法</td>
+</tr>
+<tr>
+<td>0xb7</td>
+<td>invokespecial</td>
+<td></td>
+<td>调用超类构造方法，实例初始化方法，私有方法</td>
+</tr>
+<tr>
+<td>0xb8</td>
+<td>invokestatic</td>
+<td></td>
+<td>调用静态方法</td>
+</tr>
+<tr>
+<td>0xb9</td>
+<td>invokeinterface</td>
+<td></td>
+<td>调用接口方法</td>
+</tr>
+<tr>
+<td>0xbb</td>
+<td>new</td>
+<td></td>
+<td>创建一个对象，并将其引用值压入栈顶</td>
+</tr>
+<tr>
+<td>0xbc</td>
+<td>newarray</td>
+<td></td>
+<td>创建一个指定原始类型（如int, float, char…）的数组，并将其引用值压入栈顶</td>
+</tr>
+<tr>
+<td>0xbd</td>
+<td>anewarray</td>
+<td></td>
+<td>创建一个引用型（如类，接口，数组）的数组，并将其引用值压入栈顶</td>
+</tr>
+<tr>
+<td>0xbe</td>
+<td>arraylength</td>
+<td></td>
+<td>获得数组的长度值并压入栈顶</td>
+</tr>
+<tr>
+<td>0xbf</td>
+<td>athrow</td>
+<td>无</td>
+<td>将栈顶的异常抛出</td>
+</tr>
+<tr>
+<td>0xc0</td>
+<td>checkcast</td>
+<td></td>
+<td>检验类型转换，检验未通过将抛出ClassCastException</td>
+</tr>
+<tr>
+<td>0xc1</td>
+<td>instanceof</td>
+<td></td>
+<td>检验对象是否是指定的类的实例，如果是将1压入栈顶，否则将0压入栈顶</td>
+</tr>
+<tr>
+<td>0xc2</td>
+<td>monitorenter</td>
+<td></td>
+<td>获得对象的锁，用于同步方法或同步块</td>
+</tr>
+<tr>
+<td>0xc3</td>
+<td>monitorexit</td>
+<td></td>
+<td>释放对象的锁，用于同步方法或同步块</td>
+</tr>
+<tr>
+<td>0xc4</td>
+<td>wide</td>
+<td></td>
+<td>&lt;待补充&gt;</td>
+</tr>
+<tr>
+<td>0xc5</td>
+<td>multianewarray</td>
+<td></td>
+<td>创建指定类型和指定维度的多维数组（执行该指令时，操作栈中必须包含各维度的长度值），并将其引用值压入栈顶</td>
+</tr>
+<tr>
+<td>0xc6</td>
+<td>ifnull</td>
+<td></td>
+<td>为null时跳转</td>
+</tr>
+<tr>
+<td>0xc7</td>
+<td>ifnonnull</td>
+<td></td>
+<td>不为null时跳转</td>
+</tr>
+<tr>
+<td>0xc8</td>
+<td>goto_w</td>
+<td></td>
+<td>无条件跳转（宽索引）</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Spring学习笔记（一）]]></title>
+        <id>https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi</id>
+        <link href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi">
+        </link>
+        <updated>2019-11-21T09:29:30.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="常见应用上下文类型">常见应用上下文类型</h3>
+<ul>
+<li><code>AnnotationConfigApplicationContext</code>:从一个或多个基于Java的配置中加载Spring应用上下文。</li>
+<li><code>AnnotationConfigWebApplicationContext</code>:从一个活多个基于Java的配置类中加载Spring Web应用上下文。</li>
+<li><code>ClassPathXmlApplicationContext</code>:从类路径下的一个或多个XML配置文件中加载上下文定义，把应用上下文的定义文件作为类资源。</li>
+<li><code>FileSystemXmlApplicationContext</code>:从文件系统下的一个或多个XML配置文件中加载上下文定义。</li>
+<li><code>XmlWebApplicationContext</code>:从Web应用下的一个或多个XML配置文件中加载上下文定义。</li>
+</ul>
+<h3 id="bean的生命周期">bean的生命周期</h3>
+<figure data-type="image" tabindex="1"><img src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/1581413915014.png" alt="lifecycle" loading="lazy"></figure>
+<ol>
+<li>Spring对bean进行实例化</li>
+<li>Spring讲value和bean的引用注入到bean对应的属性中</li>
+<li>看看bean是否实现一下几个接口
+<ol>
+<li>BeanNameAware:让bean知道自己在spring容器里的id</li>
+<li>BeanFactoryAware:让bean获取到beanFactory</li>
+<li>ApplicationContextAware:让bean获取到上下文</li>
+<li>BeanPostProcessor:Bean后置处理器，有两个方法，一个在bean初始化前调用postProcessBeforeInitialization()，一个在初始化后调用postProcessAfterInitialization，类似AOP环绕通知</li>
+<li>InitializingBean:要想看看bean属性赋值成功了没用可以用这个的afterPropertiesSet()方法。</li>
+</ol>
+</li>
+<li>此时，bean已经准备就绪，可以被应用程序使用了，它们将一直驻留在应用上下文中，直到该应用上下文被销毁</li>
+<li>如果bean实现了DisposableBean接口，Spring将调用它的destory()接口方法，同样，如果bean使用destroy-method声明了销毁方法，该方法也会被调用</li>
+</ol>
+<h3 id="spring-配置的可选方案">Spring 配置的可选方案</h3>
+<ul>
+<li>在XML中进行显式配置</li>
+<li>在Java中进行显式配置</li>
+<li>隐式的bean发现机制和自动装配<br>
+Spring 从两个角度实现自动化装配：
+<ul>
+<li>组件扫描：Spring会自动发现应用上下文中所创建的bean</li>
+<li>自动装配：Spring自动满足bean之间的依赖</li>
+</ul>
+</li>
+</ul>
+<h3 id="componentscan注解-扫描并自动装配">@ComponentScan注解 扫描并自动装配</h3>
+<ul>
+<li>默认，以配置类所在的包为基础包（base package）来扫描组件</li>
+<li>扫描不同的包 括号带上包名<code>@ComponentScan(&quot;packageName&quot;)</code>或者<code>@ComponetScan(basePackages =&quot;packageName&quot;)</code></li>
+<li>扫描多个包 <code>@ComponentScan(basePackages ={&quot;packageName1&quot;,&quot;packageName2&quot;})</code></li>
+<li>指定基础包中包含的类或接口 <code>@ComponentScan(basePackageClasses={CDPlayer.class,DVDPlayer.class})</code></li>
+</ul>
+<h3 id="autowired注解-实现自动装配">@AutoWired注解 实现自动装配</h3>
+<ul>
+<li>放在属性上</li>
+<li>放在构造器上</li>
+<li>放在Setter方法上</li>
+<li>如果没有匹配会抛出异常，可以采用<code>@AutoWired(required=false)</code></li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[ReentrantLock 和 synchronized 比较]]></title>
+        <id>https://github.com/skylaugh/skylaugh.github.io.git/post/reentrantlock-he-synchronized-bi-jiao</id>
+        <link href="https://github.com/skylaugh/skylaugh.github.io.git/post/reentrantlock-he-synchronized-bi-jiao">
+        </link>
+        <updated>2019-10-30T09:48:09.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="可重入性">可重入性：</h3>
+<p>两者都是可重入的。同一个现成计入一次，锁的计数器进行自增，等到锁的计数器下降为零时，才能释放锁。</p>
+<h3 id="锁的实现">锁的实现：</h3>
+<p>synchronized 依赖于 JVM 实现，而 ReentrantLock 基于 JDK 实现。区别类似于操作系统控制实现与用户使用代码实现。</p>
+<h3 id="性能区别">性能区别：</h3>
+<p>在 synchronized 优化前性能比 ReentrantLock 差很多， 但自从引入了偏向锁、轻量级锁（自选锁）后，也就是自循锁后，两者性能差不多（JDK1.6以后）。官方更推荐使用 synchronized, 因为写法更容易，synchronized 的优化其实借鉴了 ReentrantLock 中的 CAS 技术，都是试图在用户态就把加锁问题解决，避免进入内核态的线程阻塞。</p>
+<h3 id="功能区别">功能区别：</h3>
+<h4 id="便利性">便利性</h4>
+<p>synchronized 更便利，它是由编译器保证加锁与释放。ReentrantLock 是需要手动声明与释放锁，所以为了避免忘记手动释放锁造成死锁，最好在 finally 种声明释放所。</p>
+<h4 id="锁的细粒度和灵活度">锁的细粒度和灵活度</h4>
+<p>ReentrantLock 优于 synchronized</p>
+<h3 id="reentrantlock-独有的功能">ReentrantLock 独有的功能</h3>
+<ul>
+<li><strong>可配置公平锁</strong>，ReentrantLock 可以指定是公平锁还是非公平锁，synchronized 只能是非公平锁。（公平锁就是先等待的线程先获得锁）</li>
+</ul>
+<pre><code>//创建一个非公平锁，默认是非公平锁
+Lock lock = new ReentrantLock();
+Lock lock = new ReentrantLock(false);
+ 
+//创建一个公平锁，构造传参true
+Lock lock = new ReentrantLock(true);
+</code></pre>
+<ul>
+<li><strong>分组唤醒</strong>，提供了一个 Condition 类，可以实现分组唤醒需要唤醒的线程。不像是 synchronized 要么随机唤醒一个线程，要么全部唤醒</li>
+<li><strong>等待可中断</strong>,提供能够终端等待锁的线程的机制，通过lock.lockInterruptibly()实现，这种机制 ReentrantLock 持有锁的线程长期不释放的时候，正在等待的线程可以通过lock.lockInterruptibly()选择放弃等待，这相当于Synchronized来说可以避免出现死锁的情况。</li>
+</ul>
+<h3 id="reentrantlock源码分析">ReentrantLock源码分析</h3>
+<p>lock()方法在公平锁中</p>
+<ol>
+<li>先调用acquire方法尝试获取锁</li>
+</ol>
+<pre><code>final void lock() {
+            acquire(1);
+        }
+</code></pre>
+<ol start="2">
+<li>acquire方法</li>
+</ol>
+<pre><code>public final void acquire(int arg) {
+        //尝试获取锁失败，进入等待队列
+        if (!tryAcquire(arg) &amp;&amp;
+            acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+            //
+            selfInterrupt();
+    }
+static void selfInterrupt() {
+        //中断当前线程
+        Thread.currentThread().interrupt();
+    }
+</code></pre>
+<p>lock()方法在非公平锁中<br>
+1.先比较并设置状态，成功则设置独有线程，否则去获取锁</p>
+<pre><code>final void lock() {
+            if (compareAndSetState(0, 1))
+               setExclusiveOwnerThread(Thread.currentThread());
+            else
+                acquire(1);
+        }
+</code></pre>
+<p>2.acquire方法同公平锁</p>
+<h3 id="为什么非公平锁比公平锁更高效">为什么非公平锁比公平锁更高效</h3>
+<p>个人理解，公平锁都要排队，上一个用完这把锁后，去唤醒下一个，但是唤醒需要一定时间。<br>
+非公平锁就是在还未唤醒时插队，抢先一步拿到锁，这就相当于节省了一部分唤醒时间。</p>
+<h3 id="cas无锁技术">CAS无锁技术</h3>
+<p>compare and swap,比较并切换，是一种实现并发算法时常用到的技术。<br>
+在多线程高并发编程的时候，最关键的问题就是保证<strong>临界区</strong>的对象的安全访问。通常是加锁来处理，其实加锁本质上是将并发转变为串行来实现的，会影响吞吐量。<br>
+对于并发控制而言，锁是一种<strong>悲观策略</strong>，会阻塞线程执行。而无锁是一种乐观策略。无锁的策略采用一种比较交换技术<strong>CAS</strong>来鉴别线程冲突。<br>
+与锁相比，CAS 会使得程序设计比较负责，由于其性能优势，天生免疫死锁，没有竞争带来的开销和线程间频繁调度带来的开销，比基于锁的方式有着更优越的性能。</p>
+<h4 id="cas算法">CAS算法</h4>
+<p>CAS方法包含三个参数CAS(V,E,N),V表示当前内存的是，E表示预期值，N表示更新的值，只有当V等于E的时候，才会将V值改为N，如果V不等于E，说明已经有其他线程对它做了更新，则当前线程直接返回V值。<br>
+J.U.C并发包下的atomic包里的类都是CAS实现的</p>
+<h4 id="cas缺点">CAS缺点</h4>
+<p>CAS存在一个很明显的问题，即ABA问题。<br>
+问题：如果变量V初次读取的时候是A，并且在准备赋值的时候检查到它仍然是A，那能说明它的值没有被其他线程修改过了吗？<br>
+如果在这段期间曾经被改成B，然后又改回A，那CAS操作就会误认为它从来没有被修改过。针对这种情况，java并发包中提供了一个带有标记的原子引用类AtomicStampedReference，它可以通过控制变量值的版本来保证CAS的正确性。改进后的CAS(V,E,N，ES,NS),ES表示期望的标记，NS表示新的标记</p>
+<h3 id="可重入性的定义">可重入性的定义</h3>
+<p>举例：方法A和方法B都加了同一把锁，方法A加锁后调用方法B，如果锁可充入，那么方法B会获得锁，锁的计数器+1，如果不可重入，那么就会死锁。可重入锁的计数器全部释放后，锁才会释放。</p>
+<h3 id="死锁的四个必要条件">死锁的四个必要条件</h3>
+<ol>
+<li>互斥：至少有一个资源必须处于非共享模式，即一次只有一个进程可使用。如果另一进程申请该资源，那么申请进程应等到该资源释放为止。</li>
+<li>占有并等待：—个进程应占有至少一个资源，并等待另一个资源，而该资源为其他进程所占有。</li>
+<li>非抢占：资源不能被抢占，即资源只能被进程在完成任务后自愿释放。</li>
+<li>循环等待：有一组等待进程 {P0，P1，…，Pn}，P0 等待的资源为 P1 占有，P1 等待的资源为 P2 占有，……，Pn-1 等待的资源为 Pn 占有，Pn 等待的资源为 P0 占有。</li>
+</ol>
+<pre><code>public class DeadLock {
+    public static String obj1 = &quot;obj1&quot;;
+    public static String obj2 = &quot;obj2&quot;;
+    public static void main(String[] args){
+        Thread a = new Thread(new Lock1());
+        Thread b = new Thread(new Lock2());
+        a.start();
+        b.start();
+    }
+}
+class Lock1 implements Runnable{
+    @Override
+    public void run(){
+        try{
+            System.out.println(&quot;Lock1 running&quot;);
+            while(true){
+                synchronized(DeadLock.obj1){
+                    System.out.println(&quot;Lock1 lock obj1&quot;);
+                    Thread.sleep(3000);//获取obj1后先等一会儿，让Lock2有足够的时间锁住obj2
+                    synchronized(DeadLock.obj2){
+                        System.out.println(&quot;Lock1 lock obj2&quot;);
+                    }
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}
+class Lock2 implements Runnable{
+    @Override
+    public void run(){
+        try{
+            System.out.println(&quot;Lock2 running&quot;);
+            while(true){
+                synchronized(DeadLock.obj2){
+                    System.out.println(&quot;Lock2 lock obj2&quot;);
+                    Thread.sleep(3000);
+                    synchronized(DeadLock.obj1){
+                        System.out.println(&quot;Lock2 lock obj1&quot;);
+                    }
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+<p>用jstack查看</p>
+<pre><code>Found one Java-level deadlock:
+=============================
+&quot;Thread-1&quot;:
+  waiting to lock monitor 0x00007f9dcf818ca8 (object 0x00000007959dbee0, a java.lang.String),
+  which is held by &quot;Thread-0&quot;
+&quot;Thread-0&quot;:
+  waiting to lock monitor 0x00007f9dcf814c08 (object 0x00000007959dbf10, a java.lang.String),
+  which is held by &quot;Thread-1&quot;
+
+Java stack information for the threads listed above:
+===================================================
+&quot;Thread-1&quot;:
+	at Study20191021.Lock2.run(DeadLock.java:52)
+	- waiting to lock &lt;0x00000007959dbee0&gt; (a java.lang.String)
+	- locked &lt;0x00000007959dbf10&gt; (a java.lang.String)
+	at java.lang.Thread.run(Thread.java:748)
+&quot;Thread-0&quot;:
+	at Study20191021.Lock1.run(DeadLock.java:33)
+	- waiting to lock &lt;0x00000007959dbf10&gt; (a java.lang.String)
+	- locked &lt;0x00000007959dbee0&gt; (a java.lang.String)
+	at java.lang.Thread.run(Thread.java:748)
+
+Found 1 deadlock.
+
+</code></pre>
+<h3 id="synchronized的几种用法">synchronized的几种用法</h3>
+<ol>
+<li>同步类<br>
+下面提供了两种同步类的方法，锁住效果和同步静态方法一样，都是类级别的锁，同时只有一个线程能访问带有同步类锁的方法。</li>
+</ol>
+<pre><code>/**
+ * 用在类
+ */
+private void synchronizedClass() {
+    synchronized (TestSynchronized.class) {
+        System.out.println(&quot;synchronizedClass&quot;);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+ 
+/**
+ * 用在类
+ */
+private void synchronizedGetClass() {
+    synchronized (this.getClass()) {
+        System.out.println(&quot;synchronizedGetClass&quot;);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+<ol start="2">
+<li>同步方法<br>
+这个也是我们用得最多的，只要涉及线程安全，上来就给方法来个同步锁。这种方法使用虽然最简单，但是只能作用在单例上面，如果不是单例，同步方法锁将失效。</li>
+</ol>
+<pre><code>/**
+ * 用在普通方法
+ */
+private synchronized void synchronizedMethod() {
+    System.out.println(&quot;synchronizedMethod&quot;);
+    try {
+        Thread.sleep(2000);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<ol start="3">
+<li>同步静态方法，不管你有多少个类实例，同时只有一个线程能获取锁进入这个方法。</li>
+</ol>
+<pre><code>/**
+ * 用在静态方法
+ */
+private synchronized static void synchronizedStaticMethod() {
+    System.out.println(&quot;synchronizedStaticMethod&quot;);
+    try {
+        Thread.sleep(2000);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<p>同步静态方法是类级别的锁，一旦任何一个线程进入这个方法，其他所有线程将无法访问这个类的任何同步类锁的方法。<br>
+4. 同步对象实例<br>
+这也是同步块的用法，和上面的锁住当前实例一样，这里表示锁住整个 LOCK 对象实例，只有获取到这个 LOCK 实例的锁才能进入这个方法。</p>
+<pre><code>/**
+ * 用在对象
+ */
+private void synchronizedInstance() {
+    synchronized (LOCK) {
+        System.out.println(&quot;synchronizedInstance&quot;);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+<ol start="5">
+<li>同步代码块<br>
+这也是同步块的用法，表示锁住整个当前对象实例，只有获取到这个实例的锁才能进入这个方法。</li>
+</ol>
+<pre><code>/**
+ * 用在this
+ */
+private void synchronizedThis() {
+    synchronized (this) {
+        System.out.println(&quot;synchronizedThis&quot;);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+ 
+</code></pre>
+<p>另外，类锁与实例锁不相互阻塞，但相同的类锁，相同的当前实例锁，相同的对象锁会相互阻塞。<br>
+synchronized不能被继承；<br>
+不能使用synchronized关键字修饰接口方法；<br>
+构造方法也不能用synchronized；</p>
+<h3 id="monitor监视器">Monitor监视器</h3>
+<p>monitor 是一个同步工具，提供线程（进程）被阻塞和被唤醒的管理机制<br>
+在 jvm 中，每一个<strong>对象头</strong>都关联着 Monitor，每一个监视器和一个对象引用相关联，为了实现监视器的互斥功能，每个对象都管理者一把锁。<br>
+一旦方法或者代码块被 synchronized 修饰，那么这个部分就放入了监视器的监事区域，确保一次只能有一个线程执行该部分的代码，线程在获取锁之前不允许执行该部分的代码。</p>
+<h4 id="monitor的基本元素">monitor的基本元素</h4>
+<ul>
+<li>临界区--被 synchronized 修饰的方法、代码块</li>
+<li>monitor 对象以及锁</li>
+<li>条件变量以及定义在 monitor 对象上的 wait signal 操作<br>
+monitor object 作用，保存被阻塞的队列，提供 wait() 和 notify() 进行阻塞和唤醒。java.lang.Object 都能作为 monitor object.<br>
+Java 对象存储在内存中，分为三个部分，<strong>对象头、实例数据、对齐填充</strong>，在对象头中，保存了<strong>锁标识</strong>（其中的重量级锁指的就是 synchronized 锁）。<br>
+<img src="https://raw.githubusercontent.com/skylaugh/ImageHosting/master/img/20191025150843.png" alt="" loading="lazy"><br>
+当一个线程需要获取 Object 的锁时，会被放入 EntrySet 中进行等待，如果该线程获取到了锁，成为当前锁的 owner。如果根据程序逻辑，一个已经获得了锁的线程缺少某些外部条件，而无法继续进行下去（例如生产者发现队列已满或者消费者发现队列为空），那么该线程可以通过调用 wait 方法将锁释放，进入 wait set 中阻塞进行等待，其它线程在这个时候有机会获得锁，去干其它的事情，从而使得之前不成立的外部条件成立，这样先前被阻塞的线程就可以重新进入 EntrySet 去竞争锁。这个<strong>外部条件</strong>在 monitor 机制中称为<strong>条件变量</strong>。</li>
+</ul>
+<h3 id="守护线程">守护线程</h3>
+<p>Java提供两种类型的线程：用户线程和守护程序线程<br>
+用户线程是高优先级的线程。JVM将在终止任务之前等待任何用户线程完成其任务。<br>
+守护线程是低优先级线程，其唯一作用是为用户线程提供服务。<br>
+守护线程对于后台支持任务非常有用，例如垃圾收集，释放未使用对象的内存一级从缓存中删除不需要的条目。大多数JVM线程都是守护线程。</p>
+<h4 id="创建守护线程">创建守护线程</h4>
+<pre><code>public class DaemonTest {
+    public static void main(String[] args){
+        DaemonThread daemonThread = new DaemonThread();
+        Thread thread = new Thread(daemonThread);
+        thread.setDaemon(true);
+        thread.start();
+    }
+}
+class DaemonThread implements Runnable{
+
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().isDaemon());
+    }
+}
+</code></pre>
+<p>任何线程都继承创建它的线程的守护进程状态。由于主线程是用户线程，因此在main方法内创建的任何线程默认为用户线程。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Redis的RDB和AOF]]></title>
+        <id>https://github.com/skylaugh/skylaugh.github.io.git/post/redis-de-rdb-he-aof</id>
+        <link href="https://github.com/skylaugh/skylaugh.github.io.git/post/redis-de-rdb-he-aof">
+        </link>
+        <updated>2019-10-23T09:45:58.000Z</updated>
+        <content type="html"><![CDATA[<p>从一道面试题开始说起吧</p>
+<blockquote>
+<h3 id="redis-1s-set-10w次有什么问题及问题产生的原因">Redis 1s set 10w次有什么问题，及问题产生的原因。</h3>
+</blockquote>
+<ol>
+<li>写请求太多阻塞其他请求，导致性能下降</li>
+<li>触发 rdb 备份操作，fork 新线程也会阻塞其他操作，</li>
+<li>在 rdb 备份时，如果 set 请求的太多，可能会导致内存暴涨一倍，导致内存不足，或者使用 swap 导致性能下降。</li>
+<li>如果开启了 AOF 备份方式，可能会导致频繁刷新缓冲区数据到磁盘，导致性能下降。进一步阻塞请求。</li>
+</ol>
+<h3 id="redis-的-rdb-是什么">Redis 的 RDB 是什么？</h3>
+<ol>
+<li>在指定的时间间隔内将内存中的数据集快照写入磁盘，也就是Snapshot快照，恢复时是将快照文件直接读到内存里。</li>
+<li>持久化时Redis会单独创建(fork)一个子进程来进行持久化，子进程先将数据写入到一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。</li>
+<li>整个过程中主进程不进行任何IO操作，这就确保了极高的性能。</li>
+<li>进行大规模数据的恢复，且对于恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。RDB的缺点是最后一次持久化后的数据可能丢失。</li>
+</ol>
+<h3 id="rdb-的优缺点">RDB 的优缺点</h3>
+<p>优点：</p>
+<ol>
+<li>适合大规模的数据恢复。</li>
+<li>如果业务对数据完整性和一致性要求不高，RDB是很好的选择。</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>数据的完整性和一致性不高，因为RDB可能在最后一次备份时宕机了。</li>
+<li>备份时占用内存，因为Redis 在备份时会独立创建一个子进程，将数据写入到一个临时文件（此时内存中的数据是原来的两倍哦），最后再将临时文件替换之前的备份文件。<br>
+所以Redis 的持久化和数据的恢复要选择在夜深人静的时候执行是比较合理的。</li>
+</ol>
+<h3 id="fork线程">fork线程</h3>
+<ul>
+<li>fork的作用是复制一个与当前进程一样的进程。新进程的所有数据（变量、环境变量、程序计数器等）数值都和原进程一致，但是是一个全新的进程，并作为原进程的子进程</li>
+</ul>
+<h3 id="aof">AOF</h3>
+<p>Redis 默认不开启。它的出现是为了弥补RDB的不足（数据的不一致性），所以它采用日志的形式来记录每个<strong>写操作</strong>，并追加到文件中。Redis 重启的会根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作。</p>
+<h3 id="从配置文件了解aof">从配置文件了解AOF</h3>
+<p>打开 <code>redis.conf</code> 文件，找到 <code>APPEND ONLY MODE</code> 对应内容</p>
+<ol>
+<li>redis 默认关闭，开启需要手动把no改为yes</li>
+</ol>
+<pre><code>appendonly yes
+</code></pre>
+<ol start="2">
+<li>指定本地数据库文件名，默认值为 <code>appendonly.aof</code></li>
+</ol>
+<pre><code>appendfilename &quot;appendonly.aof&quot;
+</code></pre>
+<ol start="3">
+<li>指定更新日志条件</li>
+</ol>
+<pre><code># appendfsync always
+appendfsync everysec
+# appendfsync no
+</code></pre>
+<p>解说：</p>
+<ul>
+<li>always：同步持久化，每次发生数据变化会立刻写入到磁盘中。性能较差当数据完整性比较好（慢，安全）</li>
+<li>everysec：出厂默认推荐，每秒异步记录一次（默认值）</li>
+<li>no：不同步</li>
+</ul>
+<ol start="4">
+<li>配置重写触发机制</li>
+</ol>
+<pre><code>auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+</code></pre>
+<p>解说：当AOF文件大小是上次rewrite后大小的一倍且文件大于64M时触发。一般都设置为3G，64M太小了。</p>
+<h4 id="触发aof快照">触发AOF快照</h4>
+<p>根据配置文件触发，可以是每次执行触发，可以是每秒触发，可以不同步。</p>
+<h4 id="根据aof文件恢复数据">根据AOF文件恢复数据</h4>
+<p>正常情况下，将appendonly.aof 文件拷贝到redis的安装目录的bin目录下，重启redis服务即可。但在实际开发中，可能因为某些原因导致appendonly.aof 文件格式异常，从而导致数据还原失败，可以通过命令<code>redis-check-aof --fix appendonly.aof</code> 进行修复 。</p>
+<h4 id="aof的重写机制">AOF的重写机制</h4>
+<p>前面也说到了，AOF的工作原理是将写操作追加到文件中，文件的冗余内容会越来越多。所以聪明的 Redis 新增了重写机制。当AOF文件的大小超过所设定的阈值时，Redis就会对AOF文件的内容压缩。</p>
+<h4 id="重写的原理">重写的原理</h4>
+<p>Redis 会 fork 出一条新进程，读取内存中的数据，并重新写到一个临时文件中（并没有读取旧文件）。最后替换旧的aof文件。</p>
+<p>触发机制：当AOF文件大小是上次rewrite后大小的一倍且文件大于64M时触发。这里的“一倍”和“64M” 可以通过配置文件修改。</p>
+<h3 id="aof-的优缺点">AOF 的优缺点</h3>
+<p>优点：数据的完整性和一致性更高<br>
+缺点：因为AOF记录的内容多，文件会越来越大，数据恢复也会越来越慢。</p>
+<h2 id="总结">总结：</h2>
+<ol>
+<li>Redis 默认开启RDB持久化方式，在指定的时间间隔内，执行指定次数的写操作，则将内存中的数据写入到磁盘中。</li>
+<li>RDB 持久化适合大规模的数据恢复但它的数据一致性和完整性较差。</li>
+<li>Redis 需要手动开启AOF持久化方式，默认是每秒将写操作日志追加到AOF文件中。</li>
+<li>AOF 的数据完整性比RDB高，但记录内容多了，会影响数据恢复的效率。</li>
+<li>Redis 针对 AOF文件大的问题，提供重写的瘦身机制。</li>
+<li>若只打算用Redis 做缓存，可以关闭持久化。</li>
+<li>若打算使用Redis 的持久化。建议RDB和AOF都开启。其实RDB更适合做数据的备份，留一后手。AOF出问题了，还有RDB。</li>
+</ol>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[红黑树]]></title>
+        <id>https://github.com/skylaugh/skylaugh.github.io.git/post/hong-hei-shu</id>
+        <link href="https://github.com/skylaugh/skylaugh.github.io.git/post/hong-hei-shu">
+        </link>
+        <updated>2019-09-04T09:39:39.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="之前看-hashmap-jdk18中的源码就有提到红黑树这次我们来了解以下红黑树究竟是怎样一种数据结构">  之前看 HashMap jdk1.8中的源码，就有提到红黑树，这次我们来了解以下红黑树究竟是怎样一种数据结构。</h2>
+<h3 id="定义">定义</h3>
+<blockquote>
+<p>红黑树（Red Black Tree）RBT 是一种自<strong>平衡二叉查找树</strong>，是在计算机科学中用到的一种数据结构，典型的用途是实现关联数组。<br>
+它是在1972年由Rudolf Bayer发明的，当时被称为平衡二叉B树（symmetric binary B-trees）。后来，在1978年被 Leo J. Guibas 和 Robert Sedgewick 修改为如今的“红黑树”。<br>
+红黑树和AVL树类似，都是在进行插入和删除操作时通过特定操作保持二叉查找树的平衡，从而获得较高的查找性能。<br>
+它虽然是复杂的，但它的最坏情况运行时间也是非常良好的，并且在实践中是高效的：它可以在O(log n)时间内做查找，插入和删除，这里的n是树中元素的数目。</p>
+</blockquote>
+<h3 id="二叉查找树">二叉查找树</h3>
+<p>二叉查找树，Binary Search Tree 「BST」，我们首先看下二叉查找树有哪些特性呢？</p>
+<ol>
+<li>某节点的左子树节点值仅包含小于该节点值</li>
+<li>某节点的右子树节点值仅包含大于该节点值</li>
+<li>左右子树每个也必须是二叉查找树</li>
+</ol>
+<h3 id="红黑树特征">红黑树特征:</h3>
+<ol>
+<li>每个节点非黑即红</li>
+<li>根节点是黑色的</li>
+<li>每个叶节点都是黑色的</li>
+<li>一个红色节点的直接子节点都是黑色的（不能有两个红色节点连着有父子关系）</li>
+<li>从任意一个节点到叶节点，经过的黑色节点个数(黑高)是一样的</li>
+</ol>
+<h3 id="红黑树动态演示"><a href="http://algoanim.ide.sk/index.php?page=showanim&amp;id=63">红黑树动态演示</a></h3>
+<p>这个网站可以帮助理解红黑树插入删除的过程。<br>
+变色的时机可能不太对，他统一放在最后变色了，理解上习惯右旋后直接变色，来判断下一步操作。</p>
+<h3 id="插入操作">插入操作</h3>
+<p>插入会改变树的节点，树节点改变会有以下两种方式。</p>
+<ul>
+<li><strong>变色</strong> recolor</li>
+<li><strong>旋转</strong> rotation</li>
+</ul>
+<p>为防止树全黑，且为了方便根节点到子节点黑色数相等，插入一般预设为红色节点</p>
+<h4 id="变色">变色：</h4>
+<p>条件：父红叔红变颜色<br>
+颜色变化：父变黑，叔变黑，爷变红，如果变色不能达到红黑树的要求，再尝试旋转。</p>
+<h4 id="左旋">左旋</h4>
+<p>条件：父红叔黑右子树</p>
+<h4 id="右旋">右旋</h4>
+<p>条件：父红叔黑左子树</p>
+<h3 id="4种情况">4种情况</h3>
+<ol>
+<li>父左子左<br>
+<img src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/1581414101770.png" alt="左左" loading="lazy"></li>
+<li>父左子右<br>
+<img src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/1581414116409.png" alt="左右" loading="lazy"></li>
+<li>父右子右<br>
+<img src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/1581414131816.png" alt="右右" loading="lazy"></li>
+<li>父右子左<br>
+<img src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/1581414161504.png" alt="右左" loading="lazy"></li>
+</ol>
+<h3 id="删除操作">删除操作</h3>
+<p>// todo 删除操作太麻烦了，先搁置<br>
+  真佩服那些面试能手写红黑树的大佬，我能记个插入的几种情况就不错了，还得看着规则写。能写出删除操作的是真牛！！！小弟在此给大佬顶礼膜拜Orz。</p>
+<h3 id="手写红黑树代码">手写红黑树代码</h3>
+<p>  花了三天时间写出来的，估计挺多漏洞的，不过自己测了测插入目前没遇到啥问题，删除回头有空再写吧。算是自己造了个方形的轮子。<br>
+  有点好处就是写了个toImage()方法，可以将构造的红黑树画出来，比较直观。下面上代码：</p>
+<pre><code>import javax.swing.*;
+import java.awt.*;
+
+/**
+ * @ClassName RedBlackTree
+ * @Description 红黑树
+ * @Author leo
+ * @Date 2019-09-24 09:57
+ **/
+public class RedBlackTree extends JFrame {
+    static final int R = 0;//红色
+    static final int B = 1;//黑色
+    Node root;
+
+    public RedBlackTree() {
+        super();
+        initialize(500);// 调用初始化方法
+    }
+
+    static class Node {
+        //颜色
+        int color;
+        //值
+        int value;
+        //父节点
+        Node parent;
+        //左节点
+        Node left;
+        //右节点
+        Node right;
+
+        public Node(int value) {
+            this.color = R;
+            this.value = value;
+        }
+    }
+
+    /**
+     * 插入新节点 值为参数
+     *
+     * @param value
+     */
+    public void insert(int value) {
+        Node newNode = new Node(value);
+        insert(newNode);
+    }
+
+    /**
+     * 插入新节点
+     *
+     * @param newNode
+     */
+    public void insert(Node newNode) {
+        Node curNode = root;
+        if (root == null) {
+            root = newNode;
+            //判断是否符合规则
+            judgeRule(newNode);
+        } else if (curNode.value &gt; newNode.value) {
+            if (curNode.left != null) {
+                insert(curNode.left, newNode);
+            } else {
+                curNode.left = newNode;
+                newNode.parent = curNode;
+                //判断是否符合规则
+                judgeRule(newNode);
+            }
+        } else {
+            if (curNode.right != null) {
+                insert(curNode.right, newNode);
+            } else {
+                curNode.right = newNode;
+                newNode.parent = curNode;
+                //判断是否符合规则
+                judgeRule(newNode);
+            }
+        }
+    }
+
+    /**
+     * 插入递归寻找合适位置
+     *
+     * @param curNode
+     * @param newNode
+     */
+    public void insert(Node curNode, Node newNode) {
+        if (curNode.value &gt; newNode.value) {
+            if (curNode.left != null) {
+                insert(curNode.left, newNode);
+            } else {
+                curNode.left = newNode;
+                newNode.parent = curNode;
+                //判断是否符合规则
+                judgeRule(newNode);
+            }
+        } else {
+            if (curNode.right != null) {
+                insert(curNode.right, newNode);
+            } else {
+                curNode.right = newNode;
+                newNode.parent = curNode;
+                //判断是否符合规则
+                judgeRule(newNode);
+            }
+        }
+    }
+
+    /**
+     * 判断是否符合规则
+     *
+     * @param curNode
+     */
+    public void judgeRule(Node curNode) {
+        //判断是否父节点也是红色
+        if (curNode.parent == null) {
+            //父节点为空，说明节点是根节点，变黑色
+            curNode.color = B;
+            root = curNode;
+        } else {
+            //不是根节点
+            if (curNode.parent.color == R) {
+                //父节点也为红色
+                Node grandparent = curNode.parent.parent;
+                Node uncle;
+                int parentLR; //0左 1右
+                if (curNode.parent == grandparent.left) {
+                    parentLR = 0;
+                    //父亲左子树
+                    if (grandparent.right != null) {
+                        //不为null
+                        uncle = grandparent.right;
+                    } else {
+                        //null节点 黑色
+                        uncle = null;
+                    }
+                } else {
+                    parentLR = 1;
+                    //父亲右子树
+                    if (grandparent.left != null) {
+                        //不为null
+                        uncle = grandparent.left;
+                    } else {
+                        //null节点 黑色
+                        uncle = null;
+                    }
+                }
+                if (uncle != null &amp;&amp; uncle.color == R) {
+                    //父红叔红变颜色
+                    recolor(curNode, uncle);
+                } else {
+                    //父红叔黑判断 当前节点左右子树
+                    if (curNode.value &lt; curNode.parent.value) {
+                        if (parentLR == 0) {
+                            //父左子左 右旋
+                            rightRotate(curNode.parent);
+                        } else {
+                            //父右子左 右旋
+                            RLRotate(curNode);
+                            leftRotate(curNode);
+                        }
+
+                    } else {
+                        if (parentLR == 1) {
+                            //父右子右 左旋
+                            leftRotate(curNode.parent);
+                        } else {
+                            //父左子右 左旋
+                            LRRotate(curNode);
+                            rightRotate(curNode);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 变色
+     *
+     * @param curNode
+     * @param uncle
+     */
+    private void recolor(Node curNode, Node uncle) {
+        //父变黑
+        curNode.parent.color = B;
+        //叔变黑
+        uncle.color = B;
+        //爷变红
+        uncle.parent.color = R;
+        judgeRule(uncle.parent);
+    }
+
+    /**
+     * 左旋 父子互换，前父挂左子，前子挂前爷，父子颜色互换
+     *
+     * @param curNode
+     */
+    private void leftRotate(Node curNode) {
+        //当前父节点
+        Node parent = curNode.parent;
+        //当前爷节点
+        Node grandparent = curNode.parent.parent;
+        //判断爷节点是否为空
+        if (grandparent != null) {
+            //如果不为空
+            if (parent == grandparent.left) {
+                //父节点是左子树，当前节点就挂爷节点左子树
+                grandparent.left = curNode;
+            } else {
+                //父节点是右子树，当前节点就挂爷节点右子树
+                grandparent.right = curNode;
+            }
+        }
+        //当前父节点挂在当前节点左子树
+        parent.parent = curNode;
+        //当前节点左子树挂在前父节点右子树
+        parent.right = curNode.left;
+        if (parent.right != null) {
+            parent.right.parent = parent;
+        }
+        //当前节点左子树指向当前父节点
+        curNode.left = parent;
+        //当前节点挂到当前爷节点上
+        curNode.parent = grandparent;
+        //当前节点和当前父节点变色
+        int color = curNode.color;
+        curNode.color = parent.color;
+        parent.color = color;
+        if (curNode.parent == null) {
+            root = curNode;
+        }
+    }
+
+    /**
+     * 右旋 左子树
+     */
+    private void rightRotate(Node curNode) {
+        //当前父节点
+        Node parent = curNode.parent;
+        //当前爷节点
+        Node grandparent = curNode.parent.parent;
+        if (grandparent != null) {
+            if (parent == grandparent.left) {
+                grandparent.left = curNode;
+            } else {
+                grandparent.right = curNode;
+            }
+        }
+        //当前父节点挂在当前节点左子树
+        parent.parent = curNode;
+        //当前节点右子树挂在前父节点左子树
+        parent.left = curNode.right;
+        if (parent.left != null) {
+            parent.left.parent = parent;
+        }
+        //当前节点左子树指向当前父节点
+        curNode.right = parent;
+        //当前节点挂到当前爷节点上
+        curNode.parent = grandparent;
+        //当前节点和当前父节点变色
+        int color = curNode.color;
+        curNode.color = parent.color;
+        parent.color = color;
+        if (curNode.parent == null) {
+            root = curNode;
+        }
+    }
+
+    /**
+     * 右左情况前置操作
+     *
+     * @param curNode
+     */
+    private void RLRotate(Node curNode) {
+        //当前父节点
+        Node parent = curNode.parent;
+        //当前爷节点
+        Node grandparent = curNode.parent.parent;
+        //当前节点挂到爷节点上
+        curNode.parent = grandparent;
+        //爷节点的右子树指向当前节点
+        grandparent.right = curNode;
+        //前父节点挂当前节点
+        parent.parent = curNode;
+        //当前节点右子树
+        parent.left = curNode.right;
+        if (parent.left != null) {
+            parent.left.parent = parent;
+        }
+        //当前节点
+        curNode.right = parent;
+
+    }
+
+    /**
+     * 左右情况前置操作
+     *
+     * @param curNode
+     */
+    private void LRRotate(Node curNode) {
+        //当前父节点
+        Node parent = curNode.parent;
+        //当前爷节点
+        Node grandparent = curNode.parent.parent;
+        //当前节点挂到爷节点上
+        curNode.parent = grandparent;
+        //爷节点的左子树指向当前节点
+        grandparent.left = curNode;
+        //前父节点挂当前节点
+        parent.parent = curNode;
+        //当前节点右子树挂前父节点左子树
+        parent.right = curNode.left;
+        if (parent.right != null) {
+            parent.right.parent = parent;
+        }
+        curNode.left = parent;
+
+    }
+
+    /**
+     * 画布初始化
+     *
+     * @param paperSize
+     */
+    private void initialize(int paperSize) {// 初始化方法
+        this.setSize(paperSize * 2, paperSize);// 设置窗体大小
+        setDefaultCloseOperation(EXIT_ON_CLOSE);/// 设置窗体关闭方式
+        this.setTitle(&quot;绘制几何图形&quot;);// 设置窗体标题
+        MyCanvas c = new MyCanvas(paperSize);// 创建画布对象
+        add(c);// 将画布添加到窗体中
+    }
+
+    private class MyCanvas extends Canvas {// 创建内部类MyCanvas继承Canvas
+        //节点半径
+        int nodeRadius = 10;
+        //画布大小
+        int paperSize;
+        //层级限制
+        int levelLimit = 6;
+        //连线在x轴投影长度计算常量
+        int xLineLength = 512;
+
+        MyCanvas(int paperSize) {
+            this.paperSize = paperSize;
+        }
+
+
+        @Override
+        public void paint(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g;// 调用新画图类Graphics2D（强制转化为Graphics2D这个类）
+            draw(g2, paperSize - nodeRadius, 0, root, 1);
+        }
+
+        private void draw(Graphics2D g2, int x, int y, Node node, int level) {
+            if (level &gt; levelLimit) {
+                level = levelLimit;//设置大于level限制，线x轴长度就不变了，展示可能会重叠，画布越大这个层级可以越高
+            }
+            //设置节点颜色
+            g2.setColor(node.color == 1 ? Color.BLACK : Color.RED);
+            //画填充色圆
+            g2.fillOval(x, y, nodeRadius * 2, nodeRadius * 2);// 画一个圆形-坐标、宽高（Draw方法绘制的图形是空心的）
+            //设置值的颜色为白色
+            g2.setColor(Color.WHITE);
+            g2.drawString(String.valueOf(node.value), x + nodeRadius / 2, y + nodeRadius / 2 * 3);
+            //连线颜色为黑色
+            g2.setColor(Color.BLACK);
+            //线x轴投影长度
+            int lineX = xLineLength &gt;&gt; level++;
+            if (node.left != null) {
+                g2.drawLine(x + nodeRadius, y + nodeRadius * 2, x + nodeRadius - lineX, y + nodeRadius * 4);
+                draw(g2, x - lineX, y + nodeRadius * 4, node.left, level);
+            }
+            if (node.right != null) {
+                g2.drawLine(x + nodeRadius, y + nodeRadius * 2, x + nodeRadius + lineX, y + nodeRadius * 4);
+                draw(g2, x + lineX, y + nodeRadius * 4, node.right, level);
+            }
+        }
+
+    }
+}
+
+</code></pre>
+<p>测试代码</p>
+<pre><code>public static void main(String[] args){
+        int[] arr = {1,2,3,4,5,6,7,8,9};
+        RedBlackTree rbt = new RedBlackTree();
+        for (int a:arr){
+            rbt.insert(a);
+        }
+        rbt.setVisible(true);
+    }
+</code></pre>
+<p>输出图像<br>
+<img src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/1581414193000.png" alt="rbt" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[链表反转]]></title>
+        <id>https://github.com/skylaugh/skylaugh.github.io.git/post/lian-biao-fan-zhuan</id>
+        <link href="https://github.com/skylaugh/skylaugh.github.io.git/post/lian-biao-fan-zhuan">
+        </link>
+        <updated>2019-08-20T09:28:38.000Z</updated>
+        <content type="html"><![CDATA[<p>比较常见的一道算法题，使用额外空间使此问题变得十分简单，本文记录一下不使用额外空间的两种方法。</p>
+<h3 id="链表类">链表类</h3>
+<pre><code>public class ListNode {
+    Integer value;
+    ListNode next;
+    
+    public ListNode(Integer value){
+        this.value = value;
+    }
+    
+    @Override
+    public String toString(){
+        StringBuilder str = new StringBuilder(this.value == null?&quot;null&quot;:this.value.toString());
+        ListNode cur = this;
+        while (cur.next != null){
+            str = str.append(&quot;-&gt;&quot;).append(cur.next.value);
+            cur = cur.next;
+        }
+        return str.toString();
+    }
+}
+</code></pre>
+<p>我重写了一下toString方法，比较方便看结构。</p>
+<h3 id="循环方法">循环方法</h3>
+<pre><code>    public static ListNode reverseLoop(ListNode node){
+        ListNode prev = null;
+        ListNode head = node;
+        ListNode next;
+        while (head != null) {
+            next = head.next;
+            head.next = prev;
+            prev = head;
+            head = next;
+        }
+        return prev;
+    }
+</code></pre>
+<h3 id="递归方法">递归方法</h3>
+<pre><code>    public static ListNode reverseIter(ListNode head){
+        if(head == null || head.next == null) {
+            return head;
+        }
+        ListNode result = reverseIter(head.next);
+        head.next.next = head;
+        head.next = null;
+        return result;
+    }
+</code></pre>
+<h3 id="测试">测试</h3>
+<pre><code>    public static void main(String[] args){
+        ListNode node1 = new ListNode(1);
+        ListNode node2 = new ListNode(2);
+        ListNode node3 = new ListNode(3);
+        ListNode node4 = new ListNode(4);
+        ListNode node5 = new ListNode(5);
+        ListNode node6 = new ListNode(6);
+        ListNode node7 = new ListNode(7);
+        ListNode node8 = new ListNode(8);
+        ListNode node9 = new ListNode(null);
+        node1.next = node2;
+        node2.next = node3;
+        node3.next = node4;
+        node4.next = node5;
+        node5.next = node6;
+        node6.next = node7;
+        node7.next = node8;
+        node8.next = node9;
+        System.out.println(reverseLoop(node1));
+        System.out.println(reverseIter(node9));
+    }
+</code></pre>
+<p>输出结果</p>
+<pre><code>null-&gt;8-&gt;7-&gt;6-&gt;5-&gt;4-&gt;3-&gt;2-&gt;1
+1-&gt;2-&gt;3-&gt;4-&gt;5-&gt;6-&gt;7-&gt;8-&gt;null
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[BigDecimal进行除法运算的一个小坑]]></title>
+        <id>https://github.com/skylaugh/skylaugh.github.io.git/post/bigdecimal-jin-xing-chu-fa-yun-suan-de-yi-ge-xiao-keng</id>
+        <link href="https://github.com/skylaugh/skylaugh.github.io.git/post/bigdecimal-jin-xing-chu-fa-yun-suan-de-yi-ge-xiao-keng">
+        </link>
+        <updated>2019-08-07T09:26:26.000Z</updated>
+        <content type="html"><![CDATA[<h4 id="问题">问题</h4>
+<p>先看一个例子:</p>
+<pre><code>    public static void main(String[] args){
+        BigDecimal num1 = new BigDecimal(3);
+        BigDecimal num2 = new BigDecimal(7);
+        BigDecimal num3 = num1.divide(num2).setScale(2);
+        System.out.println(num3);
+    }
+</code></pre>
+<p>这段代码运行过程中会抛出一个异常<br>
+<code>java.lang.ArithmeticException: Non-terminating decimal expansion; no exact representable decimal result</code><br>
+意思大概是运算异常，没有可精确表示的十进制结果。</p>
+<h4 id="原因">原因</h4>
+<p>因为结果除不尽，所以在 divide 的时候已经抛出了该异常，并不会进行保留两位小数的运算。</p>
+<h4 id="解决方案">解决方案</h4>
+<p>在使用BigDecimal进行除法运算时，最好使用divide的重载方法</p>
+<pre><code>    /**
+    * divisor 除数
+    * scale 保留几位小数
+    * roundingMode 舍入模式
+    */
+    public BigDecimal divide(BigDecimal divisor, int scale, RoundingMode roundingMode) {
+        return divide(divisor, scale, roundingMode.oldMode);
+    }
+</code></pre>
+<p>所以写成以下方式就没问题了</p>
+<pre><code>    public static void main(String[] args){
+        BigDecimal num1 = new BigDecimal(3);
+        BigDecimal num2 = new BigDecimal(7);
+        BigDecimal num3 = num1.divide(num2,2,BigDecimal.ROUND_HALF_DOWN);
+        System.out.println(num3);
+    }
+</code></pre>
+<p>备注:关于RoundingMode的几种模式</p>
+<ul>
+<li><strong>ROUND_UP</strong><br>
+向远离零的方向舍入。<strong>向外取整模式</strong></li>
+<li><strong>ROUND_DOWN</strong><br>
+向接近零的方向舍入。<strong>向内取整模式</strong></li>
+<li><strong>ROUND_CEILING</strong><br>
+向正无穷大的方向舍入。<strong>向上取整模式</strong></li>
+<li><strong>ROUND_FLOOR</strong><br>
+向负无穷大的方向舍入。<strong>向下取整模式</strong></li>
+<li><strong>ROUND_HALF_UP</strong><br>
+向“最接近的”整数舍入。<strong>四舍五入模式</strong></li>
+<li><strong>ROUND_HALF_DOWN</strong><br>
+向“最接近的”整数舍入。<strong>五舍六入模式</strong></li>
+<li><strong>ROUND_HALF_EVEN</strong><br>
+若（舍入位大于5）或者（舍入位等于5且前一位为奇数），则对舍入部分的前一位数字加1；若（舍入位小于5）或者（舍入位等于5且前一位为偶数），则直接舍弃。即为<strong>银行家舍入模式</strong>。</li>
+<li><strong>ROUND_UNNECESSARY</strong><br>
+具有精确的结果，因此不需要舍入。如果对获得精确结果的操作指定此舍入模式，则抛出<code>ArithmeticException</code>。</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Arthas 快速入门]]></title>
+        <id>https://github.com/skylaugh/skylaugh.github.io.git/post/arthas-kuai-su-ru-men</id>
+        <link href="https://github.com/skylaugh/skylaugh.github.io.git/post/arthas-kuai-su-ru-men">
+        </link>
+        <updated>2019-07-29T09:23:08.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="arthas阿尔萨斯-能为你做什么">Arthas（阿尔萨斯） 能为你做什么？</h2>
+<figure data-type="image" tabindex="1"><img src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/1581413033495.png" alt="arthas" loading="lazy"></figure>
+<p><code>Arthas</code> 是Alibaba开源的Java诊断工具，深受开发者喜爱。</p>
+<p>当你遇到以下类似问题而束手无策时，<code>Arthas</code>可以帮助你解决：</p>
+<ol>
+<li>这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？</li>
+<li>我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？</li>
+<li>遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？</li>
+<li>线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！</li>
+<li>是否有一个全局视角来查看系统的运行状况？</li>
+<li>有什么办法可以监控到JVM的实时运行状态？</li>
+</ol>
+<hr>
+<h2 id="1-启动demo">1. 启动Demo</h2>
+<pre><code class="language-bash">wget https://alibaba.github.io/arthas/arthas-demo.jar
+java -jar arthas-demo.jar
+</code></pre>
+<p><code>arthas-demo</code>是一个简单的程序，每隔一秒生成一个随机数，再执行质因式分解，并打印出分解结果。</p>
+<p><code>arthas-demo</code>源代码：<a href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java">查看</a></p>
+<h2 id="2-启动arthas">2. 启动arthas</h2>
+<p>在命令行下面执行（使用和目标进程一致的用户启动，否则可能attach失败）：</p>
+<pre><code class="language-bash">wget https://alibaba.github.io/arthas/arthas-boot.jar
+java -jar arthas-boot.jar
+</code></pre>
+<ul>
+<li>执行该程序的用户需要和目标进程具有相同的权限。比如以<code>admin</code>用户来执行：<code>sudo su admin &amp;&amp; java -jar arthas-boot.jar</code> 或 <code>sudo -u admin -EH java -jar arthas-boot.jar</code>。</li>
+<li>如果attach不上目标进程，可以查看<code>~/logs/arthas/</code> 目录下的日志。</li>
+<li>如果下载速度比较慢，可以使用aliyun的镜像：<code>java -jar arthas-boot.jar --repo-mirror aliyun --use-http</code></li>
+<li><code>java -jar arthas-boot.jar -h</code> 打印更多参数信息。</li>
+</ul>
+<p>选择应用java进程：</p>
+<pre><code class="language-bash">$ $ java -jar arthas-boot.jar
+* [1]: 35542
+  [2]: 71560 arthas-demo.jar
+</code></pre>
+<p>Demo进程是第2个，则输入2，再输入<code>回车/enter</code>。Arthas会attach到目标进程上，并输出日志：</p>
+<pre><code class="language-bash">[INFO] Try to attach process 71560
+[INFO] Attach process 71560 success.
+[INFO] arthas-client connect 127.0.0.1 3658
+  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+ /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'
+|  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |
+`--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
+
+
+wiki: https://alibaba.github.io/arthas
+version: 3.0.5.20181127201536
+pid: 71560
+time: 2018-11-28 19:16:24
+
+$
+</code></pre>
+<h2 id="3-查看dashboard">3. 查看dashboard</h2>
+<p>输入<a href="dashboard.md">dashboard</a>，按<code>回车/enter</code>，会展示当前进程的信息，按<code>ctrl+c</code>可以中断执行。</p>
+<pre><code class="language-bash">$ dashboard
+ID     NAME                   GROUP          PRIORI STATE  %CPU    TIME   INTERRU DAEMON
+17     pool-2-thread-1        system         5      WAITIN 67      0:0    false   false
+27     Timer-for-arthas-dashb system         10     RUNNAB 32      0:0    false   true
+11     AsyncAppender-Worker-a system         9      WAITIN 0       0:0    false   true
+9      Attach Listener        system         9      RUNNAB 0       0:0    false   true
+3      Finalizer              system         8      WAITIN 0       0:0    false   true
+2      Reference Handler      system         10     WAITIN 0       0:0    false   true
+4      Signal Dispatcher      system         9      RUNNAB 0       0:0    false   true
+26     as-command-execute-dae system         10     TIMED_ 0       0:0    false   true
+13     job-timeout            system         9      TIMED_ 0       0:0    false   true
+1      main                   main           5      TIMED_ 0       0:0    false   false
+14     nioEventLoopGroup-2-1  system         10     RUNNAB 0       0:0    false   false
+18     nioEventLoopGroup-2-2  system         10     RUNNAB 0       0:0    false   false
+23     nioEventLoopGroup-2-3  system         10     RUNNAB 0       0:0    false   false
+15     nioEventLoopGroup-3-1  system         10     RUNNAB 0       0:0    false   false
+Memory             used   total max    usage GC
+heap               32M    155M  1820M  1.77% gc.ps_scavenge.count  4
+ps_eden_space      14M    65M   672M   2.21% gc.ps_scavenge.time(m 166
+ps_survivor_space  4M     5M    5M           s)
+ps_old_gen         12M    85M   1365M  0.91% gc.ps_marksweep.count 0
+nonheap            20M    23M   -1           gc.ps_marksweep.time( 0
+code_cache         3M     5M    240M   1.32% ms)
+Runtime
+os.name                Mac OS X
+os.version             10.13.4
+java.version           1.8.0_162
+java.home              /Library/Java/JavaVir
+                       tualMachines/jdk1.8.0
+                       _162.jdk/Contents/Hom
+                       e/jre
+</code></pre>
+<h2 id="4-通过thread命令来获取到arthas-demo进程的main-class">4. 通过thread命令来获取到<code>arthas-demo</code>进程的Main Class</h2>
+<p><code>thread 1</code>会打印线程ID 1的栈，通常是main函数的线程。</p>
+<pre><code class="language-bash">$ thread 1 | grep 'main('
+    at demo.MathGame.main(MathGame.java:17)
+</code></pre>
+<h2 id="5-通过jad来反编译main-class">5. 通过jad来反编译Main Class</h2>
+<pre><code class="language-java">$ jad demo.MathGame
+
+ClassLoader:
++-sun.misc.Launcher$AppClassLoader@3d4eac69
+  +-sun.misc.Launcher$ExtClassLoader@66350f69
+
+Location:
+/tmp/arthas-demo.jar
+
+/*
+ * Decompiled with CFR 0_132.
+ */
+package demo;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+public class MathGame {
+    private static Random random = new Random();
+    private int illegalArgumentCount = 0;
+
+    public static void main(String[] args) throws InterruptedException {
+        MathGame game = new MathGame();
+        do {
+            game.run();
+            TimeUnit.SECONDS.sleep(1L);
+        } while (true);
+    }
+
+    public void run() throws InterruptedException {
+        try {
+            int number = random.nextInt();
+            List&lt;Integer&gt; primeFactors = this.primeFactors(number);
+            MathGame.print(number, primeFactors);
+        }
+        catch (Exception e) {
+            System.out.println(String.format(&quot;illegalArgumentCount:%3d, &quot;, this.illegalArgumentCount) + e.getMessage());
+        }
+    }
+
+    public static void print(int number, List&lt;Integer&gt; primeFactors) {
+        StringBuffer sb = new StringBuffer(&quot;&quot; + number + &quot;=&quot;);
+        Iterator&lt;Integer&gt; iterator = primeFactors.iterator();
+        while (iterator.hasNext()) {
+            int factor = iterator.next();
+            sb.append(factor).append('*');
+        }
+        if (sb.charAt(sb.length() - 1) == '*') {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        System.out.println(sb);
+    }
+
+    public List&lt;Integer&gt; primeFactors(int number) {
+        if (number &lt; 2) {
+            ++this.illegalArgumentCount;
+            throw new IllegalArgumentException(&quot;number is: &quot; + number + &quot;, need &gt;= 2&quot;);
+        }
+        ArrayList&lt;Integer&gt; result = new ArrayList&lt;Integer&gt;();
+        int i = 2;
+        while (i &lt;= number) {
+            if (number % i == 0) {
+                result.add(i);
+                number /= i;
+                i = 2;
+                continue;
+            }
+            ++i;
+        }
+        return result;
+    }
+}
+
+Affect(row-cnt:1) cost in 970 ms.
+</code></pre>
+<h2 id="6-watch">6. watch</h2>
+<p>通过<a href="watch.md">watch</a>命令来查看<code>demo.MathGame#primeFactors</code>函数的返回值：</p>
+<pre><code class="language-bash">$ watch demo.MathGame primeFactors returnObj
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 107 ms.
+ts=2018-11-28 19:22:30; [cost=1.715367ms] result=null
+ts=2018-11-28 19:22:31; [cost=0.185203ms] result=null
+ts=2018-11-28 19:22:32; [cost=19.012416ms] result=@ArrayList[
+    @Integer[5],
+    @Integer[47],
+    @Integer[2675531],
+]
+ts=2018-11-28 19:22:33; [cost=0.311395ms] result=@ArrayList[
+    @Integer[2],
+    @Integer[5],
+    @Integer[317],
+    @Integer[503],
+    @Integer[887],
+]
+ts=2018-11-28 19:22:34; [cost=10.136007ms] result=@ArrayList[
+    @Integer[2],
+    @Integer[2],
+    @Integer[3],
+    @Integer[3],
+    @Integer[31],
+    @Integer[717593],
+]
+ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
+    @Integer[5],
+    @Integer[29],
+    @Integer[7651739],
+]
+</code></pre>
+<h2 id="7-退出arthas">7. 退出arthas</h2>
+<p>如果只是退出当前的连接，可以用<code>quit</code>或者<code>exit</code>命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。</p>
+<p>如果想完全退出arthas，可以执行<code>shutdown</code>命令。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[位运算之按位与(&)操作]]></title>
+        <id>https://github.com/skylaugh/skylaugh.github.io.git/post/wei-yun-suan-zhi-an-wei-yu-andcao-zuo</id>
+        <link href="https://github.com/skylaugh/skylaugh.github.io.git/post/wei-yun-suan-zhi-an-wei-yu-andcao-zuo">
+        </link>
+        <updated>2019-07-02T09:21:11.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="定义">定义</h3>
+<blockquote>
+<p>按位与运算符“&amp;”是双目运算符。其功能是参与运算的两数各对应的二进位相与。只有对应的两个二进位都为1时，结果位才为1。参与运算的两个数均以补码出现。</p>
+</blockquote>
+<h3 id="规则">规则：</h3>
+<pre><code>1 &amp; 1 = 1  
+1 &amp; 0 = 0  
+0 &amp; 1 = 0  
+0 &amp; 0 = 0  
+</code></pre>
+<h3 id="常用技巧">常用技巧</h3>
+<ol>
+<li>可以用来判断整数奇偶性<br>
+a &amp; 1<br>
+0偶 1奇<br>
+例如:</li>
+</ol>
+<pre><code>2 &amp; 1 = 0 即 10 &amp; 01 = 00 = 0;  //偶数
+6 &amp; 1 = 0 即 110 &amp; 001 = 000 = 0;  //偶数
+3 &amp; 1 = 1 即 11 &amp; 01 = 01 = 1;  //奇数
+</code></pre>
+<ol start="2">
+<li>判断是否是2的正整数幂<br>
+a &amp; a-1<br>
+若结果为0表示a是2的正整数幂。因为2的正整数幂用二进制表示是1后边跟n个0，a-1为n个1，两者按位与则是0。<br>
+例如:</li>
+</ol>
+<pre><code>a = 4
+4 &amp; 3 = 100 &amp; 011 = 000 = 0;//说明a是2的正整数幂
+</code></pre>
+<ol start="3">
+<li>
+<p>统计整数中1的个数<br>
+朴素的统计办法是：先判断n的奇偶性，为奇数时计数器增加1，然后将n右移一位，重复上面步骤，直到移位完毕。</p>
+</li>
+<li>
+<p>对于正整数的模运算（注意，负数不能这么算）<br>
+乘除法是很消耗时间的，只要对数左移一位就是乘以2，右移一位就是除以2，传说用位运算效率提高了60%。</p>
+</li>
+</ol>
+<pre><code>乘2^k,  n&lt;&lt;k;  
+除2^k,  n&gt;&gt;k。
+</code></pre>
+<p>对2的次方取模</p>
+<pre><code>n &amp; (2^k -1)
+</code></pre>
+<p>等价于</p>
+<pre><code>n % 2^k
+</code></pre>
+<p>用通俗的言语来描述就是,对2的次方取模，<strong>取模其实就是取溢出量</strong>。只要将数与2的次方-1做按位与运算即可。HashMap的get方法中用到了此取模计算。</p>
+]]></content>
+    </entry>
+</feed>

@@ -1,0 +1,567 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Arthas 快速入门 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里" />
+<link rel="shortcut icon" href="https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico">
+<link rel="stylesheet" href="https://github.com/skylaugh/skylaugh.github.io.git/styles/main.css">
+
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/jquery.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/masonry.pkgd.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/aos.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/pace.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/view-image.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/functions.js"></script>
+    <script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/waterfall.min.js"></script>
+    <script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/prism.min.js"></script>
+    
+  </head>
+  <body>
+            <header id="header" class="grid-container">
+        <!-- start: .menu-wrapper -->
+        <div class="menu-mobile"> 
+          <i class="fa fa-reorder"></i>
+        </div>
+        <div class="menu-wrapper">
+          <div class="">
+            <div class="logo">
+              <a href="https://github.com/skylaugh/skylaugh.github.io.git"><img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/logoo.png" alt=""></a>
+            </div>
+            <!-- start: .main-nav -->
+
+            <nav class="main-nav grid-container grid-parent">
+              <ul id="menu-header" class="menu gradient-effect">
+                
+                  <li class=""><a href="https://github.com/skylaugh/skylaugh.github.io.git" class="menu">首页</a></li>
+                
+                
+                  <li class="" >
+                    <a href="/archives" class="menu">
+                      归档
+                    </a>
+                  </li>
+                
+                  <li class="" >
+                    <a href="/tags" class="menu">
+                      标签
+                    </a>
+                  </li>
+                
+                  <li class="" >
+                    <a href="/post/about" class="menu">
+                      关于
+                    </a>
+                  </li>
+                
+              </ul>
+            </nav>
+            <!-- end: .main-nav -->
+            <div class="clear"></div>
+            <div class="border hide-on-tablet hide-on-mobile"></div>
+          </div>    
+          <div class="clear"></div>
+        </div>
+        <!-- end: .menu-wrapper -->
+        <div class="clear"></div>
+      </header>
+
+      <main id="single" class="main grid-container fullcover no-sidebar aos-init aos-animate" data-aos="fade">
+
+        <div class="center content">
+          <div class="featured-image cover" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/arthas-kuai-su-ru-men.jpg');">
+            <div class="meta top"> 
+              <time class="meta-info" style="float:left;" datetime="2019-07-29"><i class="fa fa-calendar"></i><span class="lately">6 个月前</span></time>
+               
+               
+            </div>
+            <div class="info">
+              <div class="tags ">
+                
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/jbLONxtxV" class="ctag ctag-0 ctag-jbLONxtxV" aria-label="">tools</a>
+                    
+              </div>
+              <h1 class="title ularge white bold">Arthas 快速入门</h1>
+            </div>
+          </div>
+        </div>  
+
+        <div class="epcl-page-wrapper">
+          <div class="left-content grid-70 np-mobile">
+            <article class="main-article post">
+              <section class="post-content">
+                <div class="text">
+                  <h2 id="arthas阿尔萨斯-能为你做什么">Arthas（阿尔萨斯） 能为你做什么？</h2>
+<figure data-type="image" tabindex="1"><img src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/1581413033495.png" alt="arthas" loading="lazy"></figure>
+<p><code>Arthas</code> 是Alibaba开源的Java诊断工具，深受开发者喜爱。</p>
+<p>当你遇到以下类似问题而束手无策时，<code>Arthas</code>可以帮助你解决：</p>
+<ol>
+<li>这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？</li>
+<li>我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？</li>
+<li>遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？</li>
+<li>线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！</li>
+<li>是否有一个全局视角来查看系统的运行状况？</li>
+<li>有什么办法可以监控到JVM的实时运行状态？</li>
+</ol>
+<hr>
+<h2 id="1-启动demo">1. 启动Demo</h2>
+<pre><code class="language-bash">wget https://alibaba.github.io/arthas/arthas-demo.jar
+java -jar arthas-demo.jar
+</code></pre>
+<p><code>arthas-demo</code>是一个简单的程序，每隔一秒生成一个随机数，再执行质因式分解，并打印出分解结果。</p>
+<p><code>arthas-demo</code>源代码：<a href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java">查看</a></p>
+<h2 id="2-启动arthas">2. 启动arthas</h2>
+<p>在命令行下面执行（使用和目标进程一致的用户启动，否则可能attach失败）：</p>
+<pre><code class="language-bash">wget https://alibaba.github.io/arthas/arthas-boot.jar
+java -jar arthas-boot.jar
+</code></pre>
+<ul>
+<li>执行该程序的用户需要和目标进程具有相同的权限。比如以<code>admin</code>用户来执行：<code>sudo su admin &amp;&amp; java -jar arthas-boot.jar</code> 或 <code>sudo -u admin -EH java -jar arthas-boot.jar</code>。</li>
+<li>如果attach不上目标进程，可以查看<code>~/logs/arthas/</code> 目录下的日志。</li>
+<li>如果下载速度比较慢，可以使用aliyun的镜像：<code>java -jar arthas-boot.jar --repo-mirror aliyun --use-http</code></li>
+<li><code>java -jar arthas-boot.jar -h</code> 打印更多参数信息。</li>
+</ul>
+<p>选择应用java进程：</p>
+<pre><code class="language-bash">$ $ java -jar arthas-boot.jar
+* [1]: 35542
+  [2]: 71560 arthas-demo.jar
+</code></pre>
+<p>Demo进程是第2个，则输入2，再输入<code>回车/enter</code>。Arthas会attach到目标进程上，并输出日志：</p>
+<pre><code class="language-bash">[INFO] Try to attach process 71560
+[INFO] Attach process 71560 success.
+[INFO] arthas-client connect 127.0.0.1 3658
+  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+ /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'
+|  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |
+`--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
+
+
+wiki: https://alibaba.github.io/arthas
+version: 3.0.5.20181127201536
+pid: 71560
+time: 2018-11-28 19:16:24
+
+$
+</code></pre>
+<h2 id="3-查看dashboard">3. 查看dashboard</h2>
+<p>输入<a href="dashboard.md">dashboard</a>，按<code>回车/enter</code>，会展示当前进程的信息，按<code>ctrl+c</code>可以中断执行。</p>
+<pre><code class="language-bash">$ dashboard
+ID     NAME                   GROUP          PRIORI STATE  %CPU    TIME   INTERRU DAEMON
+17     pool-2-thread-1        system         5      WAITIN 67      0:0    false   false
+27     Timer-for-arthas-dashb system         10     RUNNAB 32      0:0    false   true
+11     AsyncAppender-Worker-a system         9      WAITIN 0       0:0    false   true
+9      Attach Listener        system         9      RUNNAB 0       0:0    false   true
+3      Finalizer              system         8      WAITIN 0       0:0    false   true
+2      Reference Handler      system         10     WAITIN 0       0:0    false   true
+4      Signal Dispatcher      system         9      RUNNAB 0       0:0    false   true
+26     as-command-execute-dae system         10     TIMED_ 0       0:0    false   true
+13     job-timeout            system         9      TIMED_ 0       0:0    false   true
+1      main                   main           5      TIMED_ 0       0:0    false   false
+14     nioEventLoopGroup-2-1  system         10     RUNNAB 0       0:0    false   false
+18     nioEventLoopGroup-2-2  system         10     RUNNAB 0       0:0    false   false
+23     nioEventLoopGroup-2-3  system         10     RUNNAB 0       0:0    false   false
+15     nioEventLoopGroup-3-1  system         10     RUNNAB 0       0:0    false   false
+Memory             used   total max    usage GC
+heap               32M    155M  1820M  1.77% gc.ps_scavenge.count  4
+ps_eden_space      14M    65M   672M   2.21% gc.ps_scavenge.time(m 166
+ps_survivor_space  4M     5M    5M           s)
+ps_old_gen         12M    85M   1365M  0.91% gc.ps_marksweep.count 0
+nonheap            20M    23M   -1           gc.ps_marksweep.time( 0
+code_cache         3M     5M    240M   1.32% ms)
+Runtime
+os.name                Mac OS X
+os.version             10.13.4
+java.version           1.8.0_162
+java.home              /Library/Java/JavaVir
+                       tualMachines/jdk1.8.0
+                       _162.jdk/Contents/Hom
+                       e/jre
+</code></pre>
+<h2 id="4-通过thread命令来获取到arthas-demo进程的main-class">4. 通过thread命令来获取到<code>arthas-demo</code>进程的Main Class</h2>
+<p><code>thread 1</code>会打印线程ID 1的栈，通常是main函数的线程。</p>
+<pre><code class="language-bash">$ thread 1 | grep 'main('
+    at demo.MathGame.main(MathGame.java:17)
+</code></pre>
+<h2 id="5-通过jad来反编译main-class">5. 通过jad来反编译Main Class</h2>
+<pre><code class="language-java">$ jad demo.MathGame
+
+ClassLoader:
++-sun.misc.Launcher$AppClassLoader@3d4eac69
+  +-sun.misc.Launcher$ExtClassLoader@66350f69
+
+Location:
+/tmp/arthas-demo.jar
+
+/*
+ * Decompiled with CFR 0_132.
+ */
+package demo;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+public class MathGame {
+    private static Random random = new Random();
+    private int illegalArgumentCount = 0;
+
+    public static void main(String[] args) throws InterruptedException {
+        MathGame game = new MathGame();
+        do {
+            game.run();
+            TimeUnit.SECONDS.sleep(1L);
+        } while (true);
+    }
+
+    public void run() throws InterruptedException {
+        try {
+            int number = random.nextInt();
+            List&lt;Integer&gt; primeFactors = this.primeFactors(number);
+            MathGame.print(number, primeFactors);
+        }
+        catch (Exception e) {
+            System.out.println(String.format(&quot;illegalArgumentCount:%3d, &quot;, this.illegalArgumentCount) + e.getMessage());
+        }
+    }
+
+    public static void print(int number, List&lt;Integer&gt; primeFactors) {
+        StringBuffer sb = new StringBuffer(&quot;&quot; + number + &quot;=&quot;);
+        Iterator&lt;Integer&gt; iterator = primeFactors.iterator();
+        while (iterator.hasNext()) {
+            int factor = iterator.next();
+            sb.append(factor).append('*');
+        }
+        if (sb.charAt(sb.length() - 1) == '*') {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        System.out.println(sb);
+    }
+
+    public List&lt;Integer&gt; primeFactors(int number) {
+        if (number &lt; 2) {
+            ++this.illegalArgumentCount;
+            throw new IllegalArgumentException(&quot;number is: &quot; + number + &quot;, need &gt;= 2&quot;);
+        }
+        ArrayList&lt;Integer&gt; result = new ArrayList&lt;Integer&gt;();
+        int i = 2;
+        while (i &lt;= number) {
+            if (number % i == 0) {
+                result.add(i);
+                number /= i;
+                i = 2;
+                continue;
+            }
+            ++i;
+        }
+        return result;
+    }
+}
+
+Affect(row-cnt:1) cost in 970 ms.
+</code></pre>
+<h2 id="6-watch">6. watch</h2>
+<p>通过<a href="watch.md">watch</a>命令来查看<code>demo.MathGame#primeFactors</code>函数的返回值：</p>
+<pre><code class="language-bash">$ watch demo.MathGame primeFactors returnObj
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 107 ms.
+ts=2018-11-28 19:22:30; [cost=1.715367ms] result=null
+ts=2018-11-28 19:22:31; [cost=0.185203ms] result=null
+ts=2018-11-28 19:22:32; [cost=19.012416ms] result=@ArrayList[
+    @Integer[5],
+    @Integer[47],
+    @Integer[2675531],
+]
+ts=2018-11-28 19:22:33; [cost=0.311395ms] result=@ArrayList[
+    @Integer[2],
+    @Integer[5],
+    @Integer[317],
+    @Integer[503],
+    @Integer[887],
+]
+ts=2018-11-28 19:22:34; [cost=10.136007ms] result=@ArrayList[
+    @Integer[2],
+    @Integer[2],
+    @Integer[3],
+    @Integer[3],
+    @Integer[31],
+    @Integer[717593],
+]
+ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
+    @Integer[5],
+    @Integer[29],
+    @Integer[7651739],
+]
+</code></pre>
+<h2 id="7-退出arthas">7. 退出arthas</h2>
+<p>如果只是退出当前的连接，可以用<code>quit</code>或者<code>exit</code>命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。</p>
+<p>如果想完全退出arthas，可以执行<code>shutdown</code>命令。</p>
+
+                </div>
+                <div class="clear"></div>
+              </section>
+            </article>
+            <div class="clear"></div>
+
+            <section class="related section">
+              
+              <article class="prev grid-50 tablet-grid-50 grid-parent">
+                <div class="thumb cover lazy loaded" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/bigdecimal-jin-xing-chu-fa-yun-suan-de-yi-ge-xiao-keng.jpg');"></div>
+                 <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/bigdecimal-jin-xing-chu-fa-yun-suan-de-yi-ge-xiao-keng" class="full-link"></a>
+                 <div class="info">
+                  <time datetime="2019-08-07">2019-08-07</time>
+                  <h4 class="title white no-margin">BigDecimal进行除法运算的一个小坑</h4>
+                </div>
+                 <span class="epcl-button red">
+                  <img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/left-arrow.svg" width="15" alt="Left Arrow">
+                </span>
+                <div class="overlay"></div>
+              </article>
+              
+              
+              <article class="next grid-50 tablet-grid-50 grid-parent">
+                <div class="thumb cover lazy loaded" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/wei-yun-suan-zhi-an-wei-yu-andcao-zuo.jpg');"></div>
+                 <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/wei-yun-suan-zhi-an-wei-yu-andcao-zuo" class="full-link"></a>
+                 <div class="info">
+                  <time datetime="2019-07-02">2019-07-02</time>
+                  <h4 class="title white no-margin">位运算之按位与(&amp;)操作</h4>
+                </div>
+                 <span class="epcl-button red">
+                  <img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/right-arrow.svg" width="15" alt="Left Arrow">
+                </span>
+                <div class="overlay"></div>
+              </article>
+              
+
+                <div class="clear"></div>
+            </section>
+
+              <div class="clear"></div>
+
+              <div id="comments" class="bg-white hosted ">
+
+              
+                <p>请到客户端“主题--自定义配置--valine”中填入ID和KEY</p>
+              
+                <div class="clear"></div>
+              </div>
+
+              <div class="clear"></div>
+            </div>
+          </div>
+      </main>
+
+          <footer id="footer" class="grid-container">
+        <div class="widgets row gradient-effect">
+            <div class="default-sidebar border-effect">
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="tag_cloud-2" class="widget widget_epcl_posts_thumbs underline-effect">
+                  <h4 class="widget-title title white bordered">最新文章</h4>
+                  
+                  
+                  <article class="item post-0 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/java-zhi-shi-tu-pu-201912.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-12-29">2019-12-29</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912">Java知识图谱（2019.12）</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  <article class="item post-1 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/java-zhi-ling-ji.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-12-17">2019-12-17</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji">Java指令集</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  <article class="item post-2 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/spring-xue-xi-bi-ji-yi.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-11-21">2019-11-21</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi">Spring学习笔记（一）</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  <div class="clear"></div>
+                </section>
+              </div>
+
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="tag_cloud-2" class="widget widget_tag_cloud underline-effect">
+                  <h4 class="widget-title title white bordered">标签云</h4>
+                  <div class="tagcloud">
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/tUCgTF6zk" class="ctag ctag-0 ctag-tUCgTF6zk" aria-label="">Others</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/5nWxaev-g" class="ctag ctag-1 ctag-5nWxaev-g" aria-label="">JVM</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/AQ06mpYl8" class="ctag ctag-2 ctag-AQ06mpYl8" aria-label="">Spring</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/U6BJ26s62" class="ctag ctag-3 ctag-U6BJ26s62" aria-label="">并发</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/k7pFygIgX" class="ctag ctag-4 ctag-k7pFygIgX" aria-label="">缓存</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/AFwlC_qiL" class="ctag ctag-5 ctag-AFwlC_qiL" aria-label="">数据结构</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/NLraoO2c4" class="ctag ctag-6 ctag-NLraoO2c4" aria-label="">算法</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/wDdDEnxe6" class="ctag ctag-7 ctag-wDdDEnxe6" aria-label="">Bug</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/E1t30QiTK" class="ctag ctag-8 ctag-E1t30QiTK" aria-label="">Java</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/jbLONxtxV" class="ctag ctag-9 ctag-jbLONxtxV" aria-label="">tools</a>
+                    
+                  </div>
+                  <div class="clear"></div>
+                </section>
+              </div>
+
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="epcl_about-2" class="widget widget_epcl_about underline-effect">
+                  <h4 class="widget-title title white bordered">关于我</h4>
+                  <div class="avatar">
+                    <a href="" class="translate-effect thumb"><span class="fullimage cover" style="background-image: url(https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png);"></span></a>
+                  </div>
+                  <div class="info">
+                    <h4 class="title small author-name gradient-effect no-margin"><a href="">跬步</a></h4>
+                    <p class="founder">不积跬步，无以至千里</p>
+                    <div class="social">
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                    </div> 
+                  </div>
+                  <div class="clear"></div>
+                  </section>
+              </div>
+
+            </div>
+            <div class="clear"></div>
+        </div>
+
+        <div class="logo">
+          <a href="https://github.com/skylaugh/skylaugh.github.io.git"><img class="" src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/logo.png" alt=""></a>
+        </div>
+        <p class="published border-effect">
+          ©2019 共 19 篇文章
+          <br/>
+          Theme <a href="https://gridea.dev/" target="_blank">「breek」</a> Powered by <a href="https://gridea.dev/" target="_blank">「Gridea」</a>
+        </p>
+        
+        <a href="javascript:void(0)" id="back-to-top" class="epcl-button dark" style="display:none">
+          <i class="fa fa-arrow"></i>
+        </a>
+    </footer>
+    <div class="clear"></div>
+
+      <script type="text/javascript">
+       jQuery(document).ready(function($){
+          $("photos img").each(function(){
+              var _a = $("<a></a>").attr("href",this.src);
+              $(this).wrap("<div class='photo'></div>").wrap(_a);
+          })
+          $("figure img").each(function(){
+              var _b = $("<a></a>").attr("href",this.src);
+              $(this).wrap(_b);
+          })
+          isImgLoad(function(){
+            var photos = document.querySelector('photos');
+            if(photos){
+              waterfall(photos);
+            }
+            $(window).resize(function() {
+             if(photos){
+                  waterfall(photos);
+            }
+          });
+        });
+        var t_img;
+        var isLoad = true;
+        function isImgLoad(callback){
+          $('photos img').each(function(){
+            if(this.height === 0){
+              isLoad = false;
+              return false;
+            }
+          });
+          if(isLoad){
+            clearTimeout(t_img);
+            callback();
+          }else{
+            isLoad = true;
+            t_img = setTimeout(function(){
+              isImgLoad(callback);
+            },500);
+          }
+        }
+      });
+      </script>
+
+    </div>
+    <!-- end: #wrapper -->
+  </body>
+</html>

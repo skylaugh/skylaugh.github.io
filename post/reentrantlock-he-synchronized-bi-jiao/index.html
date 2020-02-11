@@ -1,0 +1,659 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ReentrantLock 和 synchronized 比较 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里" />
+<link rel="shortcut icon" href="https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico">
+<link rel="stylesheet" href="https://github.com/skylaugh/skylaugh.github.io.git/styles/main.css">
+
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/jquery.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/masonry.pkgd.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/aos.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/pace.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/view-image.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/functions.js"></script>
+    <script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/waterfall.min.js"></script>
+    <script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/prism.min.js"></script>
+    
+  </head>
+  <body>
+            <header id="header" class="grid-container">
+        <!-- start: .menu-wrapper -->
+        <div class="menu-mobile"> 
+          <i class="fa fa-reorder"></i>
+        </div>
+        <div class="menu-wrapper">
+          <div class="">
+            <div class="logo">
+              <a href="https://github.com/skylaugh/skylaugh.github.io.git"><img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/logoo.png" alt=""></a>
+            </div>
+            <!-- start: .main-nav -->
+
+            <nav class="main-nav grid-container grid-parent">
+              <ul id="menu-header" class="menu gradient-effect">
+                
+                  <li class=""><a href="https://github.com/skylaugh/skylaugh.github.io.git" class="menu">首页</a></li>
+                
+                
+                  <li class="" >
+                    <a href="/archives" class="menu">
+                      归档
+                    </a>
+                  </li>
+                
+                  <li class="" >
+                    <a href="/tags" class="menu">
+                      标签
+                    </a>
+                  </li>
+                
+                  <li class="" >
+                    <a href="/post/about" class="menu">
+                      关于
+                    </a>
+                  </li>
+                
+              </ul>
+            </nav>
+            <!-- end: .main-nav -->
+            <div class="clear"></div>
+            <div class="border hide-on-tablet hide-on-mobile"></div>
+          </div>    
+          <div class="clear"></div>
+        </div>
+        <!-- end: .menu-wrapper -->
+        <div class="clear"></div>
+      </header>
+
+      <main id="single" class="main grid-container fullcover no-sidebar aos-init aos-animate" data-aos="fade">
+
+        <div class="center content">
+          <div class="featured-image cover" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/reentrantlock-he-synchronized-bi-jiao.jpg');">
+            <div class="meta top"> 
+              <time class="meta-info" style="float:left;" datetime="2019-10-30"><i class="fa fa-calendar"></i><span class="lately">3 个月前</span></time>
+               
+               
+            </div>
+            <div class="info">
+              <div class="tags ">
+                
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/U6BJ26s62" class="ctag ctag-0 ctag-U6BJ26s62" aria-label="">并发</a>
+                    
+              </div>
+              <h1 class="title ularge white bold">ReentrantLock 和 synchronized 比较</h1>
+            </div>
+          </div>
+        </div>  
+
+        <div class="epcl-page-wrapper">
+          <div class="left-content grid-70 np-mobile">
+            <article class="main-article post">
+              <section class="post-content">
+                <div class="text">
+                  <h3 id="可重入性">可重入性：</h3>
+<p>两者都是可重入的。同一个现成计入一次，锁的计数器进行自增，等到锁的计数器下降为零时，才能释放锁。</p>
+<h3 id="锁的实现">锁的实现：</h3>
+<p>synchronized 依赖于 JVM 实现，而 ReentrantLock 基于 JDK 实现。区别类似于操作系统控制实现与用户使用代码实现。</p>
+<h3 id="性能区别">性能区别：</h3>
+<p>在 synchronized 优化前性能比 ReentrantLock 差很多， 但自从引入了偏向锁、轻量级锁（自选锁）后，也就是自循锁后，两者性能差不多（JDK1.6以后）。官方更推荐使用 synchronized, 因为写法更容易，synchronized 的优化其实借鉴了 ReentrantLock 中的 CAS 技术，都是试图在用户态就把加锁问题解决，避免进入内核态的线程阻塞。</p>
+<h3 id="功能区别">功能区别：</h3>
+<h4 id="便利性">便利性</h4>
+<p>synchronized 更便利，它是由编译器保证加锁与释放。ReentrantLock 是需要手动声明与释放锁，所以为了避免忘记手动释放锁造成死锁，最好在 finally 种声明释放所。</p>
+<h4 id="锁的细粒度和灵活度">锁的细粒度和灵活度</h4>
+<p>ReentrantLock 优于 synchronized</p>
+<h3 id="reentrantlock-独有的功能">ReentrantLock 独有的功能</h3>
+<ul>
+<li><strong>可配置公平锁</strong>，ReentrantLock 可以指定是公平锁还是非公平锁，synchronized 只能是非公平锁。（公平锁就是先等待的线程先获得锁）</li>
+</ul>
+<pre><code>//创建一个非公平锁，默认是非公平锁
+Lock lock = new ReentrantLock();
+Lock lock = new ReentrantLock(false);
+ 
+//创建一个公平锁，构造传参true
+Lock lock = new ReentrantLock(true);
+</code></pre>
+<ul>
+<li><strong>分组唤醒</strong>，提供了一个 Condition 类，可以实现分组唤醒需要唤醒的线程。不像是 synchronized 要么随机唤醒一个线程，要么全部唤醒</li>
+<li><strong>等待可中断</strong>,提供能够终端等待锁的线程的机制，通过lock.lockInterruptibly()实现，这种机制 ReentrantLock 持有锁的线程长期不释放的时候，正在等待的线程可以通过lock.lockInterruptibly()选择放弃等待，这相当于Synchronized来说可以避免出现死锁的情况。</li>
+</ul>
+<h3 id="reentrantlock源码分析">ReentrantLock源码分析</h3>
+<p>lock()方法在公平锁中</p>
+<ol>
+<li>先调用acquire方法尝试获取锁</li>
+</ol>
+<pre><code>final void lock() {
+            acquire(1);
+        }
+</code></pre>
+<ol start="2">
+<li>acquire方法</li>
+</ol>
+<pre><code>public final void acquire(int arg) {
+        //尝试获取锁失败，进入等待队列
+        if (!tryAcquire(arg) &amp;&amp;
+            acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+            //
+            selfInterrupt();
+    }
+static void selfInterrupt() {
+        //中断当前线程
+        Thread.currentThread().interrupt();
+    }
+</code></pre>
+<p>lock()方法在非公平锁中<br>
+1.先比较并设置状态，成功则设置独有线程，否则去获取锁</p>
+<pre><code>final void lock() {
+            if (compareAndSetState(0, 1))
+               setExclusiveOwnerThread(Thread.currentThread());
+            else
+                acquire(1);
+        }
+</code></pre>
+<p>2.acquire方法同公平锁</p>
+<h3 id="为什么非公平锁比公平锁更高效">为什么非公平锁比公平锁更高效</h3>
+<p>个人理解，公平锁都要排队，上一个用完这把锁后，去唤醒下一个，但是唤醒需要一定时间。<br>
+非公平锁就是在还未唤醒时插队，抢先一步拿到锁，这就相当于节省了一部分唤醒时间。</p>
+<h3 id="cas无锁技术">CAS无锁技术</h3>
+<p>compare and swap,比较并切换，是一种实现并发算法时常用到的技术。<br>
+在多线程高并发编程的时候，最关键的问题就是保证<strong>临界区</strong>的对象的安全访问。通常是加锁来处理，其实加锁本质上是将并发转变为串行来实现的，会影响吞吐量。<br>
+对于并发控制而言，锁是一种<strong>悲观策略</strong>，会阻塞线程执行。而无锁是一种乐观策略。无锁的策略采用一种比较交换技术<strong>CAS</strong>来鉴别线程冲突。<br>
+与锁相比，CAS 会使得程序设计比较负责，由于其性能优势，天生免疫死锁，没有竞争带来的开销和线程间频繁调度带来的开销，比基于锁的方式有着更优越的性能。</p>
+<h4 id="cas算法">CAS算法</h4>
+<p>CAS方法包含三个参数CAS(V,E,N),V表示当前内存的是，E表示预期值，N表示更新的值，只有当V等于E的时候，才会将V值改为N，如果V不等于E，说明已经有其他线程对它做了更新，则当前线程直接返回V值。<br>
+J.U.C并发包下的atomic包里的类都是CAS实现的</p>
+<h4 id="cas缺点">CAS缺点</h4>
+<p>CAS存在一个很明显的问题，即ABA问题。<br>
+问题：如果变量V初次读取的时候是A，并且在准备赋值的时候检查到它仍然是A，那能说明它的值没有被其他线程修改过了吗？<br>
+如果在这段期间曾经被改成B，然后又改回A，那CAS操作就会误认为它从来没有被修改过。针对这种情况，java并发包中提供了一个带有标记的原子引用类AtomicStampedReference，它可以通过控制变量值的版本来保证CAS的正确性。改进后的CAS(V,E,N，ES,NS),ES表示期望的标记，NS表示新的标记</p>
+<h3 id="可重入性的定义">可重入性的定义</h3>
+<p>举例：方法A和方法B都加了同一把锁，方法A加锁后调用方法B，如果锁可充入，那么方法B会获得锁，锁的计数器+1，如果不可重入，那么就会死锁。可重入锁的计数器全部释放后，锁才会释放。</p>
+<h3 id="死锁的四个必要条件">死锁的四个必要条件</h3>
+<ol>
+<li>互斥：至少有一个资源必须处于非共享模式，即一次只有一个进程可使用。如果另一进程申请该资源，那么申请进程应等到该资源释放为止。</li>
+<li>占有并等待：—个进程应占有至少一个资源，并等待另一个资源，而该资源为其他进程所占有。</li>
+<li>非抢占：资源不能被抢占，即资源只能被进程在完成任务后自愿释放。</li>
+<li>循环等待：有一组等待进程 {P0，P1，…，Pn}，P0 等待的资源为 P1 占有，P1 等待的资源为 P2 占有，……，Pn-1 等待的资源为 Pn 占有，Pn 等待的资源为 P0 占有。</li>
+</ol>
+<pre><code>public class DeadLock {
+    public static String obj1 = &quot;obj1&quot;;
+    public static String obj2 = &quot;obj2&quot;;
+    public static void main(String[] args){
+        Thread a = new Thread(new Lock1());
+        Thread b = new Thread(new Lock2());
+        a.start();
+        b.start();
+    }
+}
+class Lock1 implements Runnable{
+    @Override
+    public void run(){
+        try{
+            System.out.println(&quot;Lock1 running&quot;);
+            while(true){
+                synchronized(DeadLock.obj1){
+                    System.out.println(&quot;Lock1 lock obj1&quot;);
+                    Thread.sleep(3000);//获取obj1后先等一会儿，让Lock2有足够的时间锁住obj2
+                    synchronized(DeadLock.obj2){
+                        System.out.println(&quot;Lock1 lock obj2&quot;);
+                    }
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}
+class Lock2 implements Runnable{
+    @Override
+    public void run(){
+        try{
+            System.out.println(&quot;Lock2 running&quot;);
+            while(true){
+                synchronized(DeadLock.obj2){
+                    System.out.println(&quot;Lock2 lock obj2&quot;);
+                    Thread.sleep(3000);
+                    synchronized(DeadLock.obj1){
+                        System.out.println(&quot;Lock2 lock obj1&quot;);
+                    }
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+<p>用jstack查看</p>
+<pre><code>Found one Java-level deadlock:
+=============================
+&quot;Thread-1&quot;:
+  waiting to lock monitor 0x00007f9dcf818ca8 (object 0x00000007959dbee0, a java.lang.String),
+  which is held by &quot;Thread-0&quot;
+&quot;Thread-0&quot;:
+  waiting to lock monitor 0x00007f9dcf814c08 (object 0x00000007959dbf10, a java.lang.String),
+  which is held by &quot;Thread-1&quot;
+
+Java stack information for the threads listed above:
+===================================================
+&quot;Thread-1&quot;:
+	at Study20191021.Lock2.run(DeadLock.java:52)
+	- waiting to lock &lt;0x00000007959dbee0&gt; (a java.lang.String)
+	- locked &lt;0x00000007959dbf10&gt; (a java.lang.String)
+	at java.lang.Thread.run(Thread.java:748)
+&quot;Thread-0&quot;:
+	at Study20191021.Lock1.run(DeadLock.java:33)
+	- waiting to lock &lt;0x00000007959dbf10&gt; (a java.lang.String)
+	- locked &lt;0x00000007959dbee0&gt; (a java.lang.String)
+	at java.lang.Thread.run(Thread.java:748)
+
+Found 1 deadlock.
+
+</code></pre>
+<h3 id="synchronized的几种用法">synchronized的几种用法</h3>
+<ol>
+<li>同步类<br>
+下面提供了两种同步类的方法，锁住效果和同步静态方法一样，都是类级别的锁，同时只有一个线程能访问带有同步类锁的方法。</li>
+</ol>
+<pre><code>/**
+ * 用在类
+ */
+private void synchronizedClass() {
+    synchronized (TestSynchronized.class) {
+        System.out.println(&quot;synchronizedClass&quot;);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+ 
+/**
+ * 用在类
+ */
+private void synchronizedGetClass() {
+    synchronized (this.getClass()) {
+        System.out.println(&quot;synchronizedGetClass&quot;);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+<ol start="2">
+<li>同步方法<br>
+这个也是我们用得最多的，只要涉及线程安全，上来就给方法来个同步锁。这种方法使用虽然最简单，但是只能作用在单例上面，如果不是单例，同步方法锁将失效。</li>
+</ol>
+<pre><code>/**
+ * 用在普通方法
+ */
+private synchronized void synchronizedMethod() {
+    System.out.println(&quot;synchronizedMethod&quot;);
+    try {
+        Thread.sleep(2000);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<ol start="3">
+<li>同步静态方法，不管你有多少个类实例，同时只有一个线程能获取锁进入这个方法。</li>
+</ol>
+<pre><code>/**
+ * 用在静态方法
+ */
+private synchronized static void synchronizedStaticMethod() {
+    System.out.println(&quot;synchronizedStaticMethod&quot;);
+    try {
+        Thread.sleep(2000);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+<p>同步静态方法是类级别的锁，一旦任何一个线程进入这个方法，其他所有线程将无法访问这个类的任何同步类锁的方法。<br>
+4. 同步对象实例<br>
+这也是同步块的用法，和上面的锁住当前实例一样，这里表示锁住整个 LOCK 对象实例，只有获取到这个 LOCK 实例的锁才能进入这个方法。</p>
+<pre><code>/**
+ * 用在对象
+ */
+private void synchronizedInstance() {
+    synchronized (LOCK) {
+        System.out.println(&quot;synchronizedInstance&quot;);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+<ol start="5">
+<li>同步代码块<br>
+这也是同步块的用法，表示锁住整个当前对象实例，只有获取到这个实例的锁才能进入这个方法。</li>
+</ol>
+<pre><code>/**
+ * 用在this
+ */
+private void synchronizedThis() {
+    synchronized (this) {
+        System.out.println(&quot;synchronizedThis&quot;);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+ 
+</code></pre>
+<p>另外，类锁与实例锁不相互阻塞，但相同的类锁，相同的当前实例锁，相同的对象锁会相互阻塞。<br>
+synchronized不能被继承；<br>
+不能使用synchronized关键字修饰接口方法；<br>
+构造方法也不能用synchronized；</p>
+<h3 id="monitor监视器">Monitor监视器</h3>
+<p>monitor 是一个同步工具，提供线程（进程）被阻塞和被唤醒的管理机制<br>
+在 jvm 中，每一个<strong>对象头</strong>都关联着 Monitor，每一个监视器和一个对象引用相关联，为了实现监视器的互斥功能，每个对象都管理者一把锁。<br>
+一旦方法或者代码块被 synchronized 修饰，那么这个部分就放入了监视器的监事区域，确保一次只能有一个线程执行该部分的代码，线程在获取锁之前不允许执行该部分的代码。</p>
+<h4 id="monitor的基本元素">monitor的基本元素</h4>
+<ul>
+<li>临界区--被 synchronized 修饰的方法、代码块</li>
+<li>monitor 对象以及锁</li>
+<li>条件变量以及定义在 monitor 对象上的 wait signal 操作<br>
+monitor object 作用，保存被阻塞的队列，提供 wait() 和 notify() 进行阻塞和唤醒。java.lang.Object 都能作为 monitor object.<br>
+Java 对象存储在内存中，分为三个部分，<strong>对象头、实例数据、对齐填充</strong>，在对象头中，保存了<strong>锁标识</strong>（其中的重量级锁指的就是 synchronized 锁）。<br>
+<img src="https://raw.githubusercontent.com/skylaugh/ImageHosting/master/img/20191025150843.png" alt="" loading="lazy"><br>
+当一个线程需要获取 Object 的锁时，会被放入 EntrySet 中进行等待，如果该线程获取到了锁，成为当前锁的 owner。如果根据程序逻辑，一个已经获得了锁的线程缺少某些外部条件，而无法继续进行下去（例如生产者发现队列已满或者消费者发现队列为空），那么该线程可以通过调用 wait 方法将锁释放，进入 wait set 中阻塞进行等待，其它线程在这个时候有机会获得锁，去干其它的事情，从而使得之前不成立的外部条件成立，这样先前被阻塞的线程就可以重新进入 EntrySet 去竞争锁。这个<strong>外部条件</strong>在 monitor 机制中称为<strong>条件变量</strong>。</li>
+</ul>
+<h3 id="守护线程">守护线程</h3>
+<p>Java提供两种类型的线程：用户线程和守护程序线程<br>
+用户线程是高优先级的线程。JVM将在终止任务之前等待任何用户线程完成其任务。<br>
+守护线程是低优先级线程，其唯一作用是为用户线程提供服务。<br>
+守护线程对于后台支持任务非常有用，例如垃圾收集，释放未使用对象的内存一级从缓存中删除不需要的条目。大多数JVM线程都是守护线程。</p>
+<h4 id="创建守护线程">创建守护线程</h4>
+<pre><code>public class DaemonTest {
+    public static void main(String[] args){
+        DaemonThread daemonThread = new DaemonThread();
+        Thread thread = new Thread(daemonThread);
+        thread.setDaemon(true);
+        thread.start();
+    }
+}
+class DaemonThread implements Runnable{
+
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().isDaemon());
+    }
+}
+</code></pre>
+<p>任何线程都继承创建它的线程的守护进程状态。由于主线程是用户线程，因此在main方法内创建的任何线程默认为用户线程。</p>
+
+                </div>
+                <div class="clear"></div>
+              </section>
+            </article>
+            <div class="clear"></div>
+
+            <section class="related section">
+              
+              <article class="prev grid-50 tablet-grid-50 grid-parent">
+                <div class="thumb cover lazy loaded" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/spring-xue-xi-bi-ji-yi.jpg');"></div>
+                 <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi" class="full-link"></a>
+                 <div class="info">
+                  <time datetime="2019-11-21">2019-11-21</time>
+                  <h4 class="title white no-margin">Spring学习笔记（一）</h4>
+                </div>
+                 <span class="epcl-button red">
+                  <img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/left-arrow.svg" width="15" alt="Left Arrow">
+                </span>
+                <div class="overlay"></div>
+              </article>
+              
+              
+              <article class="next grid-50 tablet-grid-50 grid-parent">
+                <div class="thumb cover lazy loaded" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/redis-de-rdb-he-aof.jpg');"></div>
+                 <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/redis-de-rdb-he-aof" class="full-link"></a>
+                 <div class="info">
+                  <time datetime="2019-10-23">2019-10-23</time>
+                  <h4 class="title white no-margin">Redis的RDB和AOF</h4>
+                </div>
+                 <span class="epcl-button red">
+                  <img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/right-arrow.svg" width="15" alt="Left Arrow">
+                </span>
+                <div class="overlay"></div>
+              </article>
+              
+
+                <div class="clear"></div>
+            </section>
+
+              <div class="clear"></div>
+
+              <div id="comments" class="bg-white hosted ">
+
+              
+                <p>请到客户端“主题--自定义配置--valine”中填入ID和KEY</p>
+              
+                <div class="clear"></div>
+              </div>
+
+              <div class="clear"></div>
+            </div>
+          </div>
+      </main>
+
+          <footer id="footer" class="grid-container">
+        <div class="widgets row gradient-effect">
+            <div class="default-sidebar border-effect">
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="tag_cloud-2" class="widget widget_epcl_posts_thumbs underline-effect">
+                  <h4 class="widget-title title white bordered">最新文章</h4>
+                  
+                  
+                  <article class="item post-0 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/java-zhi-shi-tu-pu-201912.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-12-29">2019-12-29</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912">Java知识图谱（2019.12）</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  <article class="item post-1 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/java-zhi-ling-ji.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-12-17">2019-12-17</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji">Java指令集</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  <article class="item post-2 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/spring-xue-xi-bi-ji-yi.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-11-21">2019-11-21</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi">Spring学习笔记（一）</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  <div class="clear"></div>
+                </section>
+              </div>
+
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="tag_cloud-2" class="widget widget_tag_cloud underline-effect">
+                  <h4 class="widget-title title white bordered">标签云</h4>
+                  <div class="tagcloud">
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/tUCgTF6zk" class="ctag ctag-0 ctag-tUCgTF6zk" aria-label="">Others</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/5nWxaev-g" class="ctag ctag-1 ctag-5nWxaev-g" aria-label="">JVM</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/AQ06mpYl8" class="ctag ctag-2 ctag-AQ06mpYl8" aria-label="">Spring</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/U6BJ26s62" class="ctag ctag-3 ctag-U6BJ26s62" aria-label="">并发</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/k7pFygIgX" class="ctag ctag-4 ctag-k7pFygIgX" aria-label="">缓存</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/AFwlC_qiL" class="ctag ctag-5 ctag-AFwlC_qiL" aria-label="">数据结构</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/NLraoO2c4" class="ctag ctag-6 ctag-NLraoO2c4" aria-label="">算法</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/wDdDEnxe6" class="ctag ctag-7 ctag-wDdDEnxe6" aria-label="">Bug</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/E1t30QiTK" class="ctag ctag-8 ctag-E1t30QiTK" aria-label="">Java</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/jbLONxtxV" class="ctag ctag-9 ctag-jbLONxtxV" aria-label="">tools</a>
+                    
+                  </div>
+                  <div class="clear"></div>
+                </section>
+              </div>
+
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="epcl_about-2" class="widget widget_epcl_about underline-effect">
+                  <h4 class="widget-title title white bordered">关于我</h4>
+                  <div class="avatar">
+                    <a href="" class="translate-effect thumb"><span class="fullimage cover" style="background-image: url(https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png);"></span></a>
+                  </div>
+                  <div class="info">
+                    <h4 class="title small author-name gradient-effect no-margin"><a href="">跬步</a></h4>
+                    <p class="founder">不积跬步，无以至千里</p>
+                    <div class="social">
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                    </div> 
+                  </div>
+                  <div class="clear"></div>
+                  </section>
+              </div>
+
+            </div>
+            <div class="clear"></div>
+        </div>
+
+        <div class="logo">
+          <a href="https://github.com/skylaugh/skylaugh.github.io.git"><img class="" src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/logo.png" alt=""></a>
+        </div>
+        <p class="published border-effect">
+          ©2019 共 19 篇文章
+          <br/>
+          Theme <a href="https://gridea.dev/" target="_blank">「breek」</a> Powered by <a href="https://gridea.dev/" target="_blank">「Gridea」</a>
+        </p>
+        
+        <a href="javascript:void(0)" id="back-to-top" class="epcl-button dark" style="display:none">
+          <i class="fa fa-arrow"></i>
+        </a>
+    </footer>
+    <div class="clear"></div>
+
+      <script type="text/javascript">
+       jQuery(document).ready(function($){
+          $("photos img").each(function(){
+              var _a = $("<a></a>").attr("href",this.src);
+              $(this).wrap("<div class='photo'></div>").wrap(_a);
+          })
+          $("figure img").each(function(){
+              var _b = $("<a></a>").attr("href",this.src);
+              $(this).wrap(_b);
+          })
+          isImgLoad(function(){
+            var photos = document.querySelector('photos');
+            if(photos){
+              waterfall(photos);
+            }
+            $(window).resize(function() {
+             if(photos){
+                  waterfall(photos);
+            }
+          });
+        });
+        var t_img;
+        var isLoad = true;
+        function isImgLoad(callback){
+          $('photos img').each(function(){
+            if(this.height === 0){
+              isLoad = false;
+              return false;
+            }
+          });
+          if(isLoad){
+            clearTimeout(t_img);
+            callback();
+          }else{
+            isLoad = true;
+            t_img = setTimeout(function(){
+              isImgLoad(callback);
+            },500);
+          }
+        }
+      });
+      </script>
+
+    </div>
+    <!-- end: #wrapper -->
+  </body>
+</html>

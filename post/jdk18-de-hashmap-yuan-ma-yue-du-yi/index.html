@@ -1,0 +1,424 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>JDK1.8的HashMap源码阅读(一) | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里" />
+<link rel="shortcut icon" href="https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico">
+<link rel="stylesheet" href="https://github.com/skylaugh/skylaugh.github.io.git/styles/main.css">
+
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/jquery.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/masonry.pkgd.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/aos.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/pace.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/view-image.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/functions.js"></script>
+    <script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/waterfall.min.js"></script>
+    <script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/prism.min.js"></script>
+    
+  </head>
+  <body>
+            <header id="header" class="grid-container">
+        <!-- start: .menu-wrapper -->
+        <div class="menu-mobile"> 
+          <i class="fa fa-reorder"></i>
+        </div>
+        <div class="menu-wrapper">
+          <div class="">
+            <div class="logo">
+              <a href="https://github.com/skylaugh/skylaugh.github.io.git"><img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/logoo.png" alt=""></a>
+            </div>
+            <!-- start: .main-nav -->
+
+            <nav class="main-nav grid-container grid-parent">
+              <ul id="menu-header" class="menu gradient-effect">
+                
+                  <li class=""><a href="https://github.com/skylaugh/skylaugh.github.io.git" class="menu">首页</a></li>
+                
+                
+                  <li class="" >
+                    <a href="/archives" class="menu">
+                      归档
+                    </a>
+                  </li>
+                
+                  <li class="" >
+                    <a href="/tags" class="menu">
+                      标签
+                    </a>
+                  </li>
+                
+                  <li class="" >
+                    <a href="/post/about" class="menu">
+                      关于
+                    </a>
+                  </li>
+                
+              </ul>
+            </nav>
+            <!-- end: .main-nav -->
+            <div class="clear"></div>
+            <div class="border hide-on-tablet hide-on-mobile"></div>
+          </div>    
+          <div class="clear"></div>
+        </div>
+        <!-- end: .menu-wrapper -->
+        <div class="clear"></div>
+      </header>
+
+      <main id="single" class="main grid-container fullcover no-sidebar aos-init aos-animate" data-aos="fade">
+
+        <div class="center content">
+          <div class="featured-image cover" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/jdk18-de-hashmap-yuan-ma-yue-du-yi.jpg');">
+            <div class="meta top"> 
+              <time class="meta-info" style="float:left;" datetime="2019-06-11"><i class="fa fa-calendar"></i><span class="lately">8 个月前</span></time>
+               
+               
+            </div>
+            <div class="info">
+              <div class="tags ">
+                
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/E1t30QiTK" class="ctag ctag-0 ctag-E1t30QiTK" aria-label="">Java</a>
+                    
+              </div>
+              <h1 class="title ularge white bold">JDK1.8的HashMap源码阅读(一)</h1>
+            </div>
+          </div>
+        </div>  
+
+        <div class="epcl-page-wrapper">
+          <div class="left-content grid-70 np-mobile">
+            <article class="main-article post">
+              <section class="post-content">
+                <div class="text">
+                  <h3 id="继承及实现关系图">继承及实现关系图</h3>
+<h2 id=""><img src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/1581412612926.jpg" alt="HashMap" loading="lazy"></h2>
+<h3 id="源码注释及翻译">源码注释及翻译</h3>
+<blockquote>
+<p>Hash table based implementation of the <tt>Map</tt> interface.  This implementation provides all of the optional map operations, and permits <tt>null</tt> values and the <tt>null</tt> key.  (The <tt>HashMap</tt> class is roughly equivalent to <tt>Hashtable</tt>, except that it is unsynchronized and permits nulls.)  This class makes no guarantees as to the order of the map; in particular, it does not guarantee that the order will remain constant over time.</p>
+</blockquote>
+<p>基于哈希表的Map接口实现。此实现提供所有可选的映射操作，并允许null值和null键。 (HashMap类大致相当于Hashtable，除了它是不同步的,并且允许null值。)这个类不保证映射的顺序；尤其不保证排序在一段时间内保持不变。</p>
+<blockquote>
+<p>This implementation provides constant-time performance for the basic operations (<tt>get</tt> and <tt>put</tt>), assuming the hash function disperses the elements properly among the buckets.  Iteration over collection views requires time proportional to the &quot;capacity&quot; of the <tt>HashMap</tt> instance (the number of buckets) plus its size (the number of key-value mappings).  Thus, it's very important not to set the initial capacity too high (or the load factor too low) if iteration performance is important.</p>
+</blockquote>
+<p>假设哈希函数在桶之间正确地分散元素，这个实现为基本操作(get和put)提供了恒定的时间性能。对集合视图的迭代需要与HashMap实例的“容量”（桶的数量）加上其大小（键-值映射数）成正比的时间。因此，如果迭代性能很重要，则不要将初始容量设置得太高（或负载因子太低）是非常重要的。</p>
+<blockquote>
+<p>An instance of <tt>HashMap</tt> has two parameters that affect its performance: <i>initial capacity</i> and <i>load factor</i>.  The <i>capacity</i> is the number of buckets in the hash table, and the initial capacity is simply the capacity at the time the hash table is created.  The <i>load factor</i> is a measure of how full the hash table is allowed to get before its capacity is automatically increased.  When the number of entries in the hash table exceeds the product of the load factor and the current capacity, the hash table is <i>rehashed</i> (that is, internal data structures are rebuilt) so that the hash table has approximately twice the number of buckets.</p>
+</blockquote>
+<p>HashMap的一个实例有两个影响其性能的参数：初始容量和负载因子load factor。容量是哈希表中的桶数bucket，初始容量只是创建哈希表时的容量。负载因子是在自动增加容量之前允许哈希表获取的完整程度的度量。当哈希表中的条目数超过加载因子和当前容量的乘积时，哈希表将被重新哈希（即重建内部数据结构），使得哈希表扩容至两倍的桶数。</p>
+<blockquote>
+<p>As a general rule, the default load factor (.75) offers a good tradeoff between time and space costs.  Higher values decrease the space overhead but increase the lookup cost (reflected in most of the operations of the <tt>HashMap</tt> class, including <tt>get</tt> and <tt>put</tt>).  The expected number of entries in the map and its load factor should be taken into account when setting its initial capacity, so as to minimize the number of rehash operations.  If the initial capacity is greater than the maximum number of entries divided by the load factor, no rehash operations will ever occur.</p>
+</blockquote>
+<p>作为一般规则，默认负载因子（0.75）提供了时间和空间成本之间的良好折中。较高的值会降低空间开销，但会增加查找成本（反映在HashMap类的大多数操作中，包括get和put）。在设置其初始容量时，应考虑映射中的预期条目数及其负载因子，以便最小化重新散列操作的数量。如果初始容量大于最大条目数除以负载因子，则不会发生重新加载操作。</p>
+<blockquote>
+<p>If many mappings are to be stored in a <tt>HashMap</tt> instance, creating it with a sufficiently large capacity will allow the mappings to be stored more efficiently than letting it perform automatic rehashing as needed to grow the table.  Note that using many keys with the same {@code hashCode()} is a sure way to slow down performance of any hash table. To ameliorate impact, when keys are {@link Comparable}, this class may use comparison order among keys to help break ties.</p>
+</blockquote>
+<p>如果要将多个映射存储在HashMap实例中，则创建足够大初始容量的映射将比自动重新散列来扩展表更高效。请注意，使用具有相同hashCode()的多个键将会降低哈希表性能。为了改善影响，当键为Comparable时，此类可以使用比较顺序的键来帮助打破关系。</p>
+<blockquote>
+<p><strong>Note that this implementation is not synchronized.</strong> If multiple threads access a hash map concurrently, and at least one of the threads modifies the map structurally, it <i>must</i> be synchronized externally.  (A structural modification is any operation that adds or deletes one or more mappings; merely changing the value associated with a key that an instance already contains is not a structural modification.)  This is typically accomplished by synchronizing on some object that naturally encapsulates the map.</p>
+</blockquote>
+<p>请注意，此实现不同步。如果多个线程同时访问哈希映射，并且至少有一个线程在结构上修改了映射，那么它必须在外部进行同步。(结构修改是添加或删除一个或多个映射的任何操作；仅更改与实例已包含的键关联的值不是结构修改。)这通常通过同步自然封装映射的某个对象来实现。</p>
+<blockquote>
+<p>If no such object exists, the map should be &quot;wrapped&quot; using the {@link Collections#synchronizedMap Collections.synchronizedMap} method.  This is best done at creation time, to prevent accidental unsynchronized access to the map:<pre> Map m = Collections.synchronizedMap(new HashMap(...));</pre></p>
+</blockquote>
+<p>如果不存在此类对象，则应使用Collections.synchronizedMap方法“包装”映射。这最好在创建时完成，以防止意外地访问map不同步:</p>
+<pre><code>Map m = Collections.synchronizedMap(new HashMap(...));
+</code></pre>
+<blockquote>
+<p>The iterators returned by all of this class's &quot;collection view methods&quot; are <i>fail-fast</i>: if the map is structurally modified at any time after the iterator is created, in any way except through the iterator's own <tt>remove</tt> method, the iterator will throw a {@link ConcurrentModificationException}.  Thus, in the face of concurrent modification, the iterator fails quickly and cleanly, rather than risking arbitrary, non-deterministic behavior at an undetermined time in the future.</p>
+</blockquote>
+<p>所有这个类的“集合视图方法”返回的迭代器都是'fail-fast'：如果在创建迭代器之后的任何时候对映射进行结构修改，除了通过迭代器自己的remove方法之外，迭代器将抛出一个ConcurrentModificationException。因此，面对并发修改，迭代器将干净且快速地失败，而不是在将来不确定时间冒着各种不确定性行为的风险。</p>
+<blockquote>
+<p>Note that the fail-fast behavior of an iterator cannot be guaranteed as it is, generally speaking, impossible to make any hard guarantees in the presence of unsynchronized concurrent modification.  Fail-fast iterators throw <tt>ConcurrentModificationException</tt> on a best-effort basis. Therefore, it would be wrong to write a program that depended on this exception for its correctness: <i>the fail-fast behavior of iterators should be used only to detect bugs.</i></p>
+</blockquote>
+<p>请注意，迭代器的“快速失败”行为无法保证，因为一般来说，在不同步并发修改的情况下，它无法做出任何硬性保证。'fail-fast'迭代器会尽最大努力抛出ConcurrentModificationException。因此，不能编写依赖于此异常的程序以确保其正确性，迭代器的快速失败行为应该仅用于检测错误。</p>
+<p><em><strong>注释：fail-fast 机制，即快速失败机制，是java集合(Collection)中的一种错误检测机制。当在迭代集合的过程中该集合在结构上发生改变的时候，就有可能会发生fail-fast，即抛出ConcurrentModificationException异常。fail-fast机制并不保证在不同步的修改下一定会抛出异常，它只是尽最大努力去抛出，所以这种机制一般仅用于检测bug。</strong></em></p>
+<hr>
+<h3 id="默认属性">默认属性</h3>
+<pre><code>//默认初始容量1&lt;&lt;4,位运算,2的4次方,即16
+static final int DEFAULT_INITIAL_CAPACITY = 1 &lt;&lt; 4; // aka 16 还蛮嘻哈的
+
+//最大容量,2的30次方
+static final int MAXIMUM_CAPACITY = 1 &lt;&lt; 30;
+
+//默认负载因子,0.75
+static final float DEFAULT_LOAD_FACTOR = 0.75f;
+
+//一个桶的树化阈值,当桶中元素个数超过这个值时,需要使用红黑树节点替换链表节点
+static final int TREEIFY_THRESHOLD = 8;
+
+//一个树的链表还原阈值,当扩容时，桶中元素个数小于这个值,就会把树形的桶元素还原（切分）为链表结构
+static final int UNTREEIFY_THRESHOLD = 6;
+
+//当哈希表中的容量大于这个值时，表中的桶才能进行树形化
+//否则桶内元素太多时会扩容，而不是树形化
+//为了避免进行扩容、树形化选择的冲突，这个值不能小于 4 * TREEIFY_THRESHOLD
+static final int MIN_TREEIFY_CAPACITY = 64;
+</code></pre>
+<p>默认初始容量16，负载因子0.75,即容量超过16 * 0.75 = 12 时发生rehash扩容至32。</p>
+
+                </div>
+                <div class="clear"></div>
+              </section>
+            </article>
+            <div class="clear"></div>
+
+            <section class="related section">
+              
+              <article class="prev grid-50 tablet-grid-50 grid-parent">
+                <div class="thumb cover lazy loaded" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/jdk18-de-hashmap-yuan-ma-yue-du-er.jpg');"></div>
+                 <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/jdk18-de-hashmap-yuan-ma-yue-du-er" class="full-link"></a>
+                 <div class="info">
+                  <time datetime="2019-06-13">2019-06-13</time>
+                  <h4 class="title white no-margin">JDK1.8的HashMap源码阅读(二)</h4>
+                </div>
+                 <span class="epcl-button red">
+                  <img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/left-arrow.svg" width="15" alt="Left Arrow">
+                </span>
+                <div class="overlay"></div>
+              </article>
+              
+              
+              <article class="next grid-50 tablet-grid-50 grid-parent">
+                <div class="thumb cover lazy loaded" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/mybatis-chu-li-mysql-xia-blob-yu-string-hu-zhuan-wen-ti.jpg');"></div>
+                 <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/mybatis-chu-li-mysql-xia-blob-yu-string-hu-zhuan-wen-ti" class="full-link"></a>
+                 <div class="info">
+                  <time datetime="2019-05-21">2019-05-21</time>
+                  <h4 class="title white no-margin">Mybatis处理mysql下BLOB与String互转问题</h4>
+                </div>
+                 <span class="epcl-button red">
+                  <img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/right-arrow.svg" width="15" alt="Left Arrow">
+                </span>
+                <div class="overlay"></div>
+              </article>
+              
+
+                <div class="clear"></div>
+            </section>
+
+              <div class="clear"></div>
+
+              <div id="comments" class="bg-white hosted ">
+
+              
+                <p>请到客户端“主题--自定义配置--valine”中填入ID和KEY</p>
+              
+                <div class="clear"></div>
+              </div>
+
+              <div class="clear"></div>
+            </div>
+          </div>
+      </main>
+
+          <footer id="footer" class="grid-container">
+        <div class="widgets row gradient-effect">
+            <div class="default-sidebar border-effect">
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="tag_cloud-2" class="widget widget_epcl_posts_thumbs underline-effect">
+                  <h4 class="widget-title title white bordered">最新文章</h4>
+                  
+                  
+                  <article class="item post-0 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/java-zhi-shi-tu-pu-201912.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-12-29">2019-12-29</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912">Java知识图谱（2019.12）</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  <article class="item post-1 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/java-zhi-ling-ji.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-12-17">2019-12-17</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji">Java指令集</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  <article class="item post-2 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/spring-xue-xi-bi-ji-yi.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-11-21">2019-11-21</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi">Spring学习笔记（一）</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  <div class="clear"></div>
+                </section>
+              </div>
+
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="tag_cloud-2" class="widget widget_tag_cloud underline-effect">
+                  <h4 class="widget-title title white bordered">标签云</h4>
+                  <div class="tagcloud">
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/tUCgTF6zk" class="ctag ctag-0 ctag-tUCgTF6zk" aria-label="">Others</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/5nWxaev-g" class="ctag ctag-1 ctag-5nWxaev-g" aria-label="">JVM</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/AQ06mpYl8" class="ctag ctag-2 ctag-AQ06mpYl8" aria-label="">Spring</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/U6BJ26s62" class="ctag ctag-3 ctag-U6BJ26s62" aria-label="">并发</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/k7pFygIgX" class="ctag ctag-4 ctag-k7pFygIgX" aria-label="">缓存</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/AFwlC_qiL" class="ctag ctag-5 ctag-AFwlC_qiL" aria-label="">数据结构</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/NLraoO2c4" class="ctag ctag-6 ctag-NLraoO2c4" aria-label="">算法</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/wDdDEnxe6" class="ctag ctag-7 ctag-wDdDEnxe6" aria-label="">Bug</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/E1t30QiTK" class="ctag ctag-8 ctag-E1t30QiTK" aria-label="">Java</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/jbLONxtxV" class="ctag ctag-9 ctag-jbLONxtxV" aria-label="">tools</a>
+                    
+                  </div>
+                  <div class="clear"></div>
+                </section>
+              </div>
+
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="epcl_about-2" class="widget widget_epcl_about underline-effect">
+                  <h4 class="widget-title title white bordered">关于我</h4>
+                  <div class="avatar">
+                    <a href="" class="translate-effect thumb"><span class="fullimage cover" style="background-image: url(https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png);"></span></a>
+                  </div>
+                  <div class="info">
+                    <h4 class="title small author-name gradient-effect no-margin"><a href="">跬步</a></h4>
+                    <p class="founder">不积跬步，无以至千里</p>
+                    <div class="social">
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                    </div> 
+                  </div>
+                  <div class="clear"></div>
+                  </section>
+              </div>
+
+            </div>
+            <div class="clear"></div>
+        </div>
+
+        <div class="logo">
+          <a href="https://github.com/skylaugh/skylaugh.github.io.git"><img class="" src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/logo.png" alt=""></a>
+        </div>
+        <p class="published border-effect">
+          ©2019 共 19 篇文章
+          <br/>
+          Theme <a href="https://gridea.dev/" target="_blank">「breek」</a> Powered by <a href="https://gridea.dev/" target="_blank">「Gridea」</a>
+        </p>
+        
+        <a href="javascript:void(0)" id="back-to-top" class="epcl-button dark" style="display:none">
+          <i class="fa fa-arrow"></i>
+        </a>
+    </footer>
+    <div class="clear"></div>
+
+      <script type="text/javascript">
+       jQuery(document).ready(function($){
+          $("photos img").each(function(){
+              var _a = $("<a></a>").attr("href",this.src);
+              $(this).wrap("<div class='photo'></div>").wrap(_a);
+          })
+          $("figure img").each(function(){
+              var _b = $("<a></a>").attr("href",this.src);
+              $(this).wrap(_b);
+          })
+          isImgLoad(function(){
+            var photos = document.querySelector('photos');
+            if(photos){
+              waterfall(photos);
+            }
+            $(window).resize(function() {
+             if(photos){
+                  waterfall(photos);
+            }
+          });
+        });
+        var t_img;
+        var isLoad = true;
+        function isImgLoad(callback){
+          $('photos img').each(function(){
+            if(this.height === 0){
+              isLoad = false;
+              return false;
+            }
+          });
+          if(isLoad){
+            clearTimeout(t_img);
+            callback();
+          }else{
+            isLoad = true;
+            t_img = setTimeout(function(){
+              isImgLoad(callback);
+            },500);
+          }
+        }
+      });
+      </script>
+
+    </div>
+    <!-- end: #wrapper -->
+  </body>
+</html>

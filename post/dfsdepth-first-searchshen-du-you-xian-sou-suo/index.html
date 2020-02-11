@@ -1,0 +1,411 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DFS(Depth First Search)深度优先搜索 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里" />
+<link rel="shortcut icon" href="https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico">
+<link rel="stylesheet" href="https://github.com/skylaugh/skylaugh.github.io.git/styles/main.css">
+
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/jquery.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/masonry.pkgd.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/aos.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/pace.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/view-image.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/functions.js"></script>
+    <script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/waterfall.min.js"></script>
+    <script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/prism.min.js"></script>
+    
+  </head>
+  <body>
+            <header id="header" class="grid-container">
+        <!-- start: .menu-wrapper -->
+        <div class="menu-mobile"> 
+          <i class="fa fa-reorder"></i>
+        </div>
+        <div class="menu-wrapper">
+          <div class="">
+            <div class="logo">
+              <a href="https://github.com/skylaugh/skylaugh.github.io.git"><img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/logoo.png" alt=""></a>
+            </div>
+            <!-- start: .main-nav -->
+
+            <nav class="main-nav grid-container grid-parent">
+              <ul id="menu-header" class="menu gradient-effect">
+                
+                  <li class=""><a href="https://github.com/skylaugh/skylaugh.github.io.git" class="menu">首页</a></li>
+                
+                
+                  <li class="" >
+                    <a href="/archives" class="menu">
+                      归档
+                    </a>
+                  </li>
+                
+                  <li class="" >
+                    <a href="/tags" class="menu">
+                      标签
+                    </a>
+                  </li>
+                
+                  <li class="" >
+                    <a href="/post/about" class="menu">
+                      关于
+                    </a>
+                  </li>
+                
+              </ul>
+            </nav>
+            <!-- end: .main-nav -->
+            <div class="clear"></div>
+            <div class="border hide-on-tablet hide-on-mobile"></div>
+          </div>    
+          <div class="clear"></div>
+        </div>
+        <!-- end: .menu-wrapper -->
+        <div class="clear"></div>
+      </header>
+
+      <main id="single" class="main grid-container fullcover no-sidebar aos-init aos-animate" data-aos="fade">
+
+        <div class="center content">
+          <div class="featured-image cover" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/dfsdepth-first-searchshen-du-you-xian-sou-suo.jpg');">
+            <div class="meta top"> 
+              <time class="meta-info" style="float:left;" datetime="2019-03-27"><i class="fa fa-calendar"></i><span class="lately">10 个月前</span></time>
+               
+               
+            </div>
+            <div class="info">
+              <div class="tags ">
+                
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/NLraoO2c4" class="ctag ctag-0 ctag-NLraoO2c4" aria-label="">算法</a>
+                    
+              </div>
+              <h1 class="title ularge white bold">DFS(Depth First Search)深度优先搜索</h1>
+            </div>
+          </div>
+        </div>  
+
+        <div class="epcl-page-wrapper">
+          <div class="left-content grid-70 np-mobile">
+            <article class="main-article post">
+              <section class="post-content">
+                <div class="text">
+                  <p>最近在刷leetcode的时候,做到二叉树相关的题目，很多题解都提到了DFS。像我这样半路出价的程序猿，数据结构和算法的基础都比较薄弱。在此对DFS算法做一个记录。</p>
+<blockquote>
+<p>深度优先搜索算法（英语：Depth-First-Search，DFS）是一种用于遍历或搜索树或图的算法。沿着树的深度遍历树的节点，尽可能深的搜索树的分支。当节点v的所在边都己被探寻过，搜索将回溯到发现节点v的那条边的起始节点。这一过程一直进行到已发现从源节点可达的所有节点为止。如果还存在未被发现的节点，则选择其中一个作为源节点并重复以上过程，整个进程反复进行直到所有节点都被访问为止。属于盲目搜索。</p>
+</blockquote>
+<blockquote>
+<p>深度优先搜索是图论中的经典算法，利用深度优先搜索算法可以产生目标图的相应拓扑排序表，利用拓扑排序表可以方便的解决很多相关的图论问题，如最大路径问题等等。</p>
+</blockquote>
+<blockquote>
+<p>因发明“深度优先搜索算法”，约翰·霍普克洛夫特与罗伯特·塔扬在1986年共同获得计算机领域的最高奖：图灵奖。</p>
+</blockquote>
+<figure data-type="image" tabindex="1"><img src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/1581410130804.jpg" alt="dfs" loading="lazy"></figure>
+<h4 id="实现方法">实现方法</h4>
+<ol>
+<li>首先将根节点放入stack中。</li>
+<li>从stack中取出第一个节点，并检验它是否为目标。<br>
+如果找到目标，则结束搜寻并回传结果。<br>
+否则将它某一个尚未检验过的直接子节点加入stack中。</li>
+<li>重复步骤2。</li>
+<li>如果不存在未检测过的直接子节点。<br>
+将上一级节点加入stack中。<br>
+重复步骤2。</li>
+<li>重复步骤4。</li>
+<li>若stack为空，表示整张图都检查过了——亦即图中没有欲搜寻的目标。结束搜寻并回传“找不到目标”。</li>
+</ol>
+<p>个人理解，最重要的两点，1是终止条件，2是递归逻辑。</p>
+<h4 id="一个例子">一个例子</h4>
+<h5 id="leetcode-104-二叉树的最大深度">leetcode 104. 二叉树的最大深度</h5>
+<p>给定一个二叉树，找出其最大深度。</p>
+<p>二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。</p>
+<p>说明: 叶子节点是指没有子节点的节点。</p>
+<p>示例：<br>
+给定二叉树 [3,9,20,null,null,15,7]，</p>
+<pre><code>    3
+   / \
+  9  20
+    /  \
+   15   7
+</code></pre>
+<p>返回它的最大深度 3 。</p>
+<p>来源：力扣（LeetCode）<br>
+链接：<a href="https://leetcode-cn.com/problems/maximum-depth-of-binary-tree">https://leetcode-cn.com/problems/maximum-depth-of-binary-tree</a></p>
+<h5 id="题解">题解</h5>
+<pre><code>public int maxDepth(TreeNode root) {
+    if (root == null) {
+      return 0;
+    } else {
+      int left_height = maxDepth(root.left);
+      int right_height = maxDepth(root.right);
+      return java.lang.Math.max(left_height, right_height) + 1;
+    }
+}
+</code></pre>
+
+                </div>
+                <div class="clear"></div>
+              </section>
+            </article>
+            <div class="clear"></div>
+
+            <section class="related section">
+              
+              <article class="prev grid-50 tablet-grid-50 grid-parent">
+                <div class="thumb cover lazy loaded" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/wei-xin-zhi-fu-kai-fa-ji-lu-java.jpg');"></div>
+                 <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/wei-xin-zhi-fu-kai-fa-ji-lu-java" class="full-link"></a>
+                 <div class="info">
+                  <time datetime="2019-04-18">2019-04-18</time>
+                  <h4 class="title white no-margin">微信支付开发记录（JAVA）</h4>
+                </div>
+                 <span class="epcl-button red">
+                  <img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/left-arrow.svg" width="15" alt="Left Arrow">
+                </span>
+                <div class="overlay"></div>
+              </article>
+              
+              
+              <article class="next grid-50 tablet-grid-50 grid-parent">
+                <div class="thumb cover lazy loaded" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/shu-ju-jie-gou-stack-zhan-de-xue-xi.jpg');"></div>
+                 <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/shu-ju-jie-gou-stack-zhan-de-xue-xi" class="full-link"></a>
+                 <div class="info">
+                  <time datetime="2019-03-05">2019-03-05</time>
+                  <h4 class="title white no-margin">数据结构Stack栈的学习</h4>
+                </div>
+                 <span class="epcl-button red">
+                  <img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/right-arrow.svg" width="15" alt="Left Arrow">
+                </span>
+                <div class="overlay"></div>
+              </article>
+              
+
+                <div class="clear"></div>
+            </section>
+
+              <div class="clear"></div>
+
+              <div id="comments" class="bg-white hosted ">
+
+              
+                <p>请到客户端“主题--自定义配置--valine”中填入ID和KEY</p>
+              
+                <div class="clear"></div>
+              </div>
+
+              <div class="clear"></div>
+            </div>
+          </div>
+      </main>
+
+          <footer id="footer" class="grid-container">
+        <div class="widgets row gradient-effect">
+            <div class="default-sidebar border-effect">
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="tag_cloud-2" class="widget widget_epcl_posts_thumbs underline-effect">
+                  <h4 class="widget-title title white bordered">最新文章</h4>
+                  
+                  
+                  <article class="item post-0 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/java-zhi-shi-tu-pu-201912.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-12-29">2019-12-29</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912">Java知识图谱（2019.12）</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  <article class="item post-1 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/java-zhi-ling-ji.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-12-17">2019-12-17</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji">Java指令集</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  <article class="item post-2 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/spring-xue-xi-bi-ji-yi.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-11-21">2019-11-21</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi">Spring学习笔记（一）</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  <div class="clear"></div>
+                </section>
+              </div>
+
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="tag_cloud-2" class="widget widget_tag_cloud underline-effect">
+                  <h4 class="widget-title title white bordered">标签云</h4>
+                  <div class="tagcloud">
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/tUCgTF6zk" class="ctag ctag-0 ctag-tUCgTF6zk" aria-label="">Others</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/5nWxaev-g" class="ctag ctag-1 ctag-5nWxaev-g" aria-label="">JVM</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/AQ06mpYl8" class="ctag ctag-2 ctag-AQ06mpYl8" aria-label="">Spring</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/U6BJ26s62" class="ctag ctag-3 ctag-U6BJ26s62" aria-label="">并发</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/k7pFygIgX" class="ctag ctag-4 ctag-k7pFygIgX" aria-label="">缓存</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/AFwlC_qiL" class="ctag ctag-5 ctag-AFwlC_qiL" aria-label="">数据结构</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/NLraoO2c4" class="ctag ctag-6 ctag-NLraoO2c4" aria-label="">算法</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/wDdDEnxe6" class="ctag ctag-7 ctag-wDdDEnxe6" aria-label="">Bug</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/E1t30QiTK" class="ctag ctag-8 ctag-E1t30QiTK" aria-label="">Java</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/jbLONxtxV" class="ctag ctag-9 ctag-jbLONxtxV" aria-label="">tools</a>
+                    
+                  </div>
+                  <div class="clear"></div>
+                </section>
+              </div>
+
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="epcl_about-2" class="widget widget_epcl_about underline-effect">
+                  <h4 class="widget-title title white bordered">关于我</h4>
+                  <div class="avatar">
+                    <a href="" class="translate-effect thumb"><span class="fullimage cover" style="background-image: url(https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png);"></span></a>
+                  </div>
+                  <div class="info">
+                    <h4 class="title small author-name gradient-effect no-margin"><a href="">跬步</a></h4>
+                    <p class="founder">不积跬步，无以至千里</p>
+                    <div class="social">
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                    </div> 
+                  </div>
+                  <div class="clear"></div>
+                  </section>
+              </div>
+
+            </div>
+            <div class="clear"></div>
+        </div>
+
+        <div class="logo">
+          <a href="https://github.com/skylaugh/skylaugh.github.io.git"><img class="" src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/logo.png" alt=""></a>
+        </div>
+        <p class="published border-effect">
+          ©2019 共 19 篇文章
+          <br/>
+          Theme <a href="https://gridea.dev/" target="_blank">「breek」</a> Powered by <a href="https://gridea.dev/" target="_blank">「Gridea」</a>
+        </p>
+        
+        <a href="javascript:void(0)" id="back-to-top" class="epcl-button dark" style="display:none">
+          <i class="fa fa-arrow"></i>
+        </a>
+    </footer>
+    <div class="clear"></div>
+
+      <script type="text/javascript">
+       jQuery(document).ready(function($){
+          $("photos img").each(function(){
+              var _a = $("<a></a>").attr("href",this.src);
+              $(this).wrap("<div class='photo'></div>").wrap(_a);
+          })
+          $("figure img").each(function(){
+              var _b = $("<a></a>").attr("href",this.src);
+              $(this).wrap(_b);
+          })
+          isImgLoad(function(){
+            var photos = document.querySelector('photos');
+            if(photos){
+              waterfall(photos);
+            }
+            $(window).resize(function() {
+             if(photos){
+                  waterfall(photos);
+            }
+          });
+        });
+        var t_img;
+        var isLoad = true;
+        function isImgLoad(callback){
+          $('photos img').each(function(){
+            if(this.height === 0){
+              isLoad = false;
+              return false;
+            }
+          });
+          if(isLoad){
+            clearTimeout(t_img);
+            callback();
+          }else{
+            isLoad = true;
+            t_img = setTimeout(function(){
+              isImgLoad(callback);
+            },500);
+          }
+        }
+      });
+      </script>
+
+    </div>
+    <!-- end: #wrapper -->
+  </body>
+</html>

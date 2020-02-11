@@ -1,0 +1,448 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Redis的RDB和AOF | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里" />
+<link rel="shortcut icon" href="https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico">
+<link rel="stylesheet" href="https://github.com/skylaugh/skylaugh.github.io.git/styles/main.css">
+
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/jquery.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/masonry.pkgd.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/aos.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/pace.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/view-image.min.js"></script>
+<script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/functions.js"></script>
+    <script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/waterfall.min.js"></script>
+    <script src="https://github.com/skylaugh/skylaugh.github.io.git/media/js/prism.min.js"></script>
+    
+  </head>
+  <body>
+            <header id="header" class="grid-container">
+        <!-- start: .menu-wrapper -->
+        <div class="menu-mobile"> 
+          <i class="fa fa-reorder"></i>
+        </div>
+        <div class="menu-wrapper">
+          <div class="">
+            <div class="logo">
+              <a href="https://github.com/skylaugh/skylaugh.github.io.git"><img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/logoo.png" alt=""></a>
+            </div>
+            <!-- start: .main-nav -->
+
+            <nav class="main-nav grid-container grid-parent">
+              <ul id="menu-header" class="menu gradient-effect">
+                
+                  <li class=""><a href="https://github.com/skylaugh/skylaugh.github.io.git" class="menu">首页</a></li>
+                
+                
+                  <li class="" >
+                    <a href="/archives" class="menu">
+                      归档
+                    </a>
+                  </li>
+                
+                  <li class="" >
+                    <a href="/tags" class="menu">
+                      标签
+                    </a>
+                  </li>
+                
+                  <li class="" >
+                    <a href="/post/about" class="menu">
+                      关于
+                    </a>
+                  </li>
+                
+              </ul>
+            </nav>
+            <!-- end: .main-nav -->
+            <div class="clear"></div>
+            <div class="border hide-on-tablet hide-on-mobile"></div>
+          </div>    
+          <div class="clear"></div>
+        </div>
+        <!-- end: .menu-wrapper -->
+        <div class="clear"></div>
+      </header>
+
+      <main id="single" class="main grid-container fullcover no-sidebar aos-init aos-animate" data-aos="fade">
+
+        <div class="center content">
+          <div class="featured-image cover" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/redis-de-rdb-he-aof.jpg');">
+            <div class="meta top"> 
+              <time class="meta-info" style="float:left;" datetime="2019-10-23"><i class="fa fa-calendar"></i><span class="lately">4 个月前</span></time>
+               
+               
+            </div>
+            <div class="info">
+              <div class="tags ">
+                
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/k7pFygIgX" class="ctag ctag-0 ctag-k7pFygIgX" aria-label="">缓存</a>
+                    
+              </div>
+              <h1 class="title ularge white bold">Redis的RDB和AOF</h1>
+            </div>
+          </div>
+        </div>  
+
+        <div class="epcl-page-wrapper">
+          <div class="left-content grid-70 np-mobile">
+            <article class="main-article post">
+              <section class="post-content">
+                <div class="text">
+                  <p>从一道面试题开始说起吧</p>
+<blockquote>
+<h3 id="redis-1s-set-10w次有什么问题及问题产生的原因">Redis 1s set 10w次有什么问题，及问题产生的原因。</h3>
+</blockquote>
+<ol>
+<li>写请求太多阻塞其他请求，导致性能下降</li>
+<li>触发 rdb 备份操作，fork 新线程也会阻塞其他操作，</li>
+<li>在 rdb 备份时，如果 set 请求的太多，可能会导致内存暴涨一倍，导致内存不足，或者使用 swap 导致性能下降。</li>
+<li>如果开启了 AOF 备份方式，可能会导致频繁刷新缓冲区数据到磁盘，导致性能下降。进一步阻塞请求。</li>
+</ol>
+<h3 id="redis-的-rdb-是什么">Redis 的 RDB 是什么？</h3>
+<ol>
+<li>在指定的时间间隔内将内存中的数据集快照写入磁盘，也就是Snapshot快照，恢复时是将快照文件直接读到内存里。</li>
+<li>持久化时Redis会单独创建(fork)一个子进程来进行持久化，子进程先将数据写入到一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。</li>
+<li>整个过程中主进程不进行任何IO操作，这就确保了极高的性能。</li>
+<li>进行大规模数据的恢复，且对于恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。RDB的缺点是最后一次持久化后的数据可能丢失。</li>
+</ol>
+<h3 id="rdb-的优缺点">RDB 的优缺点</h3>
+<p>优点：</p>
+<ol>
+<li>适合大规模的数据恢复。</li>
+<li>如果业务对数据完整性和一致性要求不高，RDB是很好的选择。</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>数据的完整性和一致性不高，因为RDB可能在最后一次备份时宕机了。</li>
+<li>备份时占用内存，因为Redis 在备份时会独立创建一个子进程，将数据写入到一个临时文件（此时内存中的数据是原来的两倍哦），最后再将临时文件替换之前的备份文件。<br>
+所以Redis 的持久化和数据的恢复要选择在夜深人静的时候执行是比较合理的。</li>
+</ol>
+<h3 id="fork线程">fork线程</h3>
+<ul>
+<li>fork的作用是复制一个与当前进程一样的进程。新进程的所有数据（变量、环境变量、程序计数器等）数值都和原进程一致，但是是一个全新的进程，并作为原进程的子进程</li>
+</ul>
+<h3 id="aof">AOF</h3>
+<p>Redis 默认不开启。它的出现是为了弥补RDB的不足（数据的不一致性），所以它采用日志的形式来记录每个<strong>写操作</strong>，并追加到文件中。Redis 重启的会根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作。</p>
+<h3 id="从配置文件了解aof">从配置文件了解AOF</h3>
+<p>打开 <code>redis.conf</code> 文件，找到 <code>APPEND ONLY MODE</code> 对应内容</p>
+<ol>
+<li>redis 默认关闭，开启需要手动把no改为yes</li>
+</ol>
+<pre><code>appendonly yes
+</code></pre>
+<ol start="2">
+<li>指定本地数据库文件名，默认值为 <code>appendonly.aof</code></li>
+</ol>
+<pre><code>appendfilename &quot;appendonly.aof&quot;
+</code></pre>
+<ol start="3">
+<li>指定更新日志条件</li>
+</ol>
+<pre><code># appendfsync always
+appendfsync everysec
+# appendfsync no
+</code></pre>
+<p>解说：</p>
+<ul>
+<li>always：同步持久化，每次发生数据变化会立刻写入到磁盘中。性能较差当数据完整性比较好（慢，安全）</li>
+<li>everysec：出厂默认推荐，每秒异步记录一次（默认值）</li>
+<li>no：不同步</li>
+</ul>
+<ol start="4">
+<li>配置重写触发机制</li>
+</ol>
+<pre><code>auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+</code></pre>
+<p>解说：当AOF文件大小是上次rewrite后大小的一倍且文件大于64M时触发。一般都设置为3G，64M太小了。</p>
+<h4 id="触发aof快照">触发AOF快照</h4>
+<p>根据配置文件触发，可以是每次执行触发，可以是每秒触发，可以不同步。</p>
+<h4 id="根据aof文件恢复数据">根据AOF文件恢复数据</h4>
+<p>正常情况下，将appendonly.aof 文件拷贝到redis的安装目录的bin目录下，重启redis服务即可。但在实际开发中，可能因为某些原因导致appendonly.aof 文件格式异常，从而导致数据还原失败，可以通过命令<code>redis-check-aof --fix appendonly.aof</code> 进行修复 。</p>
+<h4 id="aof的重写机制">AOF的重写机制</h4>
+<p>前面也说到了，AOF的工作原理是将写操作追加到文件中，文件的冗余内容会越来越多。所以聪明的 Redis 新增了重写机制。当AOF文件的大小超过所设定的阈值时，Redis就会对AOF文件的内容压缩。</p>
+<h4 id="重写的原理">重写的原理</h4>
+<p>Redis 会 fork 出一条新进程，读取内存中的数据，并重新写到一个临时文件中（并没有读取旧文件）。最后替换旧的aof文件。</p>
+<p>触发机制：当AOF文件大小是上次rewrite后大小的一倍且文件大于64M时触发。这里的“一倍”和“64M” 可以通过配置文件修改。</p>
+<h3 id="aof-的优缺点">AOF 的优缺点</h3>
+<p>优点：数据的完整性和一致性更高<br>
+缺点：因为AOF记录的内容多，文件会越来越大，数据恢复也会越来越慢。</p>
+<h2 id="总结">总结：</h2>
+<ol>
+<li>Redis 默认开启RDB持久化方式，在指定的时间间隔内，执行指定次数的写操作，则将内存中的数据写入到磁盘中。</li>
+<li>RDB 持久化适合大规模的数据恢复但它的数据一致性和完整性较差。</li>
+<li>Redis 需要手动开启AOF持久化方式，默认是每秒将写操作日志追加到AOF文件中。</li>
+<li>AOF 的数据完整性比RDB高，但记录内容多了，会影响数据恢复的效率。</li>
+<li>Redis 针对 AOF文件大的问题，提供重写的瘦身机制。</li>
+<li>若只打算用Redis 做缓存，可以关闭持久化。</li>
+<li>若打算使用Redis 的持久化。建议RDB和AOF都开启。其实RDB更适合做数据的备份，留一后手。AOF出问题了，还有RDB。</li>
+</ol>
+
+                </div>
+                <div class="clear"></div>
+              </section>
+            </article>
+            <div class="clear"></div>
+
+            <section class="related section">
+              
+              <article class="prev grid-50 tablet-grid-50 grid-parent">
+                <div class="thumb cover lazy loaded" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/reentrantlock-he-synchronized-bi-jiao.jpg');"></div>
+                 <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/reentrantlock-he-synchronized-bi-jiao" class="full-link"></a>
+                 <div class="info">
+                  <time datetime="2019-10-30">2019-10-30</time>
+                  <h4 class="title white no-margin">ReentrantLock 和 synchronized 比较</h4>
+                </div>
+                 <span class="epcl-button red">
+                  <img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/left-arrow.svg" width="15" alt="Left Arrow">
+                </span>
+                <div class="overlay"></div>
+              </article>
+              
+              
+              <article class="next grid-50 tablet-grid-50 grid-parent">
+                <div class="thumb cover lazy loaded" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/hong-hei-shu.jpg');"></div>
+                 <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/hong-hei-shu" class="full-link"></a>
+                 <div class="info">
+                  <time datetime="2019-09-04">2019-09-04</time>
+                  <h4 class="title white no-margin">红黑树</h4>
+                </div>
+                 <span class="epcl-button red">
+                  <img src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/right-arrow.svg" width="15" alt="Left Arrow">
+                </span>
+                <div class="overlay"></div>
+              </article>
+              
+
+                <div class="clear"></div>
+            </section>
+
+              <div class="clear"></div>
+
+              <div id="comments" class="bg-white hosted ">
+
+              
+                <p>请到客户端“主题--自定义配置--valine”中填入ID和KEY</p>
+              
+                <div class="clear"></div>
+              </div>
+
+              <div class="clear"></div>
+            </div>
+          </div>
+      </main>
+
+          <footer id="footer" class="grid-container">
+        <div class="widgets row gradient-effect">
+            <div class="default-sidebar border-effect">
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="tag_cloud-2" class="widget widget_epcl_posts_thumbs underline-effect">
+                  <h4 class="widget-title title white bordered">最新文章</h4>
+                  
+                  
+                  <article class="item post-0 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/java-zhi-shi-tu-pu-201912.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-12-29">2019-12-29</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912">Java知识图谱（2019.12）</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  <article class="item post-1 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/java-zhi-ling-ji.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-12-17">2019-12-17</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji">Java指令集</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  <article class="item post-2 post type-post status-publish format-standard has-post-thumbnail hentry">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi" class="thumb hover-effect">
+                      <span class="fullimage cover" style="display: block;background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/spring-xue-xi-bi-ji-yi.jpg');"></span>
+                    </a>
+                    <div class="info gradient-effect">
+                      <time datetime="2019-11-21">2019-11-21</time>
+                      <h4 class="title usmall">
+                        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi">Spring学习笔记（一）</a>
+                      </h4>
+                    </div>
+                    <div class="clear"></div>
+                  </article>
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  <div class="clear"></div>
+                </section>
+              </div>
+
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="tag_cloud-2" class="widget widget_tag_cloud underline-effect">
+                  <h4 class="widget-title title white bordered">标签云</h4>
+                  <div class="tagcloud">
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/tUCgTF6zk" class="ctag ctag-0 ctag-tUCgTF6zk" aria-label="">Others</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/5nWxaev-g" class="ctag ctag-1 ctag-5nWxaev-g" aria-label="">JVM</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/AQ06mpYl8" class="ctag ctag-2 ctag-AQ06mpYl8" aria-label="">Spring</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/U6BJ26s62" class="ctag ctag-3 ctag-U6BJ26s62" aria-label="">并发</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/k7pFygIgX" class="ctag ctag-4 ctag-k7pFygIgX" aria-label="">缓存</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/AFwlC_qiL" class="ctag ctag-5 ctag-AFwlC_qiL" aria-label="">数据结构</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/NLraoO2c4" class="ctag ctag-6 ctag-NLraoO2c4" aria-label="">算法</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/wDdDEnxe6" class="ctag ctag-7 ctag-wDdDEnxe6" aria-label="">Bug</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/E1t30QiTK" class="ctag ctag-8 ctag-E1t30QiTK" aria-label="">Java</a>
+                    
+                      <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/jbLONxtxV" class="ctag ctag-9 ctag-jbLONxtxV" aria-label="">tools</a>
+                    
+                  </div>
+                  <div class="clear"></div>
+                </section>
+              </div>
+
+              <div class="grid-33 tablet-grid-50 mobile-grid-100">
+                <section id="epcl_about-2" class="widget widget_epcl_about underline-effect">
+                  <h4 class="widget-title title white bordered">关于我</h4>
+                  <div class="avatar">
+                    <a href="" class="translate-effect thumb"><span class="fullimage cover" style="background-image: url(https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png);"></span></a>
+                  </div>
+                  <div class="info">
+                    <h4 class="title small author-name gradient-effect no-margin"><a href="">跬步</a></h4>
+                    <p class="founder">不积跬步，无以至千里</p>
+                    <div class="social">
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                        
+                      
+                    </div> 
+                  </div>
+                  <div class="clear"></div>
+                  </section>
+              </div>
+
+            </div>
+            <div class="clear"></div>
+        </div>
+
+        <div class="logo">
+          <a href="https://github.com/skylaugh/skylaugh.github.io.git"><img class="" src="https://github.com/skylaugh/skylaugh.github.io.git/media/images/logo.png" alt=""></a>
+        </div>
+        <p class="published border-effect">
+          ©2019 共 19 篇文章
+          <br/>
+          Theme <a href="https://gridea.dev/" target="_blank">「breek」</a> Powered by <a href="https://gridea.dev/" target="_blank">「Gridea」</a>
+        </p>
+        
+        <a href="javascript:void(0)" id="back-to-top" class="epcl-button dark" style="display:none">
+          <i class="fa fa-arrow"></i>
+        </a>
+    </footer>
+    <div class="clear"></div>
+
+      <script type="text/javascript">
+       jQuery(document).ready(function($){
+          $("photos img").each(function(){
+              var _a = $("<a></a>").attr("href",this.src);
+              $(this).wrap("<div class='photo'></div>").wrap(_a);
+          })
+          $("figure img").each(function(){
+              var _b = $("<a></a>").attr("href",this.src);
+              $(this).wrap(_b);
+          })
+          isImgLoad(function(){
+            var photos = document.querySelector('photos');
+            if(photos){
+              waterfall(photos);
+            }
+            $(window).resize(function() {
+             if(photos){
+                  waterfall(photos);
+            }
+          });
+        });
+        var t_img;
+        var isLoad = true;
+        function isImgLoad(callback){
+          $('photos img').each(function(){
+            if(this.height === 0){
+              isLoad = false;
+              return false;
+            }
+          });
+          if(isLoad){
+            clearTimeout(t_img);
+            callback();
+          }else{
+            isLoad = true;
+            t_img = setTimeout(function(){
+              isImgLoad(callback);
+            },500);
+          }
+        }
+      });
+      </script>
+
+    </div>
+    <!-- end: #wrapper -->
+  </body>
+</html>
