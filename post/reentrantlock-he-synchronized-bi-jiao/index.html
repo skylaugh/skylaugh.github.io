@@ -1,93 +1,99 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" >
+
 <title>ReentrantLock 和 synchronized 比较 | 跬步</title>
-<meta name="description" content="不积跬步，无以至千里" />
-<link rel="shortcut icon" href="https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico?v=1581430970556">
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico?v=1581431919515">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://github.com/skylaugh/skylaugh.github.io.git/styles/main.css">
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
 
   </head>
   <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://github.com/skylaugh/skylaugh.github.io.git">
-  <img class="avatar" src="https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png?v=1581430970556" alt="">
-  </a>
-  <h1 class="site-title">
-    跬步
-  </h1>
-  <p class="site-description">
-    不积跬步，无以至千里
-  </p>
-  <div class="menu-container">
-    
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://github.com/skylaugh/skylaugh.github.io.git">
+        <img src="https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png?v=1581431919515" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
       
-        <a href="/archives" class="menu">
-          归档
-        </a>
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
       
-    
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
       
-        <a href="/tags" class="menu">
-          标签
-        </a>
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
       
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
+    </div>
   </div>
-  <div class="social-container">
-    
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://github.com/skylaugh/skylaugh.github.io.git/atom.xml" target="_blank">RSS</a>
+    </div>
   </div>
 </div>
 
-        <div class="post-detail">
-          <article class="post">
-            <h2 class="post-title">
-              ReentrantLock 和 synchronized 比较
-            </h2>
-            <div class="post-info">
-              <span>
-                2019-10-30
-              </span>
-              <span>
-                12 min read
-              </span>
-              
-                <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/U6BJ26s62" class="post-tag">
-                  # 并发
-                </a>
-              
-            </div>
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">ReentrantLock 和 synchronized 比较</h2>
+            <div class="post-date">2019-10-30</div>
             
-              <img class="post-feature-image" src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/reentrantlock-he-synchronized-bi-jiao.jpg" alt="">
+              <div class="feature-container" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/reentrantlock-he-synchronized-bi-jiao.jpg')">
+              </div>
             
-            <div class="post-content-wrapper">
-              <div class="post-content">
-                <h3 id="可重入性">可重入性：</h3>
+            <div class="post-content">
+              <h3 id="可重入性">可重入性：</h3>
 <p>两者都是可重入的。同一个现成计入一次，锁的计数器进行自增，等到锁的计数器下降为零时，才能释放锁。</p>
 <h3 id="锁的实现">锁的实现：</h3>
 <p>synchronized 依赖于 JVM 实现，而 ReentrantLock 基于 JDK 实现。区别类似于操作系统控制实现与用户使用代码实现。</p>
@@ -388,115 +394,54 @@ class DaemonThread implements Runnable{
 </code></pre>
 <p>任何线程都继承创建它的线程的守护进程状态。由于主线程是用户线程，因此在main方法内创建的任何线程默认为用户线程。</p>
 
-              </div>
-              <div class="toc-container">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li>
-<ul>
-<li><a href="#%E5%8F%AF%E9%87%8D%E5%85%A5%E6%80%A7">可重入性：</a></li>
-<li><a href="#%E9%94%81%E7%9A%84%E5%AE%9E%E7%8E%B0">锁的实现：</a></li>
-<li><a href="#%E6%80%A7%E8%83%BD%E5%8C%BA%E5%88%AB">性能区别：</a></li>
-<li><a href="#%E5%8A%9F%E8%83%BD%E5%8C%BA%E5%88%AB">功能区别：</a>
-<ul>
-<li><a href="#%E4%BE%BF%E5%88%A9%E6%80%A7">便利性</a></li>
-<li><a href="#%E9%94%81%E7%9A%84%E7%BB%86%E7%B2%92%E5%BA%A6%E5%92%8C%E7%81%B5%E6%B4%BB%E5%BA%A6">锁的细粒度和灵活度</a></li>
-</ul>
-</li>
-<li><a href="#reentrantlock-%E7%8B%AC%E6%9C%89%E7%9A%84%E5%8A%9F%E8%83%BD">ReentrantLock 独有的功能</a></li>
-<li><a href="#reentrantlock%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">ReentrantLock源码分析</a></li>
-<li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9D%9E%E5%85%AC%E5%B9%B3%E9%94%81%E6%AF%94%E5%85%AC%E5%B9%B3%E9%94%81%E6%9B%B4%E9%AB%98%E6%95%88">为什么非公平锁比公平锁更高效</a></li>
-<li><a href="#cas%E6%97%A0%E9%94%81%E6%8A%80%E6%9C%AF">CAS无锁技术</a>
-<ul>
-<li><a href="#cas%E7%AE%97%E6%B3%95">CAS算法</a></li>
-<li><a href="#cas%E7%BC%BA%E7%82%B9">CAS缺点</a></li>
-</ul>
-</li>
-<li><a href="#%E5%8F%AF%E9%87%8D%E5%85%A5%E6%80%A7%E7%9A%84%E5%AE%9A%E4%B9%89">可重入性的定义</a></li>
-<li><a href="#%E6%AD%BB%E9%94%81%E7%9A%84%E5%9B%9B%E4%B8%AA%E5%BF%85%E8%A6%81%E6%9D%A1%E4%BB%B6">死锁的四个必要条件</a></li>
-<li><a href="#synchronized%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%A8%E6%B3%95">synchronized的几种用法</a></li>
-<li><a href="#monitor%E7%9B%91%E8%A7%86%E5%99%A8">Monitor监视器</a>
-<ul>
-<li><a href="#monitor%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%85%83%E7%B4%A0">monitor的基本元素</a></li>
-</ul>
-</li>
-<li><a href="#%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B">守护线程</a>
-<ul>
-<li><a href="#%E5%88%9B%E5%BB%BA%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B">创建守护线程</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-              </div>
             </div>
-          </article>
-        </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/U6BJ26s62" class="tag">
+                    并发
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/redis-de-rdb-he-aof">
+                  <h3 class="post-title">
+                    Redis的RDB和AOF
+                  </h3>
+                </a>
+              </div>
+            
 
-        
-          <div class="next-post">
-            <div class="next">下一篇</div>
-            <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/redis-de-rdb-he-aof">
-              <h3 class="post-title">
-                Redis的RDB和AOF
-              </h3>
-            </a>
+            
+
           </div>
-        
 
-        
+        </div>
+      </div>
+    </div>
 
-        <div class="site-footer">
-  <a href="mailto:skylaugh@foxmail.com">Email</a> | 
-  <a class="rss" href="https://github.com/skylaugh/skylaugh.github.io.git/atom.xml" target="_blank">RSS</a>
-</div>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 
-<script>
-  hljs.initHighlightingOnLoad()
+<script type="application/javascript">
 
-  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+AOS.init();
 
-  // This should probably be throttled.
-  // Especially because it triggers during smooth scrolling.
-  // https://lodash.com/docs/4.17.10#throttle
-  // You could do like...
-  // window.addEventListener("scroll", () => {
-  //    _.throttle(doThatStuff, 100);
-  // });
-  // Only not doing it here to keep this Pen dependency-free.
+hljs.initHighlightingOnLoad()
 
-  window.addEventListener("scroll", event => {
-    let fromTop = window.scrollY;
-
-    mainNavLinks.forEach((link, index) => {
-      let section = document.getElementById(decodeURI(link.hash).substring(1));
-      let nextSection = null
-      if (mainNavLinks[index + 1]) {
-        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-      }
-      if (section.offsetTop <= fromTop) {
-        if (nextSection) {
-          if (nextSection.offsetTop > fromTop) {
-            link.classList.add("current");
-          } else {
-            link.classList.remove("current");    
-          }
-        } else {
-          link.classList.add("current");
-        }
-      } else {
-        link.classList.remove("current");
-      }
-    });
-  });
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
 
 </script>
 
-      </div>
-    </div>
+
+
+
   </body>
 </html>

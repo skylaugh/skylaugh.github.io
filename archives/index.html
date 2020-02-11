@@ -1,295 +1,308 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>跬步</title>
-<meta name="description" content="不积跬步，无以至千里" />
-<link rel="shortcut icon" href="https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico?v=1581430970556">
+    <meta charset="utf-8" >
+
+<title>文章归档 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico?v=1581431919515">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://github.com/skylaugh/skylaugh.github.io.git/styles/main.css">
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
 
   </head>
   <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://github.com/skylaugh/skylaugh.github.io.git">
-  <img class="avatar" src="https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png?v=1581430970556" alt="">
-  </a>
-  <h1 class="site-title">
-    跬步
-  </h1>
-  <p class="site-description">
-    不积跬步，无以至千里
-  </p>
-  <div class="menu-container">
-    
-      
-        <a href="/archives" class="menu">
-          归档
-        </a>
-      
-    
-      
-        <a href="/tags" class="menu">
-          标签
-        </a>
-      
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
-  </div>
-  <div class="social-container">
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-  </div>
-</div>
+    <div id="app" class="main">
 
-    
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://github.com/skylaugh/skylaugh.github.io.git">
+        <img src="https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png?v=1581431919515" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
         
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://github.com/skylaugh/skylaugh.github.io.git/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
 
-<div class="archives-container">
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          
+
+          <h2 class="archives-title">文章归档</h2>
+          <div class="archives-container">
+            
+              <h2 class="year" data-aos="fade-in" data-aos-delay="500">2019</h2>
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912">
+                      <h2 class="post-title">
+                        Java知识图谱（2019.12）
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji">
+                      <h2 class="post-title">
+                        Java指令集
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi">
+                      <h2 class="post-title">
+                        Spring学习笔记（一）
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/reentrantlock-he-synchronized-bi-jiao">
+                      <h2 class="post-title">
+                        ReentrantLock 和 synchronized 比较
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/redis-de-rdb-he-aof">
+                      <h2 class="post-title">
+                        Redis的RDB和AOF
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/hong-hei-shu">
+                      <h2 class="post-title">
+                        红黑树
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/lian-biao-fan-zhuan">
+                      <h2 class="post-title">
+                        链表反转
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/bigdecimal-jin-xing-chu-fa-yun-suan-de-yi-ge-xiao-keng">
+                      <h2 class="post-title">
+                        BigDecimal进行除法运算的一个小坑
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/arthas-kuai-su-ru-men">
+                      <h2 class="post-title">
+                        Arthas 快速入门
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/wei-yun-suan-zhi-an-wei-yu-andcao-zuo">
+                      <h2 class="post-title">
+                        位运算之按位与(&amp;)操作
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/jdk18-de-hashmap-yuan-ma-yue-du-er">
+                      <h2 class="post-title">
+                        JDK1.8的HashMap源码阅读(二)
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/jdk18-de-hashmap-yuan-ma-yue-du-yi">
+                      <h2 class="post-title">
+                        JDK1.8的HashMap源码阅读(一)
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/mybatis-chu-li-mysql-xia-blob-yu-string-hu-zhuan-wen-ti">
+                      <h2 class="post-title">
+                        Mybatis处理mysql下BLOB与String互转问题
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/wei-xin-zhi-fu-kai-fa-ji-lu-java">
+                      <h2 class="post-title">
+                        微信支付开发记录（JAVA）
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/dfsdepth-first-searchshen-du-you-xian-sou-suo">
+                      <h2 class="post-title">
+                        DFS(Depth First Search)深度优先搜索
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/shu-ju-jie-gou-stack-zhan-de-xue-xi">
+                      <h2 class="post-title">
+                        数据结构Stack栈的学习
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/shu-ju-jie-gou-queue-de-xue-xi">
+                      <h2 class="post-title">
+                        数据结构Queue的学习
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+                
+                  <article class="post">
+                    <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/leetcode-53zui-da-zi-xu-he">
+                      <h2 class="post-title">
+                        LeetCode 53.最大子序和
+                      </h2>
+                    </a>
+                  </article>
+                
+              
+            
+          </div>
+
+          <div class="pagination-container">
   
-    <h2 class="year">2019</h2>
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-shi-tu-pu-201912" class="post">
-          <h2 class="post-title">
-            Java知识图谱（2019.12）
-          </h2>
-          <div class="time">2019-12-29</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/java-zhi-ling-ji" class="post">
-          <h2 class="post-title">
-            Java指令集
-          </h2>
-          <div class="time">2019-12-17</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/spring-xue-xi-bi-ji-yi" class="post">
-          <h2 class="post-title">
-            Spring学习笔记（一）
-          </h2>
-          <div class="time">2019-11-21</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/reentrantlock-he-synchronized-bi-jiao" class="post">
-          <h2 class="post-title">
-            ReentrantLock 和 synchronized 比较
-          </h2>
-          <div class="time">2019-10-30</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/redis-de-rdb-he-aof" class="post">
-          <h2 class="post-title">
-            Redis的RDB和AOF
-          </h2>
-          <div class="time">2019-10-23</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/hong-hei-shu" class="post">
-          <h2 class="post-title">
-            红黑树
-          </h2>
-          <div class="time">2019-09-04</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/lian-biao-fan-zhuan" class="post">
-          <h2 class="post-title">
-            链表反转
-          </h2>
-          <div class="time">2019-08-20</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/bigdecimal-jin-xing-chu-fa-yun-suan-de-yi-ge-xiao-keng" class="post">
-          <h2 class="post-title">
-            BigDecimal进行除法运算的一个小坑
-          </h2>
-          <div class="time">2019-08-07</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/arthas-kuai-su-ru-men" class="post">
-          <h2 class="post-title">
-            Arthas 快速入门
-          </h2>
-          <div class="time">2019-07-29</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/wei-yun-suan-zhi-an-wei-yu-andcao-zuo" class="post">
-          <h2 class="post-title">
-            位运算之按位与(&amp;)操作
-          </h2>
-          <div class="time">2019-07-02</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/jdk18-de-hashmap-yuan-ma-yue-du-er" class="post">
-          <h2 class="post-title">
-            JDK1.8的HashMap源码阅读(二)
-          </h2>
-          <div class="time">2019-06-13</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/jdk18-de-hashmap-yuan-ma-yue-du-yi" class="post">
-          <h2 class="post-title">
-            JDK1.8的HashMap源码阅读(一)
-          </h2>
-          <div class="time">2019-06-11</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/mybatis-chu-li-mysql-xia-blob-yu-string-hu-zhuan-wen-ti" class="post">
-          <h2 class="post-title">
-            Mybatis处理mysql下BLOB与String互转问题
-          </h2>
-          <div class="time">2019-05-21</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/wei-xin-zhi-fu-kai-fa-ji-lu-java" class="post">
-          <h2 class="post-title">
-            微信支付开发记录（JAVA）
-          </h2>
-          <div class="time">2019-04-18</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/dfsdepth-first-searchshen-du-you-xian-sou-suo" class="post">
-          <h2 class="post-title">
-            DFS(Depth First Search)深度优先搜索
-          </h2>
-          <div class="time">2019-03-27</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/shu-ju-jie-gou-stack-zhan-de-xue-xi" class="post">
-          <h2 class="post-title">
-            数据结构Stack栈的学习
-          </h2>
-          <div class="time">2019-03-05</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/shu-ju-jie-gou-queue-de-xue-xi" class="post">
-          <h2 class="post-title">
-            数据结构Queue的学习
-          </h2>
-          <div class="time">2019-03-01</div>
-        </a>
-      
-    
-      
-        <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/leetcode-53zui-da-zi-xu-he" class="post">
-          <h2 class="post-title">
-            LeetCode 53.最大子序和
-          </h2>
-          <div class="time">2019-01-03</div>
-        </a>
-      
-    
   
 </div>
 
-    
-        <div class="pagination-container">
-  
-  
-</div>
+        </div>
+      </div>
+    </div>
 
-    
-        <div class="site-footer">
-  <a href="mailto:skylaugh@foxmail.com">Email</a> | 
-  <a class="rss" href="https://github.com/skylaugh/skylaugh.github.io.git/atom.xml" target="_blank">RSS</a>
-</div>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 
-<script>
-  hljs.initHighlightingOnLoad()
+<script type="application/javascript">
 
-  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+AOS.init();
 
-  // This should probably be throttled.
-  // Especially because it triggers during smooth scrolling.
-  // https://lodash.com/docs/4.17.10#throttle
-  // You could do like...
-  // window.addEventListener("scroll", () => {
-  //    _.throttle(doThatStuff, 100);
-  // });
-  // Only not doing it here to keep this Pen dependency-free.
+hljs.initHighlightingOnLoad()
 
-  window.addEventListener("scroll", event => {
-    let fromTop = window.scrollY;
-
-    mainNavLinks.forEach((link, index) => {
-      let section = document.getElementById(decodeURI(link.hash).substring(1));
-      let nextSection = null
-      if (mainNavLinks[index + 1]) {
-        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-      }
-      if (section.offsetTop <= fromTop) {
-        if (nextSection) {
-          if (nextSection.offsetTop > fromTop) {
-            link.classList.add("current");
-          } else {
-            link.classList.remove("current");    
-          }
-        } else {
-          link.classList.add("current");
-        }
-      } else {
-        link.classList.remove("current");
-      }
-    });
-  });
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
 
 </script>
 
-      </div>
-    </div>
+
+
+
   </body>
 </html>

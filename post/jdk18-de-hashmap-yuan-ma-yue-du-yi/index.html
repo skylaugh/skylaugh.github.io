@@ -1,93 +1,99 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" >
+
 <title>JDK1.8的HashMap源码阅读(一) | 跬步</title>
-<meta name="description" content="不积跬步，无以至千里" />
-<link rel="shortcut icon" href="https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico?v=1581430970556">
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico?v=1581431919515">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://github.com/skylaugh/skylaugh.github.io.git/styles/main.css">
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
 
   </head>
   <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://github.com/skylaugh/skylaugh.github.io.git">
-  <img class="avatar" src="https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png?v=1581430970556" alt="">
-  </a>
-  <h1 class="site-title">
-    跬步
-  </h1>
-  <p class="site-description">
-    不积跬步，无以至千里
-  </p>
-  <div class="menu-container">
-    
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://github.com/skylaugh/skylaugh.github.io.git">
+        <img src="https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png?v=1581431919515" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
       
-        <a href="/archives" class="menu">
-          归档
-        </a>
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
       
-    
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
       
-        <a href="/tags" class="menu">
-          标签
-        </a>
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
       
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
+    </div>
   </div>
-  <div class="social-container">
-    
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://github.com/skylaugh/skylaugh.github.io.git/atom.xml" target="_blank">RSS</a>
+    </div>
   </div>
 </div>
 
-        <div class="post-detail">
-          <article class="post">
-            <h2 class="post-title">
-              JDK1.8的HashMap源码阅读(一)
-            </h2>
-            <div class="post-info">
-              <span>
-                2019-06-11
-              </span>
-              <span>
-                10 min read
-              </span>
-              
-                <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/E1t30QiTK" class="post-tag">
-                  # Java
-                </a>
-              
-            </div>
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">JDK1.8的HashMap源码阅读(一)</h2>
+            <div class="post-date">2019-06-11</div>
             
-              <img class="post-feature-image" src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/jdk18-de-hashmap-yuan-ma-yue-du-yi.jpg" alt="">
+              <div class="feature-container" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/jdk18-de-hashmap-yuan-ma-yue-du-yi.jpg')">
+              </div>
             
-            <div class="post-content-wrapper">
-              <div class="post-content">
-                <h3 id="继承及实现关系图">继承及实现关系图</h3>
+            <div class="post-content">
+              <h3 id="继承及实现关系图">继承及实现关系图</h3>
 <h2 id=""><img src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/1581412612926.jpg" alt="HashMap" loading="lazy"></h2>
 <h3 id="源码注释及翻译">源码注释及翻译</h3>
 <blockquote>
@@ -153,91 +159,54 @@ static final int MIN_TREEIFY_CAPACITY = 64;
 </code></pre>
 <p>默认初始容量16，负载因子0.75,即容量超过16 * 0.75 = 12 时发生rehash扩容至32。</p>
 
-              </div>
-              <div class="toc-container">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li>
-<ul>
-<li><a href="#%E7%BB%A7%E6%89%BF%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%85%B3%E7%B3%BB%E5%9B%BE">继承及实现关系图</a></li>
-</ul>
-</li>
-<li><a href="#">!HashMap</a>
-<ul>
-<li><a href="#%E6%BA%90%E7%A0%81%E6%B3%A8%E9%87%8A%E5%8F%8A%E7%BF%BB%E8%AF%91">源码注释及翻译</a></li>
-<li><a href="#%E9%BB%98%E8%AE%A4%E5%B1%9E%E6%80%A7">默认属性</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-              </div>
             </div>
-          </article>
-        </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/E1t30QiTK" class="tag">
+                    Java
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/mybatis-chu-li-mysql-xia-blob-yu-string-hu-zhuan-wen-ti">
+                  <h3 class="post-title">
+                    Mybatis处理mysql下BLOB与String互转问题
+                  </h3>
+                </a>
+              </div>
+            
 
-        
-          <div class="next-post">
-            <div class="next">下一篇</div>
-            <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/mybatis-chu-li-mysql-xia-blob-yu-string-hu-zhuan-wen-ti">
-              <h3 class="post-title">
-                Mybatis处理mysql下BLOB与String互转问题
-              </h3>
-            </a>
+            
+
           </div>
-        
 
-        
+        </div>
+      </div>
+    </div>
 
-        <div class="site-footer">
-  <a href="mailto:skylaugh@foxmail.com">Email</a> | 
-  <a class="rss" href="https://github.com/skylaugh/skylaugh.github.io.git/atom.xml" target="_blank">RSS</a>
-</div>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 
-<script>
-  hljs.initHighlightingOnLoad()
+<script type="application/javascript">
 
-  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+AOS.init();
 
-  // This should probably be throttled.
-  // Especially because it triggers during smooth scrolling.
-  // https://lodash.com/docs/4.17.10#throttle
-  // You could do like...
-  // window.addEventListener("scroll", () => {
-  //    _.throttle(doThatStuff, 100);
-  // });
-  // Only not doing it here to keep this Pen dependency-free.
+hljs.initHighlightingOnLoad()
 
-  window.addEventListener("scroll", event => {
-    let fromTop = window.scrollY;
-
-    mainNavLinks.forEach((link, index) => {
-      let section = document.getElementById(decodeURI(link.hash).substring(1));
-      let nextSection = null
-      if (mainNavLinks[index + 1]) {
-        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-      }
-      if (section.offsetTop <= fromTop) {
-        if (nextSection) {
-          if (nextSection.offsetTop > fromTop) {
-            link.classList.add("current");
-          } else {
-            link.classList.remove("current");    
-          }
-        } else {
-          link.classList.add("current");
-        }
-      } else {
-        link.classList.remove("current");
-      }
-    });
-  });
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
 
 </script>
 
-      </div>
-    </div>
+
+
+
   </body>
 </html>

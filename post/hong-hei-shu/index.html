@@ -1,93 +1,99 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" >
+
 <title>红黑树 | 跬步</title>
-<meta name="description" content="不积跬步，无以至千里" />
-<link rel="shortcut icon" href="https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico?v=1581430970556">
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://github.com/skylaugh/skylaugh.github.io.git/favicon.ico?v=1581431919515">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://github.com/skylaugh/skylaugh.github.io.git/styles/main.css">
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
 
   </head>
   <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://github.com/skylaugh/skylaugh.github.io.git">
-  <img class="avatar" src="https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png?v=1581430970556" alt="">
-  </a>
-  <h1 class="site-title">
-    跬步
-  </h1>
-  <p class="site-description">
-    不积跬步，无以至千里
-  </p>
-  <div class="menu-container">
-    
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://github.com/skylaugh/skylaugh.github.io.git">
+        <img src="https://github.com/skylaugh/skylaugh.github.io.git/images/avatar.png?v=1581431919515" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
       
-        <a href="/archives" class="menu">
-          归档
-        </a>
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
       
-    
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
       
-        <a href="/tags" class="menu">
-          标签
-        </a>
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
       
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
+    </div>
   </div>
-  <div class="social-container">
-    
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://github.com/skylaugh/skylaugh.github.io.git/atom.xml" target="_blank">RSS</a>
+    </div>
   </div>
 </div>
 
-        <div class="post-detail">
-          <article class="post">
-            <h2 class="post-title">
-              红黑树
-            </h2>
-            <div class="post-info">
-              <span>
-                2019-09-04
-              </span>
-              <span>
-                11 min read
-              </span>
-              
-                <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/AFwlC_qiL" class="post-tag">
-                  # 数据结构
-                </a>
-              
-            </div>
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">红黑树</h2>
+            <div class="post-date">2019-09-04</div>
             
-              <img class="post-feature-image" src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/hong-hei-shu.jpg" alt="">
+              <div class="feature-container" style="background-image: url('https://github.com/skylaugh/skylaugh.github.io.git/post-images/hong-hei-shu.jpg')">
+              </div>
             
-            <div class="post-content-wrapper">
-              <div class="post-content">
-                <h2 id="之前看-hashmap-jdk18中的源码就有提到红黑树这次我们来了解以下红黑树究竟是怎样一种数据结构">  之前看 HashMap jdk1.8中的源码，就有提到红黑树，这次我们来了解以下红黑树究竟是怎样一种数据结构。</h2>
+            <div class="post-content">
+              <h2 id="之前看-hashmap-jdk18中的源码就有提到红黑树这次我们来了解以下红黑树究竟是怎样一种数据结构">  之前看 HashMap jdk1.8中的源码，就有提到红黑树，这次我们来了解以下红黑树究竟是怎样一种数据结构。</h2>
 <h3 id="定义">定义</h3>
 <blockquote>
 <p>红黑树（Red Black Tree）RBT 是一种自<strong>平衡二叉查找树</strong>，是在计算机科学中用到的一种数据结构，典型的用途是实现关联数组。<br>
@@ -539,98 +545,54 @@ public class RedBlackTree extends JFrame {
 <p>输出图像<br>
 <img src="https://github.com/skylaugh/skylaugh.github.io.git/post-images/1581414193000.png" alt="rbt" loading="lazy"></p>
 
-              </div>
-              <div class="toc-container">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#%E4%B9%8B%E5%89%8D%E7%9C%8B-hashmap-jdk18%E4%B8%AD%E7%9A%84%E6%BA%90%E7%A0%81%E5%B0%B1%E6%9C%89%E6%8F%90%E5%88%B0%E7%BA%A2%E9%BB%91%E6%A0%91%E8%BF%99%E6%AC%A1%E6%88%91%E4%BB%AC%E6%9D%A5%E4%BA%86%E8%A7%A3%E4%BB%A5%E4%B8%8B%E7%BA%A2%E9%BB%91%E6%A0%91%E7%A9%B6%E7%AB%9F%E6%98%AF%E6%80%8E%E6%A0%B7%E4%B8%80%E7%A7%8D%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">  之前看 HashMap jdk1.8中的源码，就有提到红黑树，这次我们来了解以下红黑树究竟是怎样一种数据结构。</a>
-<ul>
-<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
-<li><a href="#%E4%BA%8C%E5%8F%89%E6%9F%A5%E6%89%BE%E6%A0%91">二叉查找树</a></li>
-<li><a href="#%E7%BA%A2%E9%BB%91%E6%A0%91%E7%89%B9%E5%BE%81">红黑树特征:</a></li>
-<li><a href="#%E7%BA%A2%E9%BB%91%E6%A0%91%E5%8A%A8%E6%80%81%E6%BC%94%E7%A4%BA">红黑树动态演示</a></li>
-<li><a href="#%E6%8F%92%E5%85%A5%E6%93%8D%E4%BD%9C">插入操作</a>
-<ul>
-<li><a href="#%E5%8F%98%E8%89%B2">变色：</a></li>
-<li><a href="#%E5%B7%A6%E6%97%8B">左旋</a></li>
-<li><a href="#%E5%8F%B3%E6%97%8B">右旋</a></li>
-</ul>
-</li>
-<li><a href="#4%E7%A7%8D%E6%83%85%E5%86%B5">4种情况</a></li>
-<li><a href="#%E5%88%A0%E9%99%A4%E6%93%8D%E4%BD%9C">删除操作</a></li>
-<li><a href="#%E6%89%8B%E5%86%99%E7%BA%A2%E9%BB%91%E6%A0%91%E4%BB%A3%E7%A0%81">手写红黑树代码</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-              </div>
             </div>
-          </article>
-        </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://github.com/skylaugh/skylaugh.github.io.git/tag/AFwlC_qiL" class="tag">
+                    数据结构
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/lian-biao-fan-zhuan">
+                  <h3 class="post-title">
+                    链表反转
+                  </h3>
+                </a>
+              </div>
+            
 
-        
-          <div class="next-post">
-            <div class="next">下一篇</div>
-            <a href="https://github.com/skylaugh/skylaugh.github.io.git/post/lian-biao-fan-zhuan">
-              <h3 class="post-title">
-                链表反转
-              </h3>
-            </a>
+            
+
           </div>
-        
 
-        
+        </div>
+      </div>
+    </div>
 
-        <div class="site-footer">
-  <a href="mailto:skylaugh@foxmail.com">Email</a> | 
-  <a class="rss" href="https://github.com/skylaugh/skylaugh.github.io.git/atom.xml" target="_blank">RSS</a>
-</div>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 
-<script>
-  hljs.initHighlightingOnLoad()
+<script type="application/javascript">
 
-  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+AOS.init();
 
-  // This should probably be throttled.
-  // Especially because it triggers during smooth scrolling.
-  // https://lodash.com/docs/4.17.10#throttle
-  // You could do like...
-  // window.addEventListener("scroll", () => {
-  //    _.throttle(doThatStuff, 100);
-  // });
-  // Only not doing it here to keep this Pen dependency-free.
+hljs.initHighlightingOnLoad()
 
-  window.addEventListener("scroll", event => {
-    let fromTop = window.scrollY;
-
-    mainNavLinks.forEach((link, index) => {
-      let section = document.getElementById(decodeURI(link.hash).substring(1));
-      let nextSection = null
-      if (mainNavLinks[index + 1]) {
-        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-      }
-      if (section.offsetTop <= fromTop) {
-        if (nextSection) {
-          if (nextSection.offsetTop > fromTop) {
-            link.classList.add("current");
-          } else {
-            link.classList.remove("current");    
-          }
-        } else {
-          link.classList.add("current");
-        }
-      } else {
-        link.classList.remove("current");
-      }
-    });
-  });
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
 
 </script>
 
-      </div>
-    </div>
+
+
+
   </body>
 </html>
