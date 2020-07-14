@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>位运算之按位与(&amp;)操作 | 跬步</title>
+<title>OAuth2.0四种授权方式 | 跬步</title>
 <meta name="description" content="不积跬步，无以至千里">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -86,70 +86,107 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">位运算之按位与(&amp;)操作</h2>
-            <div class="post-date">2019-07-02</div>
+            <h2 class="post-title">OAuth2.0四种授权方式</h2>
+            <div class="post-date">2020-07-14</div>
             
-              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/wei-yun-suan-zhi-an-wei-yu-andcao-zuo.jpg')">
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/oauth20-si-chong-shou-quan-fang-shi.jpg')">
               </div>
             
             <div class="post-content">
-              <h3 id="定义">定义</h3>
-<blockquote>
-<p>按位与运算符“&amp;”是双目运算符。其功能是参与运算的两数各对应的二进位相与。只有对应的两个二进位都为1时，结果位才为1。参与运算的两个数均以补码出现。</p>
-</blockquote>
-<h3 id="规则">规则：</h3>
-<pre><code>1 &amp; 1 = 1  
-1 &amp; 0 = 0  
-0 &amp; 1 = 0  
-0 &amp; 0 = 0  
-</code></pre>
-<h3 id="常用技巧">常用技巧</h3>
-<ol>
-<li>可以用来判断整数奇偶性<br>
-a &amp; 1<br>
-0偶 1奇<br>
-例如:</li>
-</ol>
-<pre><code>2 &amp; 1 = 0 即 10 &amp; 01 = 00 = 0;  //偶数
-6 &amp; 1 = 0 即 110 &amp; 001 = 000 = 0;  //偶数
-3 &amp; 1 = 1 即 11 &amp; 01 = 01 = 1;  //奇数
-</code></pre>
-<ol start="2">
-<li>判断是否是2的正整数幂<br>
-a &amp; a-1<br>
-若结果为0表示a是2的正整数幂。因为2的正整数幂用二进制表示是1后边跟n个0，a-1为n个1，两者按位与则是0。<br>
-例如:</li>
-</ol>
-<pre><code>a = 4
-4 &amp; 3 = 100 &amp; 011 = 000 = 0;//说明a是2的正整数幂
-</code></pre>
-<ol start="3">
-<li>
-<p>统计整数中1的个数<br>
-朴素的统计办法是：先判断n的奇偶性，为奇数时计数器增加1，然后将n右移一位，重复上面步骤，直到移位完毕。</p>
+              <p>OAuth2.0不向下兼容1.0版本</p>
+<h3 id="四种获得令牌的方式">四种获得令牌的方式</h3>
+<ul>
+<li><strong>授权码</strong>(<em>authorization-code</em>)</li>
+<li><strong>隐藏式</strong>(<em>implicit</em>)</li>
+<li><strong>密码式</strong>(p<em>assword</em>)</li>
+<li><strong>客户端凭证</strong>(<em>client credentials</em>)</li>
+</ul>
+<h3 id="几个重要参数">几个重要参数</h3>
+<ul>
+<li>response_type:code或token,code需要再次请求获取token</li>
+<li>client_id:客户端身份标识</li>
+<li>client_secret:客户端密钥</li>
+<li>redirect_uri:重定向地址</li>
+<li>scope:授权的范围，read只读，all读写</li>
+<li>grant_type:授权方式
+<ul>
+<li>authorization_code 授权码</li>
+<li>password 密码</li>
+<li>client_credentials 凭证式</li>
+<li>refresh_token 更新令牌</li>
+</ul>
 </li>
-<li>
-<p>对于正整数的模运算（注意，负数不能这么算）<br>
-乘除法是很消耗时间的，只要对数左移一位就是乘以2，右移一位就是除以2，传说用位运算效率提高了60%。</p>
-</li>
-</ol>
-<pre><code>乘2^k,  n&lt;&lt;k;  
-除2^k,  n&gt;&gt;k。
+<li>state:随机数，防止CSRF攻击</li>
+</ul>
+<h4 id="1-授权码">1、授权码</h4>
+<p>安全系数最高，最常用<br>
+第一次请求，获取授权码</p>
+<pre><code>https://wx.com/oauth/authorize?
+  response_type=code&amp;
+  client_id=CLIENT_ID&amp;
+  redirect_uri=http://juejin.im/callback&amp;
+  scope=read
 </code></pre>
-<p>对2的次方取模</p>
-<pre><code>n &amp; (2^k -1)
+<p>微信重定向并带上授权码</p>
+<pre><code>http://juejin.im/callback?code=AUTHORIZATION_CODE
 </code></pre>
-<p>等价于</p>
-<pre><code>n % 2^k
+<p>第二次请求获取token，需要code和client_secret</p>
+<pre><code>https://wx.com/oauth/token?
+ client_id=CLIENT_ID&amp;
+ client_secret=CLIENT_SECRET&amp;
+ grant_type=authorization_code&amp;
+ code=AUTHORIZATION_CODE&amp;
+ redirect_uri=http://juejin.im/callback
 </code></pre>
-<p>用通俗的言语来描述就是,对2的次方取模，<strong>取模其实就是取溢出量</strong>。只要将数与2的次方-1做按位与运算即可。HashMap的get方法中用到了此取模计算。</p>
+<p>返回token信息</p>
+<pre><code> {    
+  &quot;access_token&quot;:&quot;ACCESS_TOKEN&quot;,
+  &quot;token_type&quot;:&quot;bearer&quot;,
+  &quot;expires_in&quot;:2592000,
+  &quot;refresh_token&quot;:&quot;REFRESH_TOKEN&quot;,
+  &quot;scope&quot;:&quot;read&quot;,
+  ......
+}
+
+</code></pre>
+<h4 id="2-隐藏式">2、隐藏式</h4>
+<p>纯前端应用直接获取token</p>
+<pre><code>https://wx.com/oauth/authorize?
+  response_type=token&amp;
+  client_id=CLIENT_ID&amp;
+  redirect_uri=http://juejin.im/callback&amp;
+  scope=read
+</code></pre>
+<h4 id="3-密码式">3、密码式</h4>
+<p>需要用户名和密码去申请token</p>
+<pre><code>https://wx.com/token?
+  grant_type=password&amp;
+  username=USERNAME&amp;
+  password=PASSWORD&amp;
+  client_id=CLIENT_ID
+</code></pre>
+<h4 id="4-凭证式">4、凭证式</h4>
+<p>适用于没有前端的应用</p>
+<pre><code>https://wx.com/token?
+  grant_type=client_credentials&amp;
+  client_id=CLIENT_ID&amp;
+  client_secret=CLIENT_SECRET
+</code></pre>
+<h3 id="令牌过期">令牌过期</h3>
+<p>用返回的refresh_token请求，重新获取令牌</p>
+<pre><code>https://wx.com/oauth/token?
+  grant_type=refresh_token&amp;
+  client_id=CLIENT_ID&amp;
+  client_secret=CLIENT_SECRET&amp;
+  refresh_token=REFRESH_TOKEN
+</code></pre>
 
             </div>
             
               <div class="tag-container">
                 
-                  <a href="https://skylaugh.github.io/tag/NLraoO2c4" class="tag">
-                    算法
+                  <a href="https://skylaugh.github.io/tag/tUCgTF6zk" class="tag">
+                    Others
                   </a>
                 
               </div>
@@ -157,9 +194,9 @@ a &amp; a-1<br>
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://skylaugh.github.io/post/jdk18-de-hashmap-yuan-ma-yue-du-er">
+                <a href="https://skylaugh.github.io/post/java-zhi-ling-ji">
                   <h3 class="post-title">
-                    JDK1.8的HashMap源码阅读(二)
+                    Java指令集
                   </h3>
                 </a>
               </div>

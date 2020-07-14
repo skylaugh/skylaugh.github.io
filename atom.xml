@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://skylaugh.github.io</id>
     <title>跬步</title>
-    <updated>2020-04-26T05:09:43.355Z</updated>
+    <updated>2020-07-14T14:07:55.495Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://skylaugh.github.io"/>
     <link rel="self" href="https://skylaugh.github.io/atom.xml"/>
@@ -11,101 +11,98 @@
     <icon>https://skylaugh.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 跬步</rights>
     <entry>
-        <title type="html"><![CDATA[简历]]></title>
-        <id>https://skylaugh.github.io/post/jian-li</id>
-        <link href="https://skylaugh.github.io/post/jian-li">
+        <title type="html"><![CDATA[OAuth2.0四种授权方式]]></title>
+        <id>https://skylaugh.github.io/post/oauth20-si-chong-shou-quan-fang-shi</id>
+        <link href="https://skylaugh.github.io/post/oauth20-si-chong-shou-quan-fang-shi">
         </link>
-        <updated>2020-04-22T15:27:18.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="贾笑天">贾笑天</h1>
-<h3 id="联系方式">联系方式</h3>
+        <updated>2020-07-14T14:04:30.000Z</updated>
+        <content type="html"><![CDATA[<p>OAuth2.0不向下兼容1.0版本</p>
+<h3 id="四种获得令牌的方式">四种获得令牌的方式</h3>
 <ul>
-<li><strong>手机：</strong> 13939062577</li>
-<li><strong>邮箱：</strong> skylaugh@foxmail.com</li>
-<li><strong>微信：</strong> 同手机号</li>
+<li><strong>授权码</strong>(<em>authorization-code</em>)</li>
+<li><strong>隐藏式</strong>(<em>implicit</em>)</li>
+<li><strong>密码式</strong>(p<em>assword</em>)</li>
+<li><strong>客户端凭证</strong>(<em>client credentials</em>)</li>
 </ul>
-<hr>
-<h3 id="个人信息">个人信息</h3>
+<h3 id="几个重要参数">几个重要参数</h3>
 <ul>
-<li>贾笑天(jia xiao tian)/男/1990</li>
-<li>本科/河南工业大学-食品科学与工程</li>
-<li>CET-6/能够无障碍阅读英文文档</li>
-<li>工作年限：4年</li>
-<li>博客： https://leojia.club/</li>
+<li>response_type:code或token,code需要再次请求获取token</li>
+<li>client_id:客户端身份标识</li>
+<li>client_secret:客户端密钥</li>
+<li>redirect_uri:重定向地址</li>
+<li>scope:授权的范围，read只读，all读写</li>
+<li>grant_type:授权方式
+<ul>
+<li>authorization_code 授权码</li>
+<li>password 密码</li>
+<li>client_credentials 凭证式</li>
+<li>refresh_token 更新令牌</li>
 </ul>
-<hr>
-<h3 id="专业技能">专业技能</h3>
-<ul>
-<li>熟悉 Struts，Spring，Spring Boot，Mybatis，Hibernate 等常用框架。</li>
-<li>熟悉 MySQL ，Oracle  数据库的搭建与使用，对数据库优化有一定心得。</li>
-<li>使用过 Redis，ES，ZooKeeper 等中间件。</li>
-<li>使用过 Eclipse，Idea，Git，SVN，Maven，Gradle 等工具进行开发。</li>
-<li>使用过 Junit，Jmeter 等工具进行测试。</li>
-<li>熟悉 Linux 常用命令。</li>
-</ul>
-<hr>
-<h3 id="工作及项目经历">工作及项目经历</h3>
-<p><strong>2018/06 - 2019/11</strong> | <strong>宁波和思网络科技有限公司</strong> | <strong>Java 开发</strong><br>
-任职期间项目：<br>
-<strong>社区团购小程序</strong></p>
-<ul>
-<li>项目环境：Spring Boot，Mybatis，MySQL</li>
-<li>项目描述：一款微信电商类小程序，平台需要在各个社区设置一名团长，由团长负责推广平台，每笔订单可抽佣。</li>
-<li>项目职责：
-<ol>
-<li>产品管理、订单管理模块的开发。</li>
-<li>购买及退款相关接口的开发。</li>
-<li>统计报表相关接口的开发。</li>
-</ol>
 </li>
+<li>state:随机数，防止CSRF攻击</li>
 </ul>
-<p><strong>小额贷款APP</strong></p>
-<ul>
-<li>项目环境：Spring Boot，Mybatis，Dubbo，MySQL</li>
-<li>项目描述：网贷APP，用户可以注册认证进行小额借贷。</li>
-<li>项目职责：
-<ol>
-<li>身份认证，运营商认证，银行卡认证，支付宝认证接口对接。</li>
-<li>支付宝，连连支付，通联支付，易宝支付，汇潮支付等支付方式对接。</li>
-<li>财务报表统计相关接口的开发。</li>
-</ol>
-</li>
-</ul>
-<p><strong>2017/08 - 2018/05</strong> | <strong>宁波茗软科技有限公司</strong> | <strong>Java 开发</strong><br>
-任职期间项目：<br>
-<strong>同镇信息分享小程序</strong></p>
-<ul>
-<li>项目环境：Spring Boot，Mybatis，MySQL</li>
-<li>项目描述：一款可以分享区域信息小程序，用户可以在这里发布或查询所需要的咨询，如顺风车、二手交易、房屋租售、求职招聘、寻人寻物等，用户可以通过付费对信息进行置顶。</li>
-<li>项目职责：
-<ol>
-<li>区域管理员审核、数据权限模块的开发。</li>
-<li>微信支付及退款回调处理相关接口的开发。</li>
-<li>项目中用到的定时任务相关的开发。</li>
-</ol>
-</li>
-</ul>
-<p><strong>2015/08 - 2017/07</strong> | <strong>亚信科技 &amp; 南京迈特望</strong> | <strong>Java 开发</strong><br>
-任职期间项目：<br>
-<strong>中移在线统一质检平台</strong></p>
-<ul>
-<li>项目环境：Struts2，Spring，Mybatis，Dubbo，MySQL 5.7，Tomcat 8</li>
-<li>项目描述：中国移动用于客服代表服务质量考核的系统。由质检员使用对客服代表的服务进行抽查评价。是中移在线公司牵头整合接入全网各省分公司10086客服系统、夜间专席、互联网客服、众包系统。</li>
-<li>项目职责：
-<ol>
-<li>自动化质检核心模块的开发。</li>
-<li>需求评估与设计，开发计划排期。</li>
-<li>安全优化工作，防SQL注入、CSRF、XSS攻击。</li>
-<li>性能优化，配合压测人员寻找性能瓶颈，优化项目TPS，响应时间及并发性能。</li>
-</ol>
-</li>
-</ul>
-<hr>
-<h3 id="自我评价">自我评价</h3>
-<ul>
-<li>具有良好的编码习惯，注重代码的可读性、健壮性与可扩展性。</li>
-<li>具有良好的需求分析设计能力与问题解决能力，逻辑能力强。</li>
-<li>具有很强的团队精神，有良好的组织、沟通和协调能力。</li>
-</ul>
+<h4 id="1-授权码">1、授权码</h4>
+<p>安全系数最高，最常用<br>
+第一次请求，获取授权码</p>
+<pre><code>https://wx.com/oauth/authorize?
+  response_type=code&amp;
+  client_id=CLIENT_ID&amp;
+  redirect_uri=http://juejin.im/callback&amp;
+  scope=read
+</code></pre>
+<p>微信重定向并带上授权码</p>
+<pre><code>http://juejin.im/callback?code=AUTHORIZATION_CODE
+</code></pre>
+<p>第二次请求获取token，需要code和client_secret</p>
+<pre><code>https://wx.com/oauth/token?
+ client_id=CLIENT_ID&amp;
+ client_secret=CLIENT_SECRET&amp;
+ grant_type=authorization_code&amp;
+ code=AUTHORIZATION_CODE&amp;
+ redirect_uri=http://juejin.im/callback
+</code></pre>
+<p>返回token信息</p>
+<pre><code> {    
+  &quot;access_token&quot;:&quot;ACCESS_TOKEN&quot;,
+  &quot;token_type&quot;:&quot;bearer&quot;,
+  &quot;expires_in&quot;:2592000,
+  &quot;refresh_token&quot;:&quot;REFRESH_TOKEN&quot;,
+  &quot;scope&quot;:&quot;read&quot;,
+  ......
+}
+
+</code></pre>
+<h4 id="2-隐藏式">2、隐藏式</h4>
+<p>纯前端应用直接获取token</p>
+<pre><code>https://wx.com/oauth/authorize?
+  response_type=token&amp;
+  client_id=CLIENT_ID&amp;
+  redirect_uri=http://juejin.im/callback&amp;
+  scope=read
+</code></pre>
+<h4 id="3-密码式">3、密码式</h4>
+<p>需要用户名和密码去申请token</p>
+<pre><code>https://wx.com/token?
+  grant_type=password&amp;
+  username=USERNAME&amp;
+  password=PASSWORD&amp;
+  client_id=CLIENT_ID
+</code></pre>
+<h4 id="4-凭证式">4、凭证式</h4>
+<p>适用于没有前端的应用</p>
+<pre><code>https://wx.com/token?
+  grant_type=client_credentials&amp;
+  client_id=CLIENT_ID&amp;
+  client_secret=CLIENT_SECRET
+</code></pre>
+<h3 id="令牌过期">令牌过期</h3>
+<p>用返回的refresh_token请求，重新获取令牌</p>
+<pre><code>https://wx.com/oauth/token?
+  grant_type=refresh_token&amp;
+  client_id=CLIENT_ID&amp;
+  client_secret=CLIENT_SECRET&amp;
+  refresh_token=REFRESH_TOKEN
+</code></pre>
 ]]></content>
     </entry>
     <entry>
