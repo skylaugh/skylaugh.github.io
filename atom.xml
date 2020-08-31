@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://skylaugh.github.io</id>
+    <id>http://localhost:4000</id>
     <title>跬步</title>
-    <updated>2020-08-31T15:28:15.248Z</updated>
+    <updated>2020-08-31T15:29:38.088Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://skylaugh.github.io"/>
-    <link rel="self" href="https://skylaugh.github.io/atom.xml"/>
+    <link rel="alternate" href="http://localhost:4000"/>
+    <link rel="self" href="http://localhost:4000/atom.xml"/>
     <subtitle>不积跬步，无以至千里</subtitle>
-    <logo>https://skylaugh.github.io/images/avatar.png</logo>
-    <icon>https://skylaugh.github.io/favicon.ico</icon>
+    <logo>http://localhost:4000/images/avatar.png</logo>
+    <icon>http://localhost:4000/favicon.ico</icon>
     <rights>All rights reserved 2020, 跬步</rights>
     <entry>
         <title type="html"><![CDATA[记工作中遇到的一个bug]]></title>
-        <id>https://skylaugh.github.io/post/ji-gong-zuo-zhong-yu-dao-de-yi-ge-bug</id>
-        <link href="https://skylaugh.github.io/post/ji-gong-zuo-zhong-yu-dao-de-yi-ge-bug">
+        <id>http://localhost:4000/post/ji-gong-zuo-zhong-yu-dao-de-yi-ge-bug</id>
+        <link href="http://localhost:4000/post/ji-gong-zuo-zhong-yu-dao-de-yi-ge-bug">
         </link>
         <updated>2020-08-31T15:06:51.000Z</updated>
         <content type="html"><![CDATA[<h4 id="背景概要">背景概要</h4>
@@ -70,8 +70,8 @@ public static void responseHandle(ChannelHandlerContext ctx, FullHttpResponse ht
     </entry>
     <entry>
         <title type="html"><![CDATA[OAuth2.0四种授权方式]]></title>
-        <id>https://skylaugh.github.io/post/oauth20-si-chong-shou-quan-fang-shi</id>
-        <link href="https://skylaugh.github.io/post/oauth20-si-chong-shou-quan-fang-shi">
+        <id>http://localhost:4000/post/oauth20-si-chong-shou-quan-fang-shi</id>
+        <link href="http://localhost:4000/post/oauth20-si-chong-shou-quan-fang-shi">
         </link>
         <updated>2020-07-14T14:04:30.000Z</updated>
         <content type="html"><![CDATA[<p>OAuth2.0不向下兼容1.0版本</p>
@@ -165,8 +165,8 @@ public static void responseHandle(ChannelHandlerContext ctx, FullHttpResponse ht
     </entry>
     <entry>
         <title type="html"><![CDATA[Java指令集]]></title>
-        <id>https://skylaugh.github.io/post/java-zhi-ling-ji</id>
-        <link href="https://skylaugh.github.io/post/java-zhi-ling-ji">
+        <id>http://localhost:4000/post/java-zhi-ling-ji</id>
+        <link href="http://localhost:4000/post/java-zhi-ling-ji">
         </link>
         <updated>2019-12-17T09:49:52.000Z</updated>
         <content type="html"><![CDATA[<p>举个例子:</p>
@@ -1428,8 +1428,8 @@ public class Study20191104.HelloWorld {
     </entry>
     <entry>
         <title type="html"><![CDATA[Spring学习笔记（一）]]></title>
-        <id>https://skylaugh.github.io/post/spring-xue-xi-bi-ji-yi</id>
-        <link href="https://skylaugh.github.io/post/spring-xue-xi-bi-ji-yi">
+        <id>http://localhost:4000/post/spring-xue-xi-bi-ji-yi</id>
+        <link href="http://localhost:4000/post/spring-xue-xi-bi-ji-yi">
         </link>
         <updated>2019-11-21T09:29:30.000Z</updated>
         <content type="html"><![CDATA[<h3 id="常见应用上下文类型">常见应用上下文类型</h3>
@@ -1441,7 +1441,7 @@ public class Study20191104.HelloWorld {
 <li><code>XmlWebApplicationContext</code>:从Web应用下的一个或多个XML配置文件中加载上下文定义。</li>
 </ul>
 <h3 id="bean的生命周期">bean的生命周期</h3>
-<figure data-type="image" tabindex="1"><img src="https://skylaugh.github.io/post-images/1581413915014.png" alt="lifecycle" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="http://localhost:4000/post-images/1581413915014.png" alt="lifecycle" loading="lazy"></figure>
 <ol>
 <li>Spring对bean进行实例化</li>
 <li>Spring将value和bean的引用注入到bean对应的属性中</li>
@@ -1487,8 +1487,8 @@ Spring 从两个角度实现自动化装配：
     </entry>
     <entry>
         <title type="html"><![CDATA[ReentrantLock 和 synchronized 比较]]></title>
-        <id>https://skylaugh.github.io/post/reentrantlock-he-synchronized-bi-jiao</id>
-        <link href="https://skylaugh.github.io/post/reentrantlock-he-synchronized-bi-jiao">
+        <id>http://localhost:4000/post/reentrantlock-he-synchronized-bi-jiao</id>
+        <link href="http://localhost:4000/post/reentrantlock-he-synchronized-bi-jiao">
         </link>
         <updated>2019-10-30T09:48:09.000Z</updated>
         <content type="html"><![CDATA[<h3 id="可重入性">可重入性：</h3>
@@ -1795,8 +1795,8 @@ class DaemonThread implements Runnable{
     </entry>
     <entry>
         <title type="html"><![CDATA[Redis的RDB和AOF]]></title>
-        <id>https://skylaugh.github.io/post/redis-de-rdb-he-aof</id>
-        <link href="https://skylaugh.github.io/post/redis-de-rdb-he-aof">
+        <id>http://localhost:4000/post/redis-de-rdb-he-aof</id>
+        <link href="http://localhost:4000/post/redis-de-rdb-he-aof">
         </link>
         <updated>2019-10-23T09:45:58.000Z</updated>
         <content type="html"><![CDATA[<p>从一道面试题开始说起吧</p>
@@ -1892,8 +1892,8 @@ auto-aof-rewrite-min-size 64mb
     </entry>
     <entry>
         <title type="html"><![CDATA[红黑树]]></title>
-        <id>https://skylaugh.github.io/post/hong-hei-shu</id>
-        <link href="https://skylaugh.github.io/post/hong-hei-shu">
+        <id>http://localhost:4000/post/hong-hei-shu</id>
+        <link href="http://localhost:4000/post/hong-hei-shu">
         </link>
         <updated>2019-09-04T09:39:39.000Z</updated>
         <content type="html"><![CDATA[<h2 id="之前看-hashmap-jdk18中的源码就有提到红黑树这次我们来了解以下红黑树究竟是怎样一种数据结构">  之前看 HashMap jdk1.8中的源码，就有提到红黑树，这次我们来了解以下红黑树究竟是怎样一种数据结构。</h2>
@@ -1939,13 +1939,13 @@ auto-aof-rewrite-min-size 64mb
 <h3 id="4种情况">4种情况</h3>
 <ol>
 <li>父左子左<br>
-<img src="https://skylaugh.github.io/post-images/1581414101770.png" alt="左左" loading="lazy"></li>
+<img src="http://localhost:4000/post-images/1581414101770.png" alt="左左" loading="lazy"></li>
 <li>父左子右<br>
-<img src="https://skylaugh.github.io/post-images/1581414116409.png" alt="左右" loading="lazy"></li>
+<img src="http://localhost:4000/post-images/1581414116409.png" alt="左右" loading="lazy"></li>
 <li>父右子右<br>
-<img src="https://skylaugh.github.io/post-images/1581414131816.png" alt="右右" loading="lazy"></li>
+<img src="http://localhost:4000/post-images/1581414131816.png" alt="右右" loading="lazy"></li>
 <li>父右子左<br>
-<img src="https://skylaugh.github.io/post-images/1581414161504.png" alt="右左" loading="lazy"></li>
+<img src="http://localhost:4000/post-images/1581414161504.png" alt="右左" loading="lazy"></li>
 </ol>
 <h3 id="删除操作">删除操作</h3>
 <p>// todo 删除操作太麻烦了，先搁置<br>
@@ -2346,13 +2346,13 @@ public class RedBlackTree extends JFrame {
     }
 </code></pre>
 <p>输出图像<br>
-<img src="https://skylaugh.github.io/post-images/1581414193000.png" alt="rbt" loading="lazy"></p>
+<img src="http://localhost:4000/post-images/1581414193000.png" alt="rbt" loading="lazy"></p>
 ]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[链表反转]]></title>
-        <id>https://skylaugh.github.io/post/lian-biao-fan-zhuan</id>
-        <link href="https://skylaugh.github.io/post/lian-biao-fan-zhuan">
+        <id>http://localhost:4000/post/lian-biao-fan-zhuan</id>
+        <link href="http://localhost:4000/post/lian-biao-fan-zhuan">
         </link>
         <updated>2019-08-20T09:28:38.000Z</updated>
         <content type="html"><![CDATA[<p>比较常见的一道算法题，使用额外空间使此问题变得十分简单，本文记录一下不使用额外空间的两种方法。</p>
@@ -2434,8 +2434,8 @@ public class RedBlackTree extends JFrame {
     </entry>
     <entry>
         <title type="html"><![CDATA[BigDecimal进行除法运算的一个小坑]]></title>
-        <id>https://skylaugh.github.io/post/bigdecimal-jin-xing-chu-fa-yun-suan-de-yi-ge-xiao-keng</id>
-        <link href="https://skylaugh.github.io/post/bigdecimal-jin-xing-chu-fa-yun-suan-de-yi-ge-xiao-keng">
+        <id>http://localhost:4000/post/bigdecimal-jin-xing-chu-fa-yun-suan-de-yi-ge-xiao-keng</id>
+        <link href="http://localhost:4000/post/bigdecimal-jin-xing-chu-fa-yun-suan-de-yi-ge-xiao-keng">
         </link>
         <updated>2019-08-07T09:26:26.000Z</updated>
         <content type="html"><![CDATA[<h4 id="问题">问题</h4>
@@ -2494,12 +2494,12 @@ public class RedBlackTree extends JFrame {
     </entry>
     <entry>
         <title type="html"><![CDATA[Arthas 快速入门]]></title>
-        <id>https://skylaugh.github.io/post/arthas-kuai-su-ru-men</id>
-        <link href="https://skylaugh.github.io/post/arthas-kuai-su-ru-men">
+        <id>http://localhost:4000/post/arthas-kuai-su-ru-men</id>
+        <link href="http://localhost:4000/post/arthas-kuai-su-ru-men">
         </link>
         <updated>2019-07-29T09:23:08.000Z</updated>
         <content type="html"><![CDATA[<h2 id="arthas阿尔萨斯-能为你做什么">Arthas（阿尔萨斯） 能为你做什么？</h2>
-<figure data-type="image" tabindex="1"><img src="https://skylaugh.github.io/post-images/1581413033495.png" alt="arthas" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="http://localhost:4000/post-images/1581413033495.png" alt="arthas" loading="lazy"></figure>
 <p><code>Arthas</code> 是Alibaba开源的Java诊断工具，深受开发者喜爱。</p>
 <p>当你遇到以下类似问题而束手无策时，<code>Arthas</code>可以帮助你解决：</p>
 <ol>
