@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://skylaugh.github.io</id>
     <title>跬步</title>
-    <updated>2020-08-30T12:42:48.153Z</updated>
+    <updated>2020-08-31T15:11:01.882Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://skylaugh.github.io"/>
     <link rel="self" href="https://skylaugh.github.io/atom.xml"/>
@@ -10,6 +10,64 @@
     <logo>https://skylaugh.github.io/images/avatar.png</logo>
     <icon>https://skylaugh.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 跬步</rights>
+    <entry>
+        <title type="html"><![CDATA[记工作中遇到的一个bug]]></title>
+        <id>https://skylaugh.github.io/post/ji-gong-zuo-zhong-yu-dao-de-yi-ge-bug</id>
+        <link href="https://skylaugh.github.io/post/ji-gong-zuo-zhong-yu-dao-de-yi-ge-bug">
+        </link>
+        <updated>2020-08-31T15:06:51.000Z</updated>
+        <content type="html"><![CDATA[<h4 id="背景概要">背景概要</h4>
+<p>调试宇视一体机的几个 API，因为部署在内网，需要 NAT 穿透后建立 TCP 长链接通道，在通道内进行 API 的调用。server 端用了 netty 的框架。</p>
+<h4 id="bug场景">bug场景</h4>
+<p>API调用有时会有超时失败，当这种情况发生时，后续每次调用返回的都是上次发起请求的响应。</p>
+<h4 id="问题排查">问题排查</h4>
+<ol>
+<li>查看发起请求的方法，响应的请求在 handler 的 channelRead0 方法中处理。</li>
+</ol>
+<pre><code>//判断属于响应类处理方式
+else if (msg instanceof FullHttpResponse) {
+		FullHttpResponse response = (FullHttpResponse) msg;
+		HttpResponseFactory.responseHandle(ctx, response);
+	} 
+</code></pre>
+<ol start="2">
+<li>方法中调用了HttpResponseFactory 的 responseHandle 方法</li>
+</ol>
+<pre><code>public static final ConcurrentHashMap&lt;Integer, String&gt; RESPONSE_DATA = new ConcurrentHashMap&lt;&gt;(128);
+
+public static void responseHandle(ChannelHandlerContext ctx, FullHttpResponse httpResponse) {
+        try {
+            String responseBody = httpResponse.content().toString(CharsetUtil.UTF_8);
+            int iHashCodeKey = ctx.channel().hashCode();
+            //收到消息的响应的长连接MAP 无 此 hashCode 则向下
+            ConcurrentHashMap&lt;Integer, String&gt; temMap = KEEP_ALIVE_RESPONSE_MAP.get(iHashCodeKey);
+            if (null != temMap){
+                temMap.put(iHashCodeKey, responseBody);
+            }else {
+                //单设备单接口做成并行,设备这里使用通道哈希值代替
+                if (null != RESPONSE_DATA.putIfAbsent(iHashCodeKey, responseBody)) {
+                    //出现多条响应入队的情况,记录错误日志
+                    LOGGER.error(&quot;[KEEP_ALIVE][RESPONSE]-The {}- RESPONSE queue is full,this response will be drop. {}&quot;, iHashCodeKey, responseBody);
+                }
+                //如果已经有响应未提取,以后面的响应为准
+                RESPONSE_DATA.put(iHashCodeKey, responseBody);
+            }
+        } catch (Exception e) {
+            LOGGER.error(&quot;Handle response failed for {}&quot;, e.getMessage(), e);
+        }
+    }
+</code></pre>
+<p>可以看到返回的结果放入了 RESPONSE_DATA 这个 map 中，++<strong>key <em>是 channel 的哈希值</em></strong>++。<br>
+3. 查看请求方法</p>
+<pre><code>    //发起请求前，先做移除
+	responseKey = ctx.hashCode();
+	HttpResponseFactory.RESPONSE_DATA.remove(responseKey);
+</code></pre>
+<p>这里终于找到了原因，可以看到移除的 key 取值是 ctx 的哈希，而不是前文中 channel 的哈希，问题解决！</p>
+<h3 id="总结">总结</h3>
+<p>查找本次问题的思路：由于问题是每次超时才产生的，且下次请求能获取上次超时请求的响应，说明请求最终成功了，且暂时存储了响应的结果。由此可以找到存储介质，再对存取方法进行分析可以找出最终的问题原因。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[OAuth2.0四种授权方式]]></title>
         <id>https://skylaugh.github.io/post/oauth20-si-chong-shou-quan-fang-shi</id>
@@ -2648,64 +2706,6 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 <h2 id="7-退出arthas">7. 退出arthas</h2>
 <p>如果只是退出当前的连接，可以用<code>quit</code>或者<code>exit</code>命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。</p>
 <p>如果想完全退出arthas，可以执行<code>shutdown</code>命令。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[位运算之按位与(&)操作]]></title>
-        <id>https://skylaugh.github.io/post/wei-yun-suan-zhi-an-wei-yu-andcao-zuo</id>
-        <link href="https://skylaugh.github.io/post/wei-yun-suan-zhi-an-wei-yu-andcao-zuo">
-        </link>
-        <updated>2019-07-02T09:21:11.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="定义">定义</h3>
-<blockquote>
-<p>按位与运算符“&amp;”是双目运算符。其功能是参与运算的两数各对应的二进位相与。只有对应的两个二进位都为1时，结果位才为1。参与运算的两个数均以补码出现。</p>
-</blockquote>
-<h3 id="规则">规则：</h3>
-<pre><code>1 &amp; 1 = 1  
-1 &amp; 0 = 0  
-0 &amp; 1 = 0  
-0 &amp; 0 = 0  
-</code></pre>
-<h3 id="常用技巧">常用技巧</h3>
-<ol>
-<li>可以用来判断整数奇偶性<br>
-a &amp; 1<br>
-0偶 1奇<br>
-例如:</li>
-</ol>
-<pre><code>2 &amp; 1 = 0 即 10 &amp; 01 = 00 = 0;  //偶数
-6 &amp; 1 = 0 即 110 &amp; 001 = 000 = 0;  //偶数
-3 &amp; 1 = 1 即 11 &amp; 01 = 01 = 1;  //奇数
-</code></pre>
-<ol start="2">
-<li>判断是否是2的正整数幂<br>
-a &amp; a-1<br>
-若结果为0表示a是2的正整数幂。因为2的正整数幂用二进制表示是1后边跟n个0，a-1为n个1，两者按位与则是0。<br>
-例如:</li>
-</ol>
-<pre><code>a = 4
-4 &amp; 3 = 100 &amp; 011 = 000 = 0;//说明a是2的正整数幂
-</code></pre>
-<ol start="3">
-<li>
-<p>统计整数中1的个数<br>
-朴素的统计办法是：先判断n的奇偶性，为奇数时计数器增加1，然后将n右移一位，重复上面步骤，直到移位完毕。</p>
-</li>
-<li>
-<p>对于正整数的模运算（注意，负数不能这么算）<br>
-乘除法是很消耗时间的，只要对数左移一位就是乘以2，右移一位就是除以2，传说用位运算效率提高了60%。</p>
-</li>
-</ol>
-<pre><code>乘2^k,  n&lt;&lt;k;  
-除2^k,  n&gt;&gt;k。
-</code></pre>
-<p>对2的次方取模</p>
-<pre><code>n &amp; (2^k -1)
-</code></pre>
-<p>等价于</p>
-<pre><code>n % 2^k
-</code></pre>
-<p>用通俗的言语来描述就是,对2的次方取模，<strong>取模其实就是取溢出量</strong>。只要将数与2的次方-1做按位与运算即可。HashMap的get方法中用到了此取模计算。</p>
 ]]></content>
     </entry>
 </feed>
