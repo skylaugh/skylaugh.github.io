@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Paxos 分布式一致性算法 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1603811133911">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1603811133911" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Paxos 分布式一致性算法</h2>
+            <div class="post-date">2020-10-27</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/paxos-fen-bu-shi-yi-zhi-xing-suan-fa.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <h3 id="paxos解决的问题">Paxos解决的问题</h3>
+<ol>
+<li>分布式容错：<br>
+在分布式环境下，能容忍一部分节点宕机，还能对外提供稳定的服务。</li>
+<li>分布式共识算法：<br>
+在分布式环境下，各个节点就某个值达成共识，即所有节点都认同某个值。</li>
+</ol>
+<h3 id="三种角色">三种角色</h3>
+<ol>
+<li>提案者 proposer</li>
+<li>接收者 acceptor</li>
+<li>学习者 learner</li>
+</ol>
+<h3 id="三个阶段">三个阶段</h3>
+<ol>
+<li>准备阶段 prepare</li>
+<li>接收阶段 accept</li>
+<li>学习阶段 learn</li>
+</ol>
+<h3 id="提案-proposal">提案 proposal</h3>
+<p>提案是需要达成共识的一个值。用[M,V]表示，M 表示提案编号，V 表示需要达成共识的值。</p>
+<h3 id="提案者proposer">提案者（Proposer）</h3>
+<ol>
+<li>接受客户端请求，封装成提案。</li>
+<li>将提案发送给接收者。</li>
+<li>根据接收者响应情况统计，决定是否保存该提案。</li>
+</ol>
+<h3 id="接收者acceptor">接收者（Acceptor）</h3>
+<ol>
+<li>参与对提案的投票。</li>
+<li>接收和处理prepare和accept两个阶段的请求。</li>
+<li>记录三个值：
+<ol>
+<li>准备（prepare）通过的最大提案编号 maxPrepareM。</li>
+<li>接收（accept）通过最大提案编号 maxAcceptM。</li>
+<li>接收（accept）通过最大提案编号的值 maxAcceptV。</li>
+</ol>
+</li>
+</ol>
+<h3 id="学习者learner">学习者（Learner）</h3>
+<ol>
+<li>不参与提案和投票。</li>
+<li>接收提案结果并学习。</li>
+</ol>
+<h3 id="准备阶段prepare">准备阶段（Prepare）</h3>
+<ol>
+<li>proposer 向 acceptor 发送提案请求[M,]</li>
+<li>acceptor 根据约定决定是否响应。约定即：当一个 accepor 收到的提案号M是此 acceptor 在prepare阶段接收过的最大提案号（比maxPrepareM大）时响应通过。否则不响应。</li>
+<li>若一个 acceptor 通过该提案的准备（prepare）请求，保存maxPrepare = M，并要保证以下几点：
+<ol>
+<li>不再通过编号小于等于M的提案的准备（prepare）请求。</li>
+<li>不再通过编号小于M的提案。</li>
+<li>如果通过此提案，则在响应中返回 [maxAcceptM,maxAcceptV]。如果没有通过任何提案，则在响应中返回空值。</li>
+</ol>
+</li>
+</ol>
+<h3 id="接收阶段accept">接收阶段（Accept）</h3>
+<p>proposer 接收到超过半数的响应后，由 proposer 向 acceptor 发送提案[M,V],根据 acceptor 在准备阶段作出的保证</p>
+<ol>
+<li>如果此 acceptor 没有通过编号大于M的 prepare 请求，即M大于 maxPrepareM，那么则会批准此提案[M,V], 并且保存 maxPrepareM = maxAcceptM = M，maxAcceptV = V。</li>
+<li>acceptor 返回最新的 maxPrepareM。</li>
+<li>proposer 统计收到的接收（accept）请求的响应，如果响应中的编号等于自己发出的提案编号，则认为该 acceptor 批准了该提案。如果超过半数 acceptor 批准该提案，则记做该提案已达成共识。如果没有大多数 acceptor 批准该提案，则重新回到 prepare 阶段进行协商。</li>
+<li>如果在prepare请求的响应中，部分acceptor已经批准过的提案值，则V为prepare请求的响应中编号最大的提案值，否则可以由proposer任意指定。</li>
+</ol>
+<h3 id="学习阶段learn">学习阶段（Learn）</h3>
+<p>在某一个提案通过 paxos 达成共识之后，通知 learner 学习提案结果。<br>
+最佳方案：建立一个主 learner 集合，提高健壮性，先通知这个主 learner 集合，提高效率，再由主 learner 集合通知所有learner。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/NLraoO2c4" class="tag">
+                    算法
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/ji-gong-zuo-zhong-yu-dao-de-yi-ge-bug">
+                  <h3 class="post-title">
+                    记工作中遇到的一个bug
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
