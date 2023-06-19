@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>OAuth2.0四种授权方式 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">OAuth2.0四种授权方式</h2>
+            <div class="post-date">2020-07-14</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/oauth20-si-chong-shou-quan-fang-shi.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <p>OAuth2.0不向下兼容1.0版本</p>
+<h3 id="四种获得令牌的方式">四种获得令牌的方式</h3>
+<ul>
+<li><strong>授权码</strong>(<em>authorization-code</em>)</li>
+<li><strong>隐藏式</strong>(<em>implicit</em>)</li>
+<li><strong>密码式</strong>(p<em>assword</em>)</li>
+<li><strong>客户端凭证</strong>(<em>client credentials</em>)</li>
+</ul>
+<h3 id="几个重要参数">几个重要参数</h3>
+<ul>
+<li>response_type:code或token,code需要再次请求获取token</li>
+<li>client_id:客户端身份标识</li>
+<li>client_secret:客户端密钥</li>
+<li>redirect_uri:重定向地址</li>
+<li>scope:授权的范围，read只读，all读写</li>
+<li>grant_type:授权方式
+<ul>
+<li>authorization_code 授权码</li>
+<li>password 密码</li>
+<li>client_credentials 凭证式</li>
+<li>refresh_token 更新令牌</li>
+</ul>
+</li>
+<li>state:随机数，防止CSRF攻击</li>
+</ul>
+<h4 id="1-授权码">1、授权码</h4>
+<p>安全系数最高，最常用<br>
+第一次请求，获取授权码</p>
+<pre><code>https://wx.com/oauth/authorize?
+  response_type=code&amp;
+  client_id=CLIENT_ID&amp;
+  redirect_uri=http://juejin.im/callback&amp;
+  scope=read
+</code></pre>
+<p>微信重定向并带上授权码</p>
+<pre><code>http://juejin.im/callback?code=AUTHORIZATION_CODE
+</code></pre>
+<p>第二次请求获取token，需要code和client_secret</p>
+<pre><code>https://wx.com/oauth/token?
+ client_id=CLIENT_ID&amp;
+ client_secret=CLIENT_SECRET&amp;
+ grant_type=authorization_code&amp;
+ code=AUTHORIZATION_CODE&amp;
+ redirect_uri=http://juejin.im/callback
+</code></pre>
+<p>返回token信息</p>
+<pre><code> {    
+  &quot;access_token&quot;:&quot;ACCESS_TOKEN&quot;,
+  &quot;token_type&quot;:&quot;bearer&quot;,
+  &quot;expires_in&quot;:2592000,
+  &quot;refresh_token&quot;:&quot;REFRESH_TOKEN&quot;,
+  &quot;scope&quot;:&quot;read&quot;,
+  ......
+}
+
+</code></pre>
+<h4 id="2-隐藏式">2、隐藏式</h4>
+<p>纯前端应用直接获取token</p>
+<pre><code>https://wx.com/oauth/authorize?
+  response_type=token&amp;
+  client_id=CLIENT_ID&amp;
+  redirect_uri=http://juejin.im/callback&amp;
+  scope=read
+</code></pre>
+<h4 id="3-密码式">3、密码式</h4>
+<p>需要用户名和密码去申请token</p>
+<pre><code>https://wx.com/token?
+  grant_type=password&amp;
+  username=USERNAME&amp;
+  password=PASSWORD&amp;
+  client_id=CLIENT_ID
+</code></pre>
+<h4 id="4-凭证式">4、凭证式</h4>
+<p>适用于没有前端的应用</p>
+<pre><code>https://wx.com/token?
+  grant_type=client_credentials&amp;
+  client_id=CLIENT_ID&amp;
+  client_secret=CLIENT_SECRET
+</code></pre>
+<h3 id="令牌过期">令牌过期</h3>
+<p>用返回的refresh_token请求，重新获取令牌</p>
+<pre><code>https://wx.com/oauth/token?
+  grant_type=refresh_token&amp;
+  client_id=CLIENT_ID&amp;
+  client_secret=CLIENT_SECRET&amp;
+  refresh_token=REFRESH_TOKEN
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/tUCgTF6zk/" class="tag">
+                    Others
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/java-zhi-ling-ji/">
+                  <h3 class="post-title">
+                    Java指令集
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

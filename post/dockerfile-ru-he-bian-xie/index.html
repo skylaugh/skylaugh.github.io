@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Dockerfile 如何编写 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Dockerfile 如何编写</h2>
+            <div class="post-date">2022-01-05</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/dockerfile-ru-he-bian-xie.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <p>看个例子：</p>
+<pre><code># 定制镜像
+FROM openjdk:8u191-jre-alpine3.9
+RUN apk add tzdata &amp;&amp; cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    &amp;&amp; echo &quot;Asia/Shanghai&quot; &gt; /etc/timezone \
+    &amp;&amp; apk del tzdata
+# 构建镜像
+ARG JAR_FILE
+COPY target/${JAR_FILE} app.jar
+ENTRYPOINT [&quot;java&quot;,&quot;-Djava.security.egd=file:/dev/./urandom&quot;,&quot;-jar&quot;,&quot;/app.jar&quot;]
+</code></pre>
+<h4 id="定制镜像">定制镜像</h4>
+<p><strong>FROM</strong>: 定制的镜像都是基于 FROM 的镜像，例子中的 <code>openjdk:8u191-jre-alpine3.9</code> 就是定制需要的基础镜像，为什么不用 Oracle JDK 呢，这是因为从2019年4月开始 Oracle JDK 8和11以上版本从 BCL 改为 OTN 协议，商用开始收费了。而 OpenJDK 是 GPL 的。<br>
+<strong>RUN</strong>: 用于执行后面的命令行。命令行有以下两种形式：</p>
+<ol>
+<li>shell 格式：以上例子FROM后的命令行就是 shell 格式的。</li>
+<li>exec 格式：</li>
+</ol>
+<pre><code>RUN [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;]
+# 例如：
+# RUN [&quot;./test.php&quot;, &quot;dev&quot;, &quot;offline&quot;] 等价于 RUN ./test.php dev offline
+</code></pre>
+<p>例子中我们可以看到主要执行了哪几个逻辑：<br>
+首先<code>apk add tzdata</code> 添加了一个 tzdata 的安装包。<br>
+<code>cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</code> 设置了本地时间为上海时间。<br>
+<code>echo &quot;Asia/Shanghai&quot; &gt; /etc/timezone</code> 修改本地时区为上海时区。<br>
+<code>apk del tzdata</code> 最后删除了 tzdata 安装包。<br>
+注意：Dockerfile 的指令每执行一次都会在 docker 上新建一层。所以过多无意义的层，会造成镜像膨胀过大。例如：</p>
+<pre><code>FROM centos
+RUN yum -y install wget
+RUN wget -O redis.tar.gz &quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot;
+RUN tar -xvf redis.tar.gz
+</code></pre>
+<p>以上执行会创建3层镜像。可简化为以下格式：</p>
+<pre><code>FROM centos
+RUN yum -y install wget \
+    &amp;&amp; wget -O redis.tar.gz &quot;http://download.redis.io/releases/redis-5.0.3.tar.gz&quot; \
+    &amp;&amp; tar -xvf redis.tar.gz
+</code></pre>
+<p>如上，以<code>&amp;&amp;</code>符号连接命令，执行后只创建1层镜像。</p>
+<h4 id="构建镜像">构建镜像</h4>
+<p>上下文路径，就是 docker 在构建镜像时所用的本机文件，会一起打包。没定义上下文路径的情况下，默认是 Dockerfile 所在的位置。<br>
+注意：上下文路径不要放无用的文件，不然会一起打包发送给 docker 引擎，文件过多会造成构建过程缓慢。<br>
+<strong>ENV</strong>: 设置环境变量，定义了环境变量，后边的指令中就可以使用这个变量。<br>
+格式：</p>
+<pre><code>ENV &lt;key&gt; &lt;value&gt;
+ENV &lt;key1&gt;=&lt;value1&gt; &lt;key2&gt;=&lt;value2&gt;...
+</code></pre>
+<p><strong>ARG</strong>: 构建参数，与ENV作用一致，但作用域不一致。ARG设置的环境变量仅对 Dockerfile 内有效，也就是说只有 docker build 的过程中有效，构建好的镜像内不存在此环境变量。<br>
+例子中的 <code>JAR_FILE</code> 实际获取的是 maven 中 pom.xml 文件配置的 JAR_FILE 参数。也就是编译后的 jar 包名称。<br>
+<strong>COPY</strong>: 复制执行，从上下文目录中复制文件或者目录到容器内指定路径。<br>
+<strong>ADD</strong>: 和 COPY 使用类似，官方推荐用 COPY，但是ADD 源文件为tar压缩文件，如gzip，bzip2 及 xz 文件，会自动复制并解压到目标路径。<br>
+<strong>CMD</strong>: 类似 RUN 指令，但是执行时间点不同，RUN 是在 docker build 时执行，CMD 是在 docker run 时执行。会被 docker run 时指定的指令覆盖，所以没啥用，变参感觉可以直接用 docker run 指定。定参用 ENTRYPOINT 更合适。<br>
+注意：多个 CMD 指令仅最后一个生效。<br>
+<strong>ENTRYPOINT</strong>: 类似 CMD 指令，但不会被 docker run 的命令行参数指定的指令覆盖，而且这些命令行参数会被当做参数送给ENTRYPIONT 指令指定的程序。<br>
+但是，如果运行 docker run 时使用了 --entrypoint 选项，将覆盖 CMD 指令指定的程序。<br>
+例子中执行了就是一个 <code>java -jar app.jar</code> 的命令, <code>-Djava.security.egd=file:/dev/./urandom</code> 是一个加快生成随机数的配置项。<br>
+<strong>VOLUME</strong>: 定义匿名数据卷。在启动容器时忘记挂在数据卷，会自动挂载到匿名卷。<br>
+作用：</p>
+<ul>
+<li>避免重要的数据丢失，因容器重启而丢失。</li>
+<li>避免容器不断变大。<br>
+格式：</li>
+</ul>
+<pre><code>VOLUME [&quot;&lt;路径1&gt;&quot;, &quot;&lt;路径2&gt;&quot;...]
+VOLUME &lt;路径&gt;
+</code></pre>
+<p><strong>EXPOSE</strong>: 仅声明端口。帮助镜像使用者理解这个服务的守护端口，方便配置映射。使用随机端口映射时，即<code>docker run -P</code>，会自动随机映射 EXPOSE 端口。<br>
+格式：</p>
+<pre><code>EXPOSE &lt;端口1&gt; [&lt;端口2&gt;...]
+</code></pre>
+<p><strong>WORKDIR</strong>: 指定工作目录。用 WORKDIR 指定的工作目录，会在构建镜像的每一层中都存在。（WORKDIR 指定的工作目录，必须是提前创建好的）。docker build 构建镜像过程中的，每一个 RUN 命令都是新建的一层。只有通过 WORKDIR 创建的目录才会一直存在。<br>
+<strong>USER</strong>: 用于指定执行后续命令的用户和用户组，这边只是切换后续命令执行的用户。格式：</p>
+<pre><code>USER &lt;用户名&gt;[:&lt;用户组&gt;]
+</code></pre>
+<p><strong>LABEL</strong>: 用来给镜像添加一些元数据(metadata)，以键值对的形式，语法格式如下:</p>
+<pre><code>LABEL &lt;key&gt;=&lt;value&gt; &lt;key&gt;=&lt;value&gt; &lt;key&gt;=&lt;value&gt; ...
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/PWJBK2gmY/" class="tag">
+                    容器
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/paxos-fen-bu-shi-yi-zhi-xing-suan-fa/">
+                  <h3 class="post-title">
+                    Paxos 分布式一致性算法
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

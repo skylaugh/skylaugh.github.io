@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>BigDecimal进行除法运算的一个小坑 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">BigDecimal进行除法运算的一个小坑</h2>
+            <div class="post-date">2019-08-07</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/bigdecimal-jin-xing-chu-fa-yun-suan-de-yi-ge-xiao-keng.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <h4 id="问题">问题</h4>
+<p>先看一个例子:</p>
+<pre><code>    public static void main(String[] args){
+        BigDecimal num1 = new BigDecimal(3);
+        BigDecimal num2 = new BigDecimal(7);
+        BigDecimal num3 = num1.divide(num2).setScale(2);
+        System.out.println(num3);
+    }
+</code></pre>
+<p>这段代码运行过程中会抛出一个异常<br>
+<code>java.lang.ArithmeticException: Non-terminating decimal expansion; no exact representable decimal result</code><br>
+意思大概是运算异常，没有可精确表示的十进制结果。</p>
+<h4 id="原因">原因</h4>
+<p>因为结果除不尽，所以在 divide 的时候已经抛出了该异常，并不会进行保留两位小数的运算。</p>
+<h4 id="解决方案">解决方案</h4>
+<p>在使用BigDecimal进行除法运算时，最好使用divide的重载方法</p>
+<pre><code>    /**
+    * divisor 除数
+    * scale 保留几位小数
+    * roundingMode 舍入模式
+    */
+    public BigDecimal divide(BigDecimal divisor, int scale, RoundingMode roundingMode) {
+        return divide(divisor, scale, roundingMode.oldMode);
+    }
+</code></pre>
+<p>所以写成以下方式就没问题了</p>
+<pre><code>    public static void main(String[] args){
+        BigDecimal num1 = new BigDecimal(3);
+        BigDecimal num2 = new BigDecimal(7);
+        BigDecimal num3 = num1.divide(num2,2,BigDecimal.ROUND_HALF_DOWN);
+        System.out.println(num3);
+    }
+</code></pre>
+<p>备注:关于RoundingMode的几种模式</p>
+<ul>
+<li><strong>ROUND_UP</strong><br>
+向远离零的方向舍入。<strong>向外取整模式</strong></li>
+<li><strong>ROUND_DOWN</strong><br>
+向接近零的方向舍入。<strong>向内取整模式</strong></li>
+<li><strong>ROUND_CEILING</strong><br>
+向正无穷大的方向舍入。<strong>向上取整模式</strong></li>
+<li><strong>ROUND_FLOOR</strong><br>
+向负无穷大的方向舍入。<strong>向下取整模式</strong></li>
+<li><strong>ROUND_HALF_UP</strong><br>
+向“最接近的”整数舍入。<strong>四舍五入模式</strong></li>
+<li><strong>ROUND_HALF_DOWN</strong><br>
+向“最接近的”整数舍入。<strong>五舍六入模式</strong></li>
+<li><strong>ROUND_HALF_EVEN</strong><br>
+若（舍入位大于5）或者（舍入位等于5且前一位为奇数），则对舍入部分的前一位数字加1；若（舍入位小于5）或者（舍入位等于5且前一位为偶数），则直接舍弃。即为<strong>银行家舍入模式</strong>。</li>
+<li><strong>ROUND_UNNECESSARY</strong><br>
+具有精确的结果，因此不需要舍入。如果对获得精确结果的操作指定此舍入模式，则抛出<code>ArithmeticException</code>。</li>
+</ul>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/wDdDEnxe6/" class="tag">
+                    Bug
+                  </a>
+                
+                  <a href="https://skylaugh.github.io/tag/E1t30QiTK/" class="tag">
+                    Java
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/arthas-kuai-su-ru-men/">
+                  <h3 class="post-title">
+                    Arthas 快速入门
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

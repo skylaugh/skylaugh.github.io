@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>红黑树 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">红黑树</h2>
+            <div class="post-date">2019-09-04</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/hong-hei-shu.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <h2 id="之前看-hashmap-jdk18中的源码就有提到红黑树这次我们来了解以下红黑树究竟是怎样一种数据结构">  之前看 HashMap jdk1.8中的源码，就有提到红黑树，这次我们来了解以下红黑树究竟是怎样一种数据结构。</h2>
+<h3 id="定义">定义</h3>
+<blockquote>
+<p>红黑树（Red Black Tree）RBT 是一种自<strong>平衡二叉查找树</strong>，是在计算机科学中用到的一种数据结构，典型的用途是实现关联数组。<br>
+它是在1972年由Rudolf Bayer发明的，当时被称为平衡二叉B树（symmetric binary B-trees）。后来，在1978年被 Leo J. Guibas 和 Robert Sedgewick 修改为如今的“红黑树”。<br>
+红黑树和AVL树类似，都是在进行插入和删除操作时通过特定操作保持二叉查找树的平衡，从而获得较高的查找性能。<br>
+它虽然是复杂的，但它的最坏情况运行时间也是非常良好的，并且在实践中是高效的：它可以在O(log n)时间内做查找，插入和删除，这里的n是树中元素的数目。</p>
+</blockquote>
+<h3 id="二叉查找树">二叉查找树</h3>
+<p>二叉查找树，Binary Search Tree 「BST」，我们首先看下二叉查找树有哪些特性呢？</p>
+<ol>
+<li>某节点的左子树节点值仅包含小于该节点值</li>
+<li>某节点的右子树节点值仅包含大于该节点值</li>
+<li>左右子树每个也必须是二叉查找树</li>
+</ol>
+<h3 id="红黑树特征">红黑树特征:</h3>
+<ol>
+<li>每个节点非黑即红</li>
+<li>根节点是黑色的</li>
+<li>每个叶节点都是黑色的</li>
+<li>一个红色节点的直接子节点都是黑色的（不能有两个红色节点连着有父子关系）</li>
+<li>从任意一个节点到叶节点，经过的黑色节点个数(黑高)是一样的</li>
+</ol>
+<h3 id="红黑树动态演示"><a href="http://algoanim.ide.sk/index.php?page=showanim&amp;id=63">红黑树动态演示</a></h3>
+<p>这个网站可以帮助理解红黑树插入删除的过程。<br>
+变色的时机可能不太对，他统一放在最后变色了，理解上习惯右旋后直接变色，来判断下一步操作。</p>
+<h3 id="插入操作">插入操作</h3>
+<p>插入会改变树的节点，树节点改变会有以下两种方式。</p>
+<ul>
+<li><strong>变色</strong> recolor</li>
+<li><strong>旋转</strong> rotation</li>
+</ul>
+<p>为防止树全黑，且为了方便根节点到子节点黑色数相等，插入一般预设为红色节点</p>
+<h4 id="变色">变色：</h4>
+<p>条件：父红叔红变颜色<br>
+颜色变化：父变黑，叔变黑，爷变红，如果变色不能达到红黑树的要求，再尝试旋转。</p>
+<h4 id="左旋">左旋</h4>
+<p>条件：父红叔黑右子树</p>
+<h4 id="右旋">右旋</h4>
+<p>条件：父红叔黑左子树</p>
+<h3 id="4种情况">4种情况</h3>
+<ol>
+<li>父左子左<br>
+<img src="https://skylaugh.github.io/post-images/1581414101770.png" alt="左左" loading="lazy"></li>
+<li>父左子右<br>
+<img src="https://skylaugh.github.io/post-images/1581414116409.png" alt="左右" loading="lazy"></li>
+<li>父右子右<br>
+<img src="https://skylaugh.github.io/post-images/1581414131816.png" alt="右右" loading="lazy"></li>
+<li>父右子左<br>
+<img src="https://skylaugh.github.io/post-images/1581414161504.png" alt="右左" loading="lazy"></li>
+</ol>
+<h3 id="删除操作">删除操作</h3>
+<p>// todo 删除操作太麻烦了，先搁置<br>
+  真佩服那些面试能手写红黑树的大佬，我能记个插入的几种情况就不错了，还得看着规则写。能写出删除操作的是真牛！！！小弟在此给大佬顶礼膜拜Orz。</p>
+<h3 id="手写红黑树代码">手写红黑树代码</h3>
+<p>  花了三天时间写出来的，估计挺多漏洞的，不过自己测了测插入目前没遇到啥问题，删除回头有空再写吧。算是自己造了个方形的轮子。<br>
+  有点好处就是写了个toImage()方法，可以将构造的红黑树画出来，比较直观。下面上代码：</p>
+<pre><code>import javax.swing.*;
+import java.awt.*;
+
+/**
+ * @ClassName RedBlackTree
+ * @Description 红黑树
+ * @Author leo
+ * @Date 2019-09-24 09:57
+ **/
+public class RedBlackTree extends JFrame {
+    static final int R = 0;//红色
+    static final int B = 1;//黑色
+    Node root;
+
+    public RedBlackTree() {
+        super();
+        initialize(500);// 调用初始化方法
+    }
+
+    static class Node {
+        //颜色
+        int color;
+        //值
+        int value;
+        //父节点
+        Node parent;
+        //左节点
+        Node left;
+        //右节点
+        Node right;
+
+        public Node(int value) {
+            this.color = R;
+            this.value = value;
+        }
+    }
+
+    /**
+     * 插入新节点 值为参数
+     *
+     * @param value
+     */
+    public void insert(int value) {
+        Node newNode = new Node(value);
+        insert(newNode);
+    }
+
+    /**
+     * 插入新节点
+     *
+     * @param newNode
+     */
+    public void insert(Node newNode) {
+        Node curNode = root;
+        if (root == null) {
+            root = newNode;
+            //判断是否符合规则
+            judgeRule(newNode);
+        } else if (curNode.value &gt; newNode.value) {
+            if (curNode.left != null) {
+                insert(curNode.left, newNode);
+            } else {
+                curNode.left = newNode;
+                newNode.parent = curNode;
+                //判断是否符合规则
+                judgeRule(newNode);
+            }
+        } else {
+            if (curNode.right != null) {
+                insert(curNode.right, newNode);
+            } else {
+                curNode.right = newNode;
+                newNode.parent = curNode;
+                //判断是否符合规则
+                judgeRule(newNode);
+            }
+        }
+    }
+
+    /**
+     * 插入递归寻找合适位置
+     *
+     * @param curNode
+     * @param newNode
+     */
+    public void insert(Node curNode, Node newNode) {
+        if (curNode.value &gt; newNode.value) {
+            if (curNode.left != null) {
+                insert(curNode.left, newNode);
+            } else {
+                curNode.left = newNode;
+                newNode.parent = curNode;
+                //判断是否符合规则
+                judgeRule(newNode);
+            }
+        } else {
+            if (curNode.right != null) {
+                insert(curNode.right, newNode);
+            } else {
+                curNode.right = newNode;
+                newNode.parent = curNode;
+                //判断是否符合规则
+                judgeRule(newNode);
+            }
+        }
+    }
+
+    /**
+     * 判断是否符合规则
+     *
+     * @param curNode
+     */
+    public void judgeRule(Node curNode) {
+        //判断是否父节点也是红色
+        if (curNode.parent == null) {
+            //父节点为空，说明节点是根节点，变黑色
+            curNode.color = B;
+            root = curNode;
+        } else {
+            //不是根节点
+            if (curNode.parent.color == R) {
+                //父节点也为红色
+                Node grandparent = curNode.parent.parent;
+                Node uncle;
+                int parentLR; //0左 1右
+                if (curNode.parent == grandparent.left) {
+                    parentLR = 0;
+                    //父亲左子树
+                    if (grandparent.right != null) {
+                        //不为null
+                        uncle = grandparent.right;
+                    } else {
+                        //null节点 黑色
+                        uncle = null;
+                    }
+                } else {
+                    parentLR = 1;
+                    //父亲右子树
+                    if (grandparent.left != null) {
+                        //不为null
+                        uncle = grandparent.left;
+                    } else {
+                        //null节点 黑色
+                        uncle = null;
+                    }
+                }
+                if (uncle != null &amp;&amp; uncle.color == R) {
+                    //父红叔红变颜色
+                    recolor(curNode, uncle);
+                } else {
+                    //父红叔黑判断 当前节点左右子树
+                    if (curNode.value &lt; curNode.parent.value) {
+                        if (parentLR == 0) {
+                            //父左子左 右旋
+                            rightRotate(curNode.parent);
+                        } else {
+                            //父右子左 右旋
+                            RLRotate(curNode);
+                            leftRotate(curNode);
+                        }
+
+                    } else {
+                        if (parentLR == 1) {
+                            //父右子右 左旋
+                            leftRotate(curNode.parent);
+                        } else {
+                            //父左子右 左旋
+                            LRRotate(curNode);
+                            rightRotate(curNode);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 变色
+     *
+     * @param curNode
+     * @param uncle
+     */
+    private void recolor(Node curNode, Node uncle) {
+        //父变黑
+        curNode.parent.color = B;
+        //叔变黑
+        uncle.color = B;
+        //爷变红
+        uncle.parent.color = R;
+        judgeRule(uncle.parent);
+    }
+
+    /**
+     * 左旋 父子互换，前父挂左子，前子挂前爷，父子颜色互换
+     *
+     * @param curNode
+     */
+    private void leftRotate(Node curNode) {
+        //当前父节点
+        Node parent = curNode.parent;
+        //当前爷节点
+        Node grandparent = curNode.parent.parent;
+        //判断爷节点是否为空
+        if (grandparent != null) {
+            //如果不为空
+            if (parent == grandparent.left) {
+                //父节点是左子树，当前节点就挂爷节点左子树
+                grandparent.left = curNode;
+            } else {
+                //父节点是右子树，当前节点就挂爷节点右子树
+                grandparent.right = curNode;
+            }
+        }
+        //当前父节点挂在当前节点左子树
+        parent.parent = curNode;
+        //当前节点左子树挂在前父节点右子树
+        parent.right = curNode.left;
+        if (parent.right != null) {
+            parent.right.parent = parent;
+        }
+        //当前节点左子树指向当前父节点
+        curNode.left = parent;
+        //当前节点挂到当前爷节点上
+        curNode.parent = grandparent;
+        //当前节点和当前父节点变色
+        int color = curNode.color;
+        curNode.color = parent.color;
+        parent.color = color;
+        if (curNode.parent == null) {
+            root = curNode;
+        }
+    }
+
+    /**
+     * 右旋 左子树
+     */
+    private void rightRotate(Node curNode) {
+        //当前父节点
+        Node parent = curNode.parent;
+        //当前爷节点
+        Node grandparent = curNode.parent.parent;
+        if (grandparent != null) {
+            if (parent == grandparent.left) {
+                grandparent.left = curNode;
+            } else {
+                grandparent.right = curNode;
+            }
+        }
+        //当前父节点挂在当前节点左子树
+        parent.parent = curNode;
+        //当前节点右子树挂在前父节点左子树
+        parent.left = curNode.right;
+        if (parent.left != null) {
+            parent.left.parent = parent;
+        }
+        //当前节点左子树指向当前父节点
+        curNode.right = parent;
+        //当前节点挂到当前爷节点上
+        curNode.parent = grandparent;
+        //当前节点和当前父节点变色
+        int color = curNode.color;
+        curNode.color = parent.color;
+        parent.color = color;
+        if (curNode.parent == null) {
+            root = curNode;
+        }
+    }
+
+    /**
+     * 右左情况前置操作
+     *
+     * @param curNode
+     */
+    private void RLRotate(Node curNode) {
+        //当前父节点
+        Node parent = curNode.parent;
+        //当前爷节点
+        Node grandparent = curNode.parent.parent;
+        //当前节点挂到爷节点上
+        curNode.parent = grandparent;
+        //爷节点的右子树指向当前节点
+        grandparent.right = curNode;
+        //前父节点挂当前节点
+        parent.parent = curNode;
+        //当前节点右子树
+        parent.left = curNode.right;
+        if (parent.left != null) {
+            parent.left.parent = parent;
+        }
+        //当前节点
+        curNode.right = parent;
+
+    }
+
+    /**
+     * 左右情况前置操作
+     *
+     * @param curNode
+     */
+    private void LRRotate(Node curNode) {
+        //当前父节点
+        Node parent = curNode.parent;
+        //当前爷节点
+        Node grandparent = curNode.parent.parent;
+        //当前节点挂到爷节点上
+        curNode.parent = grandparent;
+        //爷节点的左子树指向当前节点
+        grandparent.left = curNode;
+        //前父节点挂当前节点
+        parent.parent = curNode;
+        //当前节点右子树挂前父节点左子树
+        parent.right = curNode.left;
+        if (parent.right != null) {
+            parent.right.parent = parent;
+        }
+        curNode.left = parent;
+
+    }
+
+    /**
+     * 画布初始化
+     *
+     * @param paperSize
+     */
+    private void initialize(int paperSize) {// 初始化方法
+        this.setSize(paperSize * 2, paperSize);// 设置窗体大小
+        setDefaultCloseOperation(EXIT_ON_CLOSE);/// 设置窗体关闭方式
+        this.setTitle(&quot;绘制几何图形&quot;);// 设置窗体标题
+        MyCanvas c = new MyCanvas(paperSize);// 创建画布对象
+        add(c);// 将画布添加到窗体中
+    }
+
+    private class MyCanvas extends Canvas {// 创建内部类MyCanvas继承Canvas
+        //节点半径
+        int nodeRadius = 10;
+        //画布大小
+        int paperSize;
+        //层级限制
+        int levelLimit = 6;
+        //连线在x轴投影长度计算常量
+        int xLineLength = 512;
+
+        MyCanvas(int paperSize) {
+            this.paperSize = paperSize;
+        }
+
+
+        @Override
+        public void paint(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g;// 调用新画图类Graphics2D（强制转化为Graphics2D这个类）
+            draw(g2, paperSize - nodeRadius, 0, root, 1);
+        }
+
+        private void draw(Graphics2D g2, int x, int y, Node node, int level) {
+            if (level &gt; levelLimit) {
+                level = levelLimit;//设置大于level限制，线x轴长度就不变了，展示可能会重叠，画布越大这个层级可以越高
+            }
+            //设置节点颜色
+            g2.setColor(node.color == 1 ? Color.BLACK : Color.RED);
+            //画填充色圆
+            g2.fillOval(x, y, nodeRadius * 2, nodeRadius * 2);// 画一个圆形-坐标、宽高（Draw方法绘制的图形是空心的）
+            //设置值的颜色为白色
+            g2.setColor(Color.WHITE);
+            g2.drawString(String.valueOf(node.value), x + nodeRadius / 2, y + nodeRadius / 2 * 3);
+            //连线颜色为黑色
+            g2.setColor(Color.BLACK);
+            //线x轴投影长度
+            int lineX = xLineLength &gt;&gt; level++;
+            if (node.left != null) {
+                g2.drawLine(x + nodeRadius, y + nodeRadius * 2, x + nodeRadius - lineX, y + nodeRadius * 4);
+                draw(g2, x - lineX, y + nodeRadius * 4, node.left, level);
+            }
+            if (node.right != null) {
+                g2.drawLine(x + nodeRadius, y + nodeRadius * 2, x + nodeRadius + lineX, y + nodeRadius * 4);
+                draw(g2, x + lineX, y + nodeRadius * 4, node.right, level);
+            }
+        }
+
+    }
+}
+
+</code></pre>
+<p>测试代码</p>
+<pre><code>public static void main(String[] args){
+        int[] arr = {1,2,3,4,5,6,7,8,9};
+        RedBlackTree rbt = new RedBlackTree();
+        for (int a:arr){
+            rbt.insert(a);
+        }
+        rbt.setVisible(true);
+    }
+</code></pre>
+<p>输出图像<br>
+<img src="https://skylaugh.github.io/post-images/1581414193000.png" alt="rbt" loading="lazy"></p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/AFwlC_qiL/" class="tag">
+                    数据结构
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/lian-biao-fan-zhuan/">
+                  <h3 class="post-title">
+                    链表反转
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

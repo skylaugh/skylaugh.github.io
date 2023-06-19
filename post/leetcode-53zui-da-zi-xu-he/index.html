@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>LeetCode 53.最大子序和 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">LeetCode 53.最大子序和</h2>
+            <div class="post-date">2019-01-03</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/leetcode-53zui-da-zi-xu-he.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <h2 id="题目">题目</h2>
+<p>给定一个整数数组 nums ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。<br>
+示例:</p>
+<pre><code>输入: [-2,1,-3,4,-1,2,1,-5,4],
+输出: 6
+解释: 连续子数组 [4,-1,2,1] 的和最大，为 6。
+</code></pre>
+<p>进阶:<br>
+如果你已经实现复杂度为 O(n) 的解法，尝试使用更为精妙的分治法求解。</p>
+<p>来源：力扣（LeetCode）<br>
+链接：https://leetcode-cn.com/problems/maximum-subarray<br>
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</p>
+<h3 id="暴力破解法-on2">暴力破解法 O(n^2)</h3>
+<p>双循环，比较所有连续子集最大值</p>
+<pre><code>public int maxSubArray(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int max = nums[0];
+        for (int j = 0; j &lt; nums.length; j++) {
+            int count = 0;
+            for (int i = j; i &lt; nums.length; i++) {
+                count = count + nums[i];
+                max = Math.max(count, max);
+            }
+        }
+        return max;
+    }
+</code></pre>
+<h3 id="动态规划法-on2">动态规划法 O(n^2)</h3>
+<p>循环一次，若当前子集之和小于等于0，那么舍弃之前子集之和，若大于0则累加</p>
+<pre><code>public int maxSubArray(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int max = nums[0];
+        int cur = 0;
+        for (int i = 0; i &lt; nums.length; i++) {
+            if (cur &lt;= 0 ){
+                cur = nums[i];
+            }else {
+                cur += nums[i];
+            }
+            max = Math.max(cur,max);
+        }
+        return max;
+    }
+</code></pre>
+<h3 id="分治法-on">分治法 O(n)</h3>
+<h4 id="循环递归">循环递归</h4>
+<p>在每一层递归上都有三个步骤:</p>
+<ol>
+<li>分解:将原问题分解为若干个规模较小，相对独立，与原问题形式相同的子问题。</li>
+<li>解决:若子问题规模较小且易于解决时，则直接解。否则，递归地解决各子问题。</li>
+<li>合并:将各子问题的解合并为原问题的解。</li>
+</ol>
+<pre><code>public int maxSubArray(int[] nums) {
+        return find(nums,0,nums.length-1);
+    }
+public int find(int[] nums,int start, int end){
+        if (start == end){
+            return nums[start];
+        }
+        if (start &gt; end){
+            return Integer.MIN_VALUE;
+        }
+        //取中间值
+        int middle = (start + end) / 2;
+        int leftMax = find(nums,start,middle -1);
+        int rightMax = find(nums,middle + 1,end);
+        //to left
+        int ml = 0;
+        for (int i = middle -1,sum = 0;i &gt;= start;i--){
+            sum += nums[i];
+            ml = Math.max(ml,sum);
+        }
+        //to right
+        int mr = 0;
+        for (int i = middle +1,sum = 0;i &lt;= end;i++){
+            sum += nums[i];
+            mr = Math.max(mr,sum);
+        }
+        return Math.max(Math.max(leftMax,rightMax),ml+mr+nums[middle]);
+    }
+</code></pre>
+<p>个人认为分治法的关键在于将一个大问题分解成解法相同的小问题。如何将问题归纳并分解成为小问题是难点。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/NLraoO2c4/" class="tag">
+                    算法
+                  </a>
+                
+              </div>
+            
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>数据结构Queue的学习 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">数据结构Queue的学习</h2>
+            <div class="post-date">2019-03-01</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/shu-ju-jie-gou-queue-de-xue-xi.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <h3 id="queue">Queue</h3>
+<ul>
+<li>Queue从字面意思就是队列，遵循着FIFO（先进先出）的原则</li>
+<li>Queue是一个接口。</li>
+<li>LinkedList实现了Deque接口，而Deque接口继承了Queue接口。</li>
+<li>Queue的元素添加方法有offer()和add(),推荐使用offer()方法。</li>
+<li>如果容量已满时（什么情况下Queue容量会满？有的说是达到Integer.MAX_VALUE），使用add()方法会抛出IllegalStateException异常，使用offer()会返回false。</li>
+<li>Queue的元素删除方法有poll()和remove()，推荐使用poll()方法。</li>
+<li>如果队列为空时，使用remove()方法会抛出NoSuchElementException异常,使用poll()会返回null。</li>
+<li>常用方法还有peek()和element()，效果一样，都是返回头部元素。区别是如果队列为空时，peek()会返回null,而element()会抛出NoSuchElementException异常。但是如果队列有头部元素，但是元素为null,element()也会返回null。</li>
+</ul>
+<h4 id="一个例子">一个例子</h4>
+<h5 id="leetcode-107-二叉树的层次遍历-ii">leetcode 107. 二叉树的层次遍历 II</h5>
+<p>给定一个二叉树，返回其节点值自底向上的层次遍历。 （即按从叶子节点所在层到根节点所在的层，逐层从左向右遍历）</p>
+<p>例如：<br>
+给定二叉树 [3,9,20,null,null,15,7],</p>
+<pre><code>    3
+   / \
+  9  20
+    /  \
+   15   7
+</code></pre>
+<p>返回其自底向上的层次遍历为：</p>
+<pre><code>[
+  [15,7],
+  [9,20],
+  [3]
+]
+</code></pre>
+<p>来源：力扣（LeetCode）<br>
+链接：https://leetcode-cn.com/problems/binary-tree-level-order-traversal-ii</p>
+<pre><code>public List&lt;List&lt;Integer&gt;&gt; levelOrderBottom(TreeNode root) {
+        List&lt;List&lt;Integer&gt;&gt; result = new ArrayList&lt;&gt;();
+        if (root == null){
+            return result;
+        }
+        Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;();
+        queue.offer(root);
+        while (!queue.isEmpty()) {
+            List&lt;Integer&gt; list = new ArrayList&lt;&gt;();
+            int size = queue.size();
+            for (int i = 0; i &lt; size; i++) {
+                TreeNode node = queue.poll();
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+                list.add(node.val);
+            }
+            result.add(0, list);
+        }
+        return result;
+    }
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/AFwlC_qiL/" class="tag">
+                    数据结构
+                  </a>
+                
+                  <a href="https://skylaugh.github.io/tag/NLraoO2c4/" class="tag">
+                    算法
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/leetcode-53zui-da-zi-xu-he/">
+                  <h3 class="post-title">
+                    LeetCode 53.最大子序和
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

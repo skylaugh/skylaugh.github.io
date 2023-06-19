@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Spring学习笔记（一） | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Spring学习笔记（一）</h2>
+            <div class="post-date">2019-11-21</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/spring-xue-xi-bi-ji-yi.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <h3 id="常见应用上下文类型">常见应用上下文类型</h3>
+<ul>
+<li><code>AnnotationConfigApplicationContext</code>:从一个或多个基于Java的配置中加载Spring应用上下文。</li>
+<li><code>AnnotationConfigWebApplicationContext</code>:从一个活多个基于Java的配置类中加载Spring Web应用上下文。</li>
+<li><code>ClassPathXmlApplicationContext</code>:从类路径下的一个或多个XML配置文件中加载上下文定义，把应用上下文的定义文件作为类资源。</li>
+<li><code>FileSystemXmlApplicationContext</code>:从文件系统下的一个或多个XML配置文件中加载上下文定义。</li>
+<li><code>XmlWebApplicationContext</code>:从Web应用下的一个或多个XML配置文件中加载上下文定义。</li>
+</ul>
+<h3 id="bean的生命周期">bean的生命周期</h3>
+<figure data-type="image" tabindex="1"><img src="https://skylaugh.github.io/post-images/1581413915014.png" alt="lifecycle" loading="lazy"></figure>
+<ol>
+<li>Spring对bean进行实例化</li>
+<li>Spring将value和bean的引用注入到bean对应的属性中</li>
+<li>看看bean是否实现一下几个接口
+<ol>
+<li>BeanNameAware:让bean知道自己在spring容器里的id</li>
+<li>BeanFactoryAware:让bean获取到beanFactory</li>
+<li>ApplicationContextAware:让bean获取到上下文</li>
+<li>BeanPostProcessor:Bean后置处理器，有两个方法，一个在bean初始化前调用postProcessBeforeInitialization()，一个在初始化后调用postProcessAfterInitialization，类似AOP环绕通知</li>
+<li>InitializingBean:要想看看bean属性赋值成功了没用可以用这个的afterPropertiesSet()方法。</li>
+</ol>
+</li>
+<li>此时，bean已经准备就绪，可以被应用程序使用了，它们将一直驻留在应用上下文中，直到该应用上下文被销毁</li>
+<li>如果bean实现了DisposableBean接口，Spring将调用它的destory()接口方法，同样，如果bean使用destroy-method声明了销毁方法，该方法也会被调用</li>
+</ol>
+<h3 id="spring-配置的可选方案">Spring 配置的可选方案</h3>
+<ul>
+<li>在XML中进行显式配置</li>
+<li>在Java中进行显式配置</li>
+<li>隐式的bean发现机制和自动装配<br>
+Spring 从两个角度实现自动化装配：
+<ul>
+<li>组件扫描：Spring会自动发现应用上下文中所创建的bean</li>
+<li>自动装配：Spring自动满足bean之间的依赖</li>
+</ul>
+</li>
+</ul>
+<h3 id="componentscan注解-扫描并自动装配">@ComponentScan注解 扫描并自动装配</h3>
+<ul>
+<li>默认，以配置类所在的包为基础包（base package）来扫描组件</li>
+<li>扫描不同的包 括号带上包名<code>@ComponentScan(&quot;packageName&quot;)</code>或者<code>@ComponetScan(basePackages =&quot;packageName&quot;)</code></li>
+<li>扫描多个包 <code>@ComponentScan(basePackages ={&quot;packageName1&quot;,&quot;packageName2&quot;})</code></li>
+<li>指定基础包中包含的类或接口 <code>@ComponentScan(basePackageClasses={CDPlayer.class,DVDPlayer.class})</code></li>
+</ul>
+<h3 id="autowired注解-实现自动装配">@AutoWired注解 实现自动装配</h3>
+<ul>
+<li>放在属性上</li>
+<li>放在构造器上</li>
+<li>放在Setter方法上</li>
+<li>如果没有匹配会抛出异常，可以采用<code>@AutoWired(required=false)</code></li>
+</ul>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/AQ06mpYl8/" class="tag">
+                    Spring
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/reentrantlock-he-synchronized-bi-jiao/">
+                  <h3 class="post-title">
+                    ReentrantLock 和 synchronized 比较
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

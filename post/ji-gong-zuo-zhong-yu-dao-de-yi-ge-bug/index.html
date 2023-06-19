@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>记工作中遇到的一个bug | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">记工作中遇到的一个bug</h2>
+            <div class="post-date">2020-08-31</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/ji-gong-zuo-zhong-yu-dao-de-yi-ge-bug.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <h4 id="背景概要">背景概要</h4>
+<p>调试宇视一体机的几个 API，因为部署在内网，需要 NAT 穿透后建立 TCP 长链接通道，在通道内进行 API 的调用。server 端用了 netty 的框架。</p>
+<h4 id="bug场景">bug场景</h4>
+<p>API调用有时会有超时失败，当这种情况发生时，后续每次调用返回的都是上次发起请求的响应。</p>
+<h4 id="问题排查">问题排查</h4>
+<ol>
+<li>查看发起请求的方法，响应的请求在 handler 的 channelRead0 方法中处理。</li>
+</ol>
+<pre><code>//判断属于响应类处理方式
+else if (msg instanceof FullHttpResponse) {
+		FullHttpResponse response = (FullHttpResponse) msg;
+		HttpResponseFactory.responseHandle(ctx, response);
+	} 
+</code></pre>
+<ol start="2">
+<li>方法中调用了HttpResponseFactory 的 responseHandle 方法</li>
+</ol>
+<pre><code>public static final ConcurrentHashMap&lt;Integer, String&gt; RESPONSE_DATA = new ConcurrentHashMap&lt;&gt;(128);
+
+public static void responseHandle(ChannelHandlerContext ctx, FullHttpResponse httpResponse) {
+        try {
+            String responseBody = httpResponse.content().toString(CharsetUtil.UTF_8);
+            int iHashCodeKey = ctx.channel().hashCode();
+            //收到消息的响应的长连接MAP 无 此 hashCode 则向下
+            ConcurrentHashMap&lt;Integer, String&gt; temMap = KEEP_ALIVE_RESPONSE_MAP.get(iHashCodeKey);
+            if (null != temMap){
+                temMap.put(iHashCodeKey, responseBody);
+            }else {
+                //单设备单接口做成并行,设备这里使用通道哈希值代替
+                if (null != RESPONSE_DATA.putIfAbsent(iHashCodeKey, responseBody)) {
+                    //出现多条响应入队的情况,记录错误日志
+                    LOGGER.error(&quot;[KEEP_ALIVE][RESPONSE]-The {}- RESPONSE queue is full,this response will be drop. {}&quot;, iHashCodeKey, responseBody);
+                }
+                //如果已经有响应未提取,以后面的响应为准
+                RESPONSE_DATA.put(iHashCodeKey, responseBody);
+            }
+        } catch (Exception e) {
+            LOGGER.error(&quot;Handle response failed for {}&quot;, e.getMessage(), e);
+        }
+    }
+</code></pre>
+<p>可以看到返回的结果放入了 RESPONSE_DATA 这个 map 中，++<strong>key <em>是 channel 的哈希值</em></strong>++。<br>
+3. 查看请求方法</p>
+<pre><code>    //发起请求前，先做移除
+	responseKey = ctx.hashCode();
+	HttpResponseFactory.RESPONSE_DATA.remove(responseKey);
+</code></pre>
+<p>这里终于找到了原因，可以看到移除的 key 取值是 ctx 的哈希，而不是前文中 channel 的哈希，问题解决！</p>
+<h3 id="总结">总结</h3>
+<p>查找本次问题的思路：由于问题是每次超时才产生的，且下次请求能获取上次超时请求的响应，说明请求最终成功了，且暂时存储了响应的结果。由此可以找到存储介质，再对存取方法进行分析可以找出最终的问题原因。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/wDdDEnxe6/" class="tag">
+                    Bug
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/oauth20-si-chong-shou-quan-fang-shi/">
+                  <h3 class="post-title">
+                    OAuth2.0四种授权方式
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

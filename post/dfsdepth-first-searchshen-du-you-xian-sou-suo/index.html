@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>DFS(Depth First Search)深度优先搜索 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">DFS(Depth First Search)深度优先搜索</h2>
+            <div class="post-date">2019-03-27</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/dfsdepth-first-searchshen-du-you-xian-sou-suo.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <p>最近在刷leetcode的时候,做到二叉树相关的题目，很多题解都提到了DFS。像我这样半路出价的程序猿，数据结构和算法的基础都比较薄弱。在此对DFS算法做一个记录。</p>
+<blockquote>
+<p>深度优先搜索算法（英语：Depth-First-Search，DFS）是一种用于遍历或搜索树或图的算法。沿着树的深度遍历树的节点，尽可能深的搜索树的分支。当节点v的所在边都己被探寻过，搜索将回溯到发现节点v的那条边的起始节点。这一过程一直进行到已发现从源节点可达的所有节点为止。如果还存在未被发现的节点，则选择其中一个作为源节点并重复以上过程，整个进程反复进行直到所有节点都被访问为止。属于盲目搜索。</p>
+</blockquote>
+<blockquote>
+<p>深度优先搜索是图论中的经典算法，利用深度优先搜索算法可以产生目标图的相应拓扑排序表，利用拓扑排序表可以方便的解决很多相关的图论问题，如最大路径问题等等。</p>
+</blockquote>
+<blockquote>
+<p>因发明“深度优先搜索算法”，约翰·霍普克洛夫特与罗伯特·塔扬在1986年共同获得计算机领域的最高奖：图灵奖。</p>
+</blockquote>
+<figure data-type="image" tabindex="1"><img src="https://skylaugh.github.io/post-images/1581410130804.jpg" alt="dfs" loading="lazy"></figure>
+<h4 id="实现方法">实现方法</h4>
+<ol>
+<li>首先将根节点放入stack中。</li>
+<li>从stack中取出第一个节点，并检验它是否为目标。<br>
+如果找到目标，则结束搜寻并回传结果。<br>
+否则将它某一个尚未检验过的直接子节点加入stack中。</li>
+<li>重复步骤2。</li>
+<li>如果不存在未检测过的直接子节点。<br>
+将上一级节点加入stack中。<br>
+重复步骤2。</li>
+<li>重复步骤4。</li>
+<li>若stack为空，表示整张图都检查过了——亦即图中没有欲搜寻的目标。结束搜寻并回传“找不到目标”。</li>
+</ol>
+<p>个人理解，最重要的两点，1是终止条件，2是递归逻辑。</p>
+<h4 id="一个例子">一个例子</h4>
+<h5 id="leetcode-104-二叉树的最大深度">leetcode 104. 二叉树的最大深度</h5>
+<p>给定一个二叉树，找出其最大深度。</p>
+<p>二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。</p>
+<p>说明: 叶子节点是指没有子节点的节点。</p>
+<p>示例：<br>
+给定二叉树 [3,9,20,null,null,15,7]，</p>
+<pre><code>    3
+   / \
+  9  20
+    /  \
+   15   7
+</code></pre>
+<p>返回它的最大深度 3 。</p>
+<p>来源：力扣（LeetCode）<br>
+链接：<a href="https://leetcode-cn.com/problems/maximum-depth-of-binary-tree">https://leetcode-cn.com/problems/maximum-depth-of-binary-tree</a></p>
+<h5 id="题解">题解</h5>
+<pre><code>public int maxDepth(TreeNode root) {
+    if (root == null) {
+      return 0;
+    } else {
+      int left_height = maxDepth(root.left);
+      int right_height = maxDepth(root.right);
+      return java.lang.Math.max(left_height, right_height) + 1;
+    }
+}
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/NLraoO2c4/" class="tag">
+                    算法
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/shu-ju-jie-gou-stack-zhan-de-xue-xi/">
+                  <h3 class="post-title">
+                    数据结构Stack栈的学习
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

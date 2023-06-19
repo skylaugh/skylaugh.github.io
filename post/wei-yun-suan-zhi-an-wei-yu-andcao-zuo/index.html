@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>位运算之按位与(&amp;)操作 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">位运算之按位与(&amp;)操作</h2>
+            <div class="post-date">2019-07-02</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/wei-yun-suan-zhi-an-wei-yu-andcao-zuo.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <h3 id="定义">定义</h3>
+<blockquote>
+<p>按位与运算符“&amp;”是双目运算符。其功能是参与运算的两数各对应的二进位相与。只有对应的两个二进位都为1时，结果位才为1。参与运算的两个数均以补码出现。</p>
+</blockquote>
+<h3 id="规则">规则：</h3>
+<pre><code>1 &amp; 1 = 1  
+1 &amp; 0 = 0  
+0 &amp; 1 = 0  
+0 &amp; 0 = 0  
+</code></pre>
+<h3 id="常用技巧">常用技巧</h3>
+<ol>
+<li>可以用来判断整数奇偶性<br>
+a &amp; 1<br>
+0偶 1奇<br>
+例如:</li>
+</ol>
+<pre><code>2 &amp; 1 = 0 即 10 &amp; 01 = 00 = 0;  //偶数
+6 &amp; 1 = 0 即 110 &amp; 001 = 000 = 0;  //偶数
+3 &amp; 1 = 1 即 11 &amp; 01 = 01 = 1;  //奇数
+</code></pre>
+<ol start="2">
+<li>判断是否是2的正整数幂<br>
+a &amp; a-1<br>
+若结果为0表示a是2的正整数幂。因为2的正整数幂用二进制表示是1后边跟n个0，a-1为n个1，两者按位与则是0。<br>
+例如:</li>
+</ol>
+<pre><code>a = 4
+4 &amp; 3 = 100 &amp; 011 = 000 = 0;//说明a是2的正整数幂
+</code></pre>
+<ol start="3">
+<li>
+<p>统计整数中1的个数<br>
+朴素的统计办法是：先判断n的奇偶性，为奇数时计数器增加1，然后将n右移一位，重复上面步骤，直到移位完毕。</p>
+</li>
+<li>
+<p>对于正整数的模运算（注意，负数不能这么算）<br>
+乘除法是很消耗时间的，只要对数左移一位就是乘以2，右移一位就是除以2，传说用位运算效率提高了60%。</p>
+</li>
+</ol>
+<pre><code>乘2^k,  n&lt;&lt;k;  
+除2^k,  n&gt;&gt;k。
+</code></pre>
+<p>对2的次方取模</p>
+<pre><code>n &amp; (2^k -1)
+</code></pre>
+<p>等价于</p>
+<pre><code>n % 2^k
+</code></pre>
+<p>用通俗的言语来描述就是,对2的次方取模，<strong>取模其实就是取溢出量</strong>。只要将数与2的次方-1做按位与运算即可。HashMap的get方法中用到了此取模计算。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/NLraoO2c4/" class="tag">
+                    算法
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/jdk18-de-hashmap-yuan-ma-yue-du-er/">
+                  <h3 class="post-title">
+                    JDK1.8的HashMap源码阅读(二)
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

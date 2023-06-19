@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>JDK1.8的HashMap源码阅读(二) | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">JDK1.8的HashMap源码阅读(二)</h2>
+            <div class="post-date">2019-06-13</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/jdk18-de-hashmap-yuan-ma-yue-du-er.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <p><img src="https://skylaugh.github.io/post-images/1581412743805.png" alt="HashMap" loading="lazy"><br>
+HashMap采用Entry数组来存储key-value对，每一个键值对组成了一个Entry实体，Entry类实际上是一个单向的链表结构，它具有Next指针，可以连接下一个Entry实体。</p>
+<pre><code>   /**
+     * Basic hash bin node, used for most entries.  (See below for
+     * TreeNode subclass, and in LinkedHashMap for its Entry subclass.)
+     */
+    static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; {
+        //key的hash
+        final int hash;
+        final K key;
+        V value;
+        //指向的下一个节点
+        Node&lt;K,V&gt; next;
+
+        Node(int hash, K key, V value, Node&lt;K,V&gt; next) {
+            this.hash = hash;
+            this.key = key;
+            this.value = value;
+            this.next = next;
+        }
+
+        public final K getKey()        { return key; }
+        public final V getValue()      { return value; }
+        public final String toString() { return key + &quot;=&quot; + value; }
+        
+        //对于此Node的hash
+        public final int hashCode() {
+            return Objects.hashCode(key) ^ Objects.hashCode(value);
+        }
+
+        public final V setValue(V newValue) {
+            V oldValue = value;
+            value = newValue;
+            return oldValue;
+        }
+
+        //equals方法，指向同一个对象，或KV都相等
+        public final boolean equals(Object o) {
+            if (o == this)
+                return true;
+            if (o instanceof Map.Entry) {
+                Map.Entry&lt;?,?&gt; e = (Map.Entry&lt;?,?&gt;)o;
+                if (Objects.equals(key, e.getKey()) &amp;&amp;
+                    Objects.equals(value, e.getValue()))
+                    return true;
+            }
+            return false;
+        }
+    }
+</code></pre>
+<p>注意，在Node中成员变量hash是指key对应的hash值。<br>
+其成员方法hashCode为node对象的hash值。<br>
+在成员变量table中引用的就是这个Node。</p>
+<pre><code>//保存Node&lt;K,V&gt;节点的数组
+transient Node&lt;K,V&gt;[] table;
+
+//由　hashMap 中 Node&lt;K,V&gt;　节点构成的 set
+transient Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet;
+
+//记录 hashMap 当前存储的元素的数量
+transient int size;
+
+//记录　hashMap 发生结构性变化的次数（注意　value 的覆盖不属于结构性变化）
+transient int modCount;
+
+//threshold的值应等于 table.length * loadFactor, size 超过这个值时进行　resize()扩容
+int threshold;
+
+//记录 hashMap 装载因子
+final float loadFactor;
+</code></pre>
+<h3 id="hash方法">hash方法</h3>
+<pre><code>    //对key的hash结果再对当前map容量取模，若结果相同，则称为哈希冲突，先以链表形式放入同一bucket，如果bucket内数量超过8，且当前map容量是否达到64及以上,两者都满足则此bucket内链表转为红黑树
+    static final int hash(Object key) {
+        int h;
+        return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);
+    }
+</code></pre>
+<p>高低16位取模运算，为了降低hash碰撞的几率。</p>
+<h3 id="get方法">get方法</h3>
+<pre><code>    public V get(Object key) {
+        Node&lt;K,V&gt; e;
+        return (e = getNode(hash(key), key)) == null ? null : e.value;
+    }
+    
+    final Node&lt;K,V&gt; getNode(int hash, Object key) {
+        Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; first, e; int n; K k;
+        //first = tab[(n - 1) &amp; hash]为什么能直接定位到指定Node的下标,对2的次方取模
+        if ((tab = table) != null &amp;&amp; (n = tab.length) &gt; 0 &amp;&amp;
+            (first = tab[(n - 1) &amp; hash]) != null) {
+            //判断桶内第一个元素hash是否相等且key是否相等
+            if (first.hash == hash &amp;&amp; // always check first node
+                ((k = first.key) == key || (key != null &amp;&amp; key.equals(k))))
+                return first;
+            //如果下个元素不为空
+            if ((e = first.next) != null) {
+                //如果是个树节点
+                if (first instanceof TreeNode)
+                    return ((TreeNode&lt;K,V&gt;)first).getTreeNode(hash, key);
+                do {//循环查找hash和key都相等的元素
+                    if (e.hash == hash &amp;&amp;
+                        ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
+                        return e;
+                } while ((e = e.next) != null);
+            }
+        }
+        return null;
+    }
+
+    final TreeNode&lt;K,V&gt; getTreeNode(int h, Object k) {
+            return ((parent != null) ? root() : this).find(h, k, null);
+        }
+
+    final TreeNode&lt;K,V&gt; find(int h, Object k, Class&lt;?&gt; kc) {
+            TreeNode&lt;K,V&gt; p = this;
+            do {
+                int ph, dir; K pk;
+                TreeNode&lt;K,V&gt; pl = p.left, pr = p.right, q;
+                if ((ph = p.hash) &gt; h)
+                    p = pl;
+                else if (ph &lt; h)
+                    p = pr;
+                else if ((pk = p.key) == k || (k != null &amp;&amp; k.equals(pk)))
+                    return p;
+                else if (pl == null)
+                    p = pr;
+                else if (pr == null)
+                    p = pl;
+                else if ((kc != null ||
+                          (kc = comparableClassFor(k)) != null) &amp;&amp;
+                         (dir = compareComparables(kc, k, pk)) != 0)
+                    p = (dir &lt; 0) ? pl : pr;
+                else if ((q = pr.find(h, k, kc)) != null)
+                    return q;
+                else
+                    p = pl;
+            } while (p != null);
+            return null;
+        }
+</code></pre>
+<p>对key做hash运算对map容量取模，计算bucket的index;<br>
+如果在对应bucket里的第一个节点里直接命中，则直接返回；<br>
+否则判断下一个是否为空，不为空的话判断first是否是个树节点，是的话用getTreeNode,是链表的话循环判断。<br>
+都找不到返回null</p>
+<h3 id="put方法">put方法</h3>
+<pre><code>    /**
+     * 将指定的值与此映射中的指定键相关联。
+     * 如果映射已存在，则替换旧值。
+     * 键和值都可以为null
+     */
+    public V put(K key, V value) {
+        return putVal(hash(key), key, value, false, true);
+    }
+    
+    /**
+     * Implements Map.put and related methods
+     * 实现Map.put和相关方法
+     * @param hash hash for key
+     * @param key the key
+     * @param value the value to put
+     * @param onlyIfAbsent if true, don't change existing value
+     * @param evict if false, the table is in creation mode.
+     * @return previous value, or null if none
+     */
+    final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+                   boolean evict) {
+        Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;
+        //table为初始化，或者容量大小等于0，调用resize方法初始化table
+        if ((tab = table) == null || (n = tab.length) == 0)
+            n = (tab = resize()).length;
+        //对应bucket目前没有元素，调用newNode初始化放入元素
+        if ((p = tab[i = (n - 1) &amp; hash]) == null)
+            tab[i] = newNode(hash, key, value, null);
+        else {
+            Node&lt;K,V&gt; e; K k;
+            //对应bucket有元素且key相同，则替换掉元素
+            if (p.hash == hash &amp;&amp;
+                ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))
+                e = p;
+            //此bucket已经是红黑树了，p是树节点，用putTreeVal方法
+            else if (p instanceof TreeNode)
+                e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);
+            //目标bucket为链表，且发生了hash冲突，链表后边追加新元素，判断链表长度是否到达树形化阈值TREEIFY_THRESHOLD=8，如达到调用treeifyBin方法
+            else {
+                for (int binCount = 0; ; ++binCount) {
+                    if ((e = p.next) == null) {
+                        p.next = newNode(hash, key, value, null);
+                        if (binCount &gt;= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                            treeifyBin(tab, hash);
+                        break;
+                    }
+                    if (e.hash == hash &amp;&amp;
+                        ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
+                        break;
+                    p = e;
+                }
+            }
+            if (e != null) { // existing mapping for key
+                V oldValue = e.value;
+                if (!onlyIfAbsent || oldValue == null)
+                    e.value = value;
+                afterNodeAccess(e);
+                return oldValue;
+            }
+        }
+        ++modCount;
+        if (++size &gt; threshold)
+            resize();
+        afterNodeInsertion(evict);
+        return null;
+    }
+</code></pre>
+<h3 id="resize方法">resize()方法</h3>
+<pre><code>    /**
+     * Initializes or doubles table size.  If null, allocates in
+     * accord with initial capacity target held in field threshold.
+     * Otherwise, because we are using power-of-two expansion, the
+     * elements from each bin must either stay at same index, or move
+     * with a power of two offset in the new table.
+     * 初始化或加倍表格大小。如果为null，则根据字段阈值中保存的初始容量目标进行分配。否则，因为我们正在使用二次幂扩展，所以每个bin中的元素必须保持相同的索引，或者在新表中以两个偏移的幂移动。
+     * @return the table
+     */
+    final Node&lt;K,V&gt;[] resize() {
+        //定义一个oldTab把老table放进去
+        Node&lt;K,V&gt;[] oldTab = table;
+        //老table的容量
+        int oldCap = (oldTab == null) ? 0 : oldTab.length;
+        //老的阈值
+        int oldThr = threshold;
+        //定义新table的容量，阈值
+        int newCap, newThr = 0;
+        if (oldCap &gt; 0) {
+            //如果老的table大小大于最大容量1&lt;&lt;30，不能扩容，阈值设置最大，返回老的table
+            if (oldCap &gt;= MAXIMUM_CAPACITY) {
+                threshold = Integer.MAX_VALUE;
+                return oldTab;
+            }//新table容量扩容至2倍且小于最大容量，老table容量大于默认初始容量，新阈值也扩大两倍
+            else if ((newCap = oldCap &lt;&lt; 1) &lt; MAXIMUM_CAPACITY &amp;&amp;
+                     oldCap &gt;= DEFAULT_INITIAL_CAPACITY)
+                newThr = oldThr &lt;&lt; 1; // double threshold
+        }//老的阈值大于0，新容量设置成老的阈值
+        else if (oldThr &gt; 0) // initial capacity was placed in threshold
+            newCap = oldThr;
+        else {               // zero initial threshold signifies using defaults 初始化table操作
+            newCap = DEFAULT_INITIAL_CAPACITY;
+            newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
+        }
+        //如果新阈值为0
+        if (newThr == 0) {
+            float ft = (float)newCap * loadFactor;
+            newThr = (newCap &lt; MAXIMUM_CAPACITY &amp;&amp; ft &lt; (float)MAXIMUM_CAPACITY ?
+                      (int)ft : Integer.MAX_VALUE);
+        }
+        threshold = newThr;
+        @SuppressWarnings({&quot;rawtypes&quot;,&quot;unchecked&quot;})
+            Node&lt;K,V&gt;[] newTab = (Node&lt;K,V&gt;[])new Node[newCap];
+        table = newTab;
+        if (oldTab != null) {
+            for (int j = 0; j &lt; oldCap; ++j) {
+                Node&lt;K,V&gt; e;
+                if ((e = oldTab[j]) != null) {
+                    oldTab[j] = null;
+                    if (e.next == null)
+                        newTab[e.hash &amp; (newCap - 1)] = e;
+                    else if (e instanceof TreeNode)
+                        ((TreeNode&lt;K,V&gt;)e).split(this, newTab, j, oldCap);
+                    else { // preserve order
+                        Node&lt;K,V&gt; loHead = null, loTail = null;
+                        Node&lt;K,V&gt; hiHead = null, hiTail = null;
+                        Node&lt;K,V&gt; next;
+                        do {
+                            next = e.next;
+                            if ((e.hash &amp; oldCap) == 0) {
+                                if (loTail == null)
+                                    loHead = e;
+                                else
+                                    loTail.next = e;
+                                loTail = e;
+                            }
+                            else {
+                                if (hiTail == null)
+                                    hiHead = e;
+                                else
+                                    hiTail.next = e;
+                                hiTail = e;
+                            }
+                        } while ((e = next) != null);
+                        if (loTail != null) {
+                            loTail.next = null;
+                            newTab[j] = loHead;
+                        }
+                        if (hiTail != null) {
+                            hiTail.next = null;
+                            newTab[j + oldCap] = hiHead;
+                        }
+                    }
+                }
+            }
+        }
+        return newTab;
+    }
+</code></pre>
+<hr>
+<h3 id="qa">Q&amp;A</h3>
+<ul>
+<li>
+<p>Q：HashMap中桶bucket的意义？<br>
+A：bucket桶可以看作key的hash对当前map容量取模结果相同（哈希冲突，aka哈希碰撞）的元素的容器。</p>
+</li>
+<li>
+<p>Q：树形化的条件是容量大于 TREEIFY_THRESHOLD = 8 还是 MIN_TREEIFY_CAPACITY = 64？<br>
+A：<em><strong>以上两个条件需同时满足。key的哈希冲突数量(开始以链表形式放入同一bucket桶中)超过TREEIFY_THRESHOLD 时会调用treeifyBin()方法,但方法中仍会判断map当前容量是否小于MIN_TREEIFY_CAPACITY，如果小于会调用resize()方法扩容，只有两个条件都达到才会触发真正的树形化treeify()方法将此桶内结构由链表转为红黑树。网上一般只说了当key的哈希重涂超过8个就会转红黑树。其实正常情况key的hash冲突数量达到8个的话，元素早已远超过64x0.75=48了。但由于我使用了极端方法生成了多个相同hash的字符串作为key值进行测试。所以调用了两次treeifyBin()中的resize()扩容了两次到64，第三次才进入treeify()方法进行树形化。</strong></em></p>
+</li>
+<li>
+<p>Q：为什么bucket元素超过8个要进行树形化？<br>
+A：因为红黑树需要进行左旋，右旋，变色这些操作来保持平衡，而单链表不需要。当元素小于8个当时候，此时做查询操作，链表结构已经能保证查询性能。当元素大于8个的时候，此时需要红黑树来加快查询速度，但是新增节点的效率变慢了。</p>
+</li>
+<li>
+<p>Q：为什么要先高16位异或低16位再取模运算?<br>
+A：为了降低hash冲突的几率。</p>
+</li>
+</ul>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/E1t30QiTK/" class="tag">
+                    Java
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/jdk18-de-hashmap-yuan-ma-yue-du-yi/">
+                  <h3 class="post-title">
+                    JDK1.8的HashMap源码阅读(一)
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

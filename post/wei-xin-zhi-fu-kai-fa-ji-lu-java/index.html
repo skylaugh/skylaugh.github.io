@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>微信支付开发记录（JAVA） | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">微信支付开发记录（JAVA）</h2>
+            <div class="post-date">2019-04-18</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/wei-xin-zhi-fu-kai-fa-ji-lu-java.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <p>最近工作中遇到的需求需要使用微信支付，这里把代码做一下记录。<br>
+以下代码主要实现了 <strong>微信支付，二维码支付，微信退款，微信转账（企业付款）</strong><br>
+其中退款和转账需要用到证书，官方有详细的指引，这里就不赘述了。<br>
+详情请查看<a href="https://pay.weixin.qq.com/wiki/doc/api/index.html">微信支付官方文档</a></p>
+<hr>
+<h3 id="支付参数类">支付参数类</h3>
+<pre><code>package bean;
+
+public class SysPayParams{
+    private String appId;
+
+    private String mchId;
+
+    private String apiKey;
+
+    private String sslCertPath;
+
+    private String certPwd;
+
+    private String notifyUrl;
+
+    private String refundNotifyUrl;
+
+    private String rechargeNotifyUrl;
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public String getMchId() {
+        return mchId;
+    }
+
+    public void setMchId(String mchId) {
+        this.mchId = mchId;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public String getNotifyUrl() {
+        return notifyUrl;
+    }
+
+    public void setNotifyUrl(String notifyUrl) {
+        this.notifyUrl = notifyUrl;
+    }
+
+    public String getSslCertPath() {
+        return sslCertPath;
+    }
+
+    public void setSslCertPath(String sslCertPath) {
+        this.sslCertPath = sslCertPath;
+    }
+
+    public String getRefundNotifyUrl() {
+        return refundNotifyUrl;
+    }
+
+    public void setRefundNotifyUrl(String refundNotifyUrl) {
+        this.refundNotifyUrl = refundNotifyUrl;
+    }
+
+    public String getCertPwd() {
+        return certPwd;
+    }
+
+    public void setCertPwd(String certPwd) {
+        this.certPwd = certPwd;
+    }
+
+    public String getRechargeNotifyUrl() {
+        return rechargeNotifyUrl;
+    }
+
+    public void setRechargeNotifyUrl(String rechargeNotifyUrl) {
+        this.rechargeNotifyUrl = rechargeNotifyUrl;
+    }
+}
+</code></pre>
+<hr>
+<h3 id="http请求工具类">http请求工具类</h3>
+<pre><code>package util;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContexts;
+import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.SSLContext;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.security.KeyStore;
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+* @Description  http请求工具类
+*/
+public class HttpClientUtil {
+    private static Logger logger = LoggerFactory.getLogger(HttpClientUtil.class);
+	
+	private static RequestConfig RC = RequestConfig.custom()
+            .setSocketTimeout(60000)  
+            .setConnectTimeout(60000)  
+            .setConnectionRequestTimeout(60000)  
+            .build();
+	
+	/** 
+     * 发送Post请求 
+     * @param httpPost 
+     * @return 
+     */  
+    private static String sendHttpPost(HttpPost httpPost, String charset) {
+    	if(charset == null) {
+			charset = &quot;UTF-8&quot;;
+		}
+        CloseableHttpClient httpClient = null;
+        CloseableHttpResponse response = null;
+        HttpEntity entity = null;
+        String responseContent = null;  
+        try {  
+            // 创建默认的httpClient实例.  
+            httpClient = HttpClients.createDefault();
+            httpPost.setConfig(RC);  
+            // 执行请求  
+            response = httpClient.execute(httpPost);  
+            entity = response.getEntity();  
+            responseContent = EntityUtils.toString(entity, charset);
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        } finally {  
+            try {  
+                // 关闭连接,释放资源  
+                if (response != null) {  
+                    response.close();  
+                }  
+                if (httpClient != null) {  
+                    httpClient.close();  
+                }  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            }  
+        }  
+        return responseContent;  
+    }  
+	
+    /** 
+     * 请求String[]参数
+     * @return 请求结果 str
+     */  
+	public static String createPostRequest(String url, String[] names, String[] values, String charset){
+		if(charset == null) {
+			charset = &quot;UTF-8&quot;;
+		}
+		HttpPost httpPost = new HttpPost(url);//创建httpPost
+		if(names != null &amp;&amp; values != null){
+			// 创建参数队列
+			List&lt;NameValuePair&gt; nameValuePairs = new ArrayList&lt;NameValuePair&gt;();
+			for(int i=0; i &lt; names.length; i++){
+				nameValuePairs.add(new BasicNameValuePair(names[i], values[i]));
+			}
+			try {  
+				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, charset));
+			} catch (Exception e) {  
+				e.printStackTrace();  
+			}  
+		}
+        return sendHttpPost(httpPost, charset);
+    }
+	
+	/** 
+     * Map&lt;String, String&gt; params
+     * @return 请求结果 str
+     */
+	public static String createPostRequest(String url, Map&lt;String, String&gt; params, String charset){
+		if(charset == null)
+			charset = &quot;UTF-8&quot;;
+		
+		HttpPost httpPost = new HttpPost(url);//创建httpPost
+		if(params != null &amp;&amp; !params.isEmpty()){
+			// 创建参数队列
+			List&lt;NameValuePair&gt; nameValuePairs = new ArrayList&lt;NameValuePair&gt;();
+			for(String name : params.keySet()){
+				nameValuePairs.add(new BasicNameValuePair(name, params.get(name)));
+			}
+			try {  
+				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, charset));
+			} catch (Exception e) {  
+				e.printStackTrace();  
+			}  
+		}
+        return sendHttpPost(httpPost, charset);
+    }
+	
+	/** 
+     * json
+     * @return 请求结果 str
+     */
+	public static String createPostRequestJSON(String url,String json, String charset){
+		if(charset == null)
+			charset = &quot;UTF-8&quot;;
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.addHeader(&quot;Content-type&quot;,&quot;application/json; charset=&quot; + charset);  
+		httpPost.setHeader(&quot;Accept&quot;, &quot;application/json&quot;);  
+		try {  
+//			System.out.println(&quot;json:&quot;+json);
+			httpPost.setEntity(new StringEntity(json, Charset.forName(charset)));
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }
+		return sendHttpPost(httpPost, charset);
+    }
+	
+	/** 
+     * xml
+     * @return 请求结果 str
+     */
+	public static String createPostRequestXML(String url, String xml, String charset){
+		if(charset == null)
+			charset = &quot;UTF-8&quot;;
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.addHeader(&quot;Content-type&quot;,&quot;application/xml; charset=&quot; + charset);
+		httpPost.setHeader(&quot;Accept&quot;, &quot;application/xml&quot;); 
+		try {  
+			httpPost.setEntity(new StringEntity(xml, Charset.forName(charset)));
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }
+		return sendHttpPost(httpPost, charset);
+	}
+
+    public static String createSslPostRequest(String url, String data, String sslcertPath, String pwd) throws Exception {
+        /**
+         * 注意PKCS12证书 是从微信商户平台-》账户设置-》 API安全中下载的
+         */
+        KeyStore keyStore = KeyStore.getInstance(&quot;PKCS12&quot;);
+        /**
+         *此处要改
+         *wxconfig.SSLCERT_PATH : 指向你的证书的绝对路径，带着证书去访问
+         */
+
+        FileInputStream instream = new FileInputStream(new File(sslcertPath));//P12文件目录
+        try {
+            /**
+             * 下载证书时的密码、默认密码是你的MCHID mch_id
+             * */
+            keyStore.load(instream, pwd.toCharArray());//这里写密码
+        } finally {
+            instream.close();
+        }
+
+        // Trust own CA and all self-signed certs
+        /**
+         * 下载证书时的密码、默认密码是你的MCHID mch_id
+         * */
+        SSLContext sslcontext = SSLContexts.custom()
+                .loadKeyMaterial(keyStore, pwd.toCharArray())//这里也是写密码的
+                .build();
+        // Allow TLSv1 protocol only
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+                sslcontext,
+                new String[]{&quot;TLSv1&quot;},
+                null,
+                SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+        CloseableHttpClient httpclient = HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
+                .build();
+        try {
+            // 设置响应头信息
+            HttpPost httpost = new HttpPost(url);
+            httpost.addHeader(&quot;Connection&quot;, &quot;keep-alive&quot;);
+            httpost.addHeader(&quot;Accept&quot;, &quot;*/*&quot;);
+            httpost.addHeader(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded; charset=UTF-8&quot;);
+            httpost.addHeader(&quot;Host&quot;, &quot;api.mch.weixin.qq.com&quot;);
+            httpost.addHeader(&quot;X-Requested-With&quot;, &quot;XMLHttpRequest&quot;);
+            httpost.addHeader(&quot;Cache-Control&quot;, &quot;max-age=0&quot;);
+            httpost.addHeader(&quot;User-Agent&quot;, &quot;Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0) &quot;);
+            httpost.setEntity(new StringEntity(data, &quot;UTF-8&quot;));
+            CloseableHttpResponse response = httpclient.execute(httpost);
+            try {
+                HttpEntity entity = response.getEntity();
+
+                String jsonStr = EntityUtils.toString(response.getEntity(), &quot;UTF-8&quot;);
+                EntityUtils.consume(entity);
+                return jsonStr;
+            } finally {
+                response.close();
+            }
+        } finally {
+            httpclient.close();
+        }
+    }
+	
+	 /**
+     * 向指定 URL 发送POST方法的请求
+     * 
+     * @param url
+     *            发送请求的 URL
+     * @param param
+     *            请求参数，请求参数应该是 name1=value1&amp;name2=value2 的形式。
+     * @param charset         
+     *             发送和接收的格式       
+     * @return 所代表远程资源的响应结果
+     */
+    public static String createPostRequestStr(String url, String param,String charset) {
+        PrintWriter out = null;
+        BufferedReader in = null;
+        String result = &quot;&quot;;
+        String line;
+        StringBuffer sb=new StringBuffer();
+        try {
+            URL realUrl = new URL(url);
+            //如果是https请求,忽略SSL证书
+            if(&quot;https&quot;.equalsIgnoreCase(realUrl.getProtocol())){
+            	   //SslUtils.ignoreSsl();
+            }
+            // 打开和URL之间的连接 
+            URLConnection conn = realUrl.openConnection();
+            // 设置通用的请求属性 设置请求格式
+            conn.setRequestProperty(&quot;contentType&quot;, charset);  
+            conn.setRequestProperty(&quot;content-type&quot;, &quot;application/x-www-form-urlencoded&quot;);
+            //设置超时时间
+            conn.setConnectTimeout( 60000);
+            conn.setReadTimeout( 60000);
+            // 发送POST请求必须设置如下两行
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            // 获取URLConnection对象对应的输出流
+            out = new PrintWriter(conn.getOutputStream());
+            // 发送请求参数
+            out.print(param);
+            // flush输出流的缓冲
+            out.flush();
+            // 定义BufferedReader输入流来读取URL的响应    设置接收格式
+            in = new BufferedReader(new InputStreamReader(conn.getInputStream(),charset));
+            while ((line = in.readLine()) != null) {
+                sb.append(line);
+            }
+            result=sb.toString();
+        } catch (Exception e) {
+            logger.error(&quot;发送 POST请求出现异常!&quot;+e);
+            //e.printStackTrace();
+        }
+        //使用finally块来关闭输出流、输入流
+        finally{
+            try{
+                if(out!=null){
+                    out.close();
+                }
+                if(in!=null){
+                    in.close();
+                }
+            }
+            catch(IOException ex){
+                ex.printStackTrace();
+            }
+        }
+        return result;
+    }
+	
+	private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5',  
+            '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};  
+
+	/** 
+	* Takes the raw bytes from the digest and formats them correct. 
+	* 
+	* @param bytes the raw bytes from the digest. 
+	* @return the formatted bytes. 
+	*/  
+	private static String getFormattedText(byte[] bytes) {  
+	int len = bytes.length;  
+	StringBuilder buf = new StringBuilder(len * 2);  
+	// 把密文转换成十六进制的字符串形式  
+	for (int j = 0; j &lt; len; j++) {  
+		buf.append(HEX_DIGITS[(bytes[j] &gt;&gt; 4) &amp; 0x0f]);  
+		buf.append(HEX_DIGITS[bytes[j] &amp; 0x0f]);  
+	}  
+	return buf.toString();  
+	}  
+	
+	public static String encode(String str) {  
+		if (str == null) {  
+		return null;  
+	}  
+	try {  
+		MessageDigest messageDigest = MessageDigest.getInstance(&quot;SHA1&quot;);  
+		messageDigest.update(str.getBytes());  
+		return getFormattedText(messageDigest.digest());  
+		} catch (Exception e) {  
+		throw new RuntimeException(e);  
+		}  
+	} 
+	
+	/**
+     * 发送get请求
+     * @param url    路径
+     * @return
+     */
+    @SuppressWarnings({ &quot;deprecation&quot;, &quot;resource&quot; })
+	public static String httpGet(String url){
+		String strResult = null;
+        //get请求返回结果
+        try {
+            DefaultHttpClient client = new DefaultHttpClient();
+            //发送get请求
+            HttpGet request = new HttpGet(url);
+            HttpResponse response = client.execute(request);
+ 
+            /**请求发送成功，并得到响应**/
+            if (response.getStatusLine().getStatusCode() == 200) {
+                /**读取服务器返回过来的json字符串数据**/
+                strResult = EntityUtils.toString(response.getEntity());
+                /**把json字符串转换成json对象**/
+                url = URLDecoder.decode(url, &quot;UTF-8&quot;);
+            } else {
+                logger.error(&quot;get请求提交失败:&quot; + url);
+            }
+        } catch (IOException e) {
+        	logger.error(&quot;get请求提交失败:&quot; + url);
+        }
+        return strResult;
+    }
+	
+}
+</code></pre>
+<hr>
+<h3 id="xml工具类">xml工具类</h3>
+<pre><code>package util;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import org.dom4j.*;
+
+import java.util.List;
+
+public class XmlTool {
+	/**
+     * String 转 org.dom4j.Document
+     * @param xml
+     * @return
+     * @throws DocumentException
+     */
+    public static Document strToDocument(String xml){
+        try {
+        	//加上xml标签是为了获取最外层的标签，如果不需要可以去掉
+			return DocumentHelper.parseText(&quot;&lt;xml&gt;&quot;+xml+&quot;&lt;/xml&gt;&quot;);
+		} catch (DocumentException e) {
+			return null;
+		}
+    }
+ 
+    /**
+     * org.dom4j.Document 转  com.alibaba.fastjson.JSONObject
+     * @param xml
+     * @return
+     * @throws DocumentException
+     */
+    public static JSONObject documentToJSONObject(String xml){
+		return elementToJSONObject(strToDocument(xml).getRootElement());
+    }
+ 
+    /**
+     * org.dom4j.Element 转  com.alibaba.fastjson.JSONObject
+     * @param node
+     * @return
+     */
+    public static JSONObject elementToJSONObject(Element node) {
+        JSONObject result = new JSONObject();
+        // 当前节点的名称、文本内容和属性
+        List&lt;Attribute&gt; listAttr = node.attributes();// 当前节点的所有属性的list
+        for (Attribute attr : listAttr) {// 遍历当前节点的所有属性
+            result.put(attr.getName(), attr.getValue());
+        }
+        // 递归遍历当前节点所有的子节点
+        List&lt;Element&gt; listElement = node.elements();// 所有一级子节点的list
+        if (!listElement.isEmpty()) {
+            for (Element e : listElement) {// 遍历所有一级子节点
+                if (e.attributes().isEmpty() &amp;&amp; e.elements().isEmpty()) // 判断一级节点是否有属性和子节点
+                    result.put(e.getName(), e.getTextTrim());// 沒有则将当前节点作为上级节点的属性对待
+                else {
+                    if (!result.containsKey(e.getName())) // 判断父节点是否存在该一级节点名称的属性
+                        result.put(e.getName(), new JSONArray());// 没有则创建
+                    ((JSONArray) result.get(e.getName())).add(elementToJSONObject(e));// 将该一级节点放入该节点名称的属性对应的值中
+                }
+            }
+        }
+        return result;
+    }
+}
+</code></pre>
+<hr>
+<h3 id="支付方法类">支付方法类</h3>
+<pre><code>package util;
+
+import bean.SysPayParams;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.MapUtils;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Security;
+import java.util.*;
+
+/**
+ * @ClassName util.WxPayUtil
+ * @Description 微信支付工具类
+ * @Author leo
+ * @Date 2019/8/7 14:29
+ **/
+public class WxPayUtil {
+    private static Logger logger = LoggerFactory.getLogger(WxPayUtil.class);
+    private static final String PAY_URL = &quot;https://api.mch.weixin.qq.com/pay/unifiedorder&quot;;
+    private static final String REFUND_URL = &quot;https://api.mch.weixin.qq.com/secapi/pay/refund&quot;;
+    private static final String TRANS_URL = &quot;https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers&quot;;
+    private static final String ALGORITHM_MODE_PADDING = &quot;AES/ECB/PKCS7Padding&quot;;
+    private static final String ALGORITHM = &quot;AES&quot;;
+    /**
+     * 微信支付
+     * @param payParams
+     * @param outOrderId
+     * @param totalPayment
+     * @param openId
+     * @param ip
+     * @param body
+     * @return
+     */
+    public Map wxPay(SysPayParams payParams, String outOrderId, BigDecimal totalPayment, String openId, String ip, String body) throws Exception {
+        JSONObject jobj = new JSONObject();
+        jobj.put(&quot;appid&quot;,payParams.getAppId());//小程序id
+        jobj.put(&quot;mch_id&quot;,payParams.getMchId());//商户号
+        jobj.put(&quot;device_info&quot;,&quot;WEB&quot;);//设备号，非必填
+        jobj.put(&quot;nonce_str&quot;, buildUUID());//随机字符串
+        //jobj.put(&quot;sign_type&quot;,&quot;MD5&quot;);//签名方式
+        jobj.put(&quot;body&quot;,body);//商品描述，规范
+        //jobj.put(&quot;detail&quot;,&quot;&quot;);//非必填，规范
+        //jobj.put(&quot;attach&quot;,&quot;&quot;);//非必填，原样返回
+        jobj.put(&quot;out_trade_no&quot;,outOrderId);//外部订单号
+        //计算支付金额，单位分 （总价-钱包付款部分）*100
+        jobj.put(&quot;total_fee&quot;,String.valueOf((totalPayment.multiply(BigDecimal.valueOf(100))).intValue()));//金额，单位分
+        jobj.put(&quot;spbill_create_ip&quot;,ip);//调用支付api的机器ip
+        //jobj.put(&quot;time_start&quot;,DateUtil.formatDateToString(orderInfo.getCreateTime(),DateUtil.yyyyMMddHHmmss2));//非必填，开始时间
+        //jobj.put(&quot;time_expire&quot;,&quot;yyyyMMddHHmmss&quot;);//非必填，失效时间
+        //jobj.put(&quot;goods_tag&quot;,&quot;WXG&quot;);//非必填，优惠标记，规则
+        jobj.put(&quot;notify_url&quot;,payParams.getNotifyUrl());//回调地址
+        jobj.put(&quot;trade_type&quot;,&quot;JSAPI&quot;);
+        //jobj.put(&quot;product_id&quot;,&quot;&quot;);//非必填，商品id
+        //jobj.put(&quot;limit_pay&quot;,&quot;no_credit&quot;);//非必填，限制用户不能使用信用卡
+        jobj.put(&quot;openid&quot;,openId);//用户唯一标识
+        //jobj.put(&quot;receipt&quot;,&quot;&quot;);//开发票
+        //jobj.put(&quot;scene_info&quot;,&quot;&quot;);//场景信息上报
+        jobj.put(&quot;sign&quot;,paramsSign(jobj,payParams.getApiKey()));//签名
+
+        String xml =jsonToXmlstr(jobj,new StringBuffer());
+        xml = &quot;&lt;xml&gt;&quot;+xml+&quot;&lt;/xml&gt;&quot;;
+        String charset = &quot;utf-8&quot;;
+        String result = HttpClientUtil.createPostRequestXML(PAY_URL,xml,charset);
+        JSONObject json = XmlTool.documentToJSONObject(result);
+        JSONObject data = (JSONObject)json.getJSONArray(&quot;xml&quot;).get(0);
+        if (&quot;SUCCESS&quot;.equals(MapUtils.getString(data,&quot;return_code&quot;))){
+            //组装返回参数
+            String prepayId = MapUtils.getString(data,&quot;prepay_id&quot;);
+            String timeStamp = String.valueOf(System.currentTimeMillis()/1000);
+            JSONObject map = new JSONObject();
+            map.put(&quot;appId&quot;,payParams.getAppId());
+            map.put(&quot;timeStamp&quot;,timeStamp);
+            map.put(&quot;nonceStr&quot;,buildUUID());
+            map.put(&quot;package&quot;,&quot;prepay_id=&quot;+prepayId);
+            map.put(&quot;signType&quot;,&quot;MD5&quot;);
+            String paySign = paramsSign(map,payParams.getApiKey());
+            map.put(&quot;paySign&quot;,paySign);
+            return map;
+        }else {
+             System.out.println(&quot;下单失败&quot;+result);
+            throw new Exception(&quot;下单失败&quot;);
+        }
+    }
+
+    /**
+     * 发起退款
+     * @param payParams
+     * @param outOrderId
+     * @param backOrderId
+     * @param totalAmount
+     * @param backAmount
+     * @param reason
+     * @return
+     */
+    public Map refund(SysPayParams payParams,String outOrderId,String backOrderId,BigDecimal totalAmount,BigDecimal backAmount,String reason) throws Exception {
+        JSONObject jobj = new JSONObject();
+        jobj.put(&quot;appid&quot;,payParams.getAppId());//小程序id
+        jobj.put(&quot;mch_id&quot;,payParams.getMchId());//商户号
+        jobj.put(&quot;nonce_str&quot;, buildUUID());//随机字符串
+        jobj.put(&quot;out_trade_no&quot;, outOrderId);//外部订单号
+        jobj.put(&quot;out_refund_no&quot;, backOrderId);//商户退款单号
+        jobj.put(&quot;total_fee&quot;,String.valueOf(totalAmount.multiply(new BigDecimal(100)).intValue()));//订单金额
+        jobj.put(&quot;refund_fee&quot;,String.valueOf(backAmount.multiply(new BigDecimal(100)).intValue()));//退款金额
+        jobj.put(&quot;refund_desc&quot;,reason);//退款原因
+        jobj.put(&quot;notify_url&quot;,payParams.getRefundNotifyUrl());
+        jobj.put(&quot;sign&quot;,paramsSign(jobj,payParams.getApiKey()));//签名
+        String xml =jsonToXmlstr(jobj,new StringBuffer());
+        xml = &quot;&lt;xml&gt;&quot;+xml+&quot;&lt;/xml&gt;&quot;;
+        String result = null;
+        try {
+            result = HttpClientUtil.createSslPostRequest(REFUND_URL,xml,payParams.getSslCertPath(),payParams.getCertPwd());
+        } catch (Exception e) {
+             System.out.println(&quot;订单:&quot;+outOrderId+&quot;退款异常，错误信息:&quot;+e.getMessage());
+        }
+        JSONObject json = XmlTool.documentToJSONObject(result);
+        JSONObject data = (JSONObject)json.getJSONArray(&quot;xml&quot;).get(0);
+        if (&quot;SUCCESS&quot;.equals(MapUtils.getString(data,&quot;return_code&quot;))){
+            Map&lt;String,Object&gt; map = new HashMap&lt;&gt;();
+            map.put(&quot;wxBackId&quot;,MapUtils.getString(data,&quot;refund_id&quot;));
+            map.put(&quot;wxBackTime&quot;,new Date());
+            return map;
+        }else {
+             System.out.println(&quot;退款失败&quot;+result);
+            throw new Exception(&quot;退款失败&quot;);
+        }
+    }
+
+    /**
+     * 转账
+     * @param payParams
+     * @param transferId
+     * @param openId
+     * @param realName
+     * @param amount
+     * @param ip
+     * @param remark
+     * @return
+     */
+    public Map transfer(SysPayParams payParams,String transferId,String openId,String realName,BigDecimal amount,String ip,String remark) throws Exception {
+        JSONObject jobj = new JSONObject();
+        jobj.put(&quot;mch_appid&quot;,payParams.getAppId());//小程序id
+        jobj.put(&quot;mchid&quot;,payParams.getMchId());//商户号
+        jobj.put(&quot;nonce_str&quot;, buildUUID());//随机字符串
+        jobj.put(&quot;partner_trade_no&quot;, transferId);//商户订单号
+        jobj.put(&quot;openid&quot;, openId);//用户openid
+        jobj.put(&quot;check_name&quot;,&quot;NO_CHECK&quot;);//姓名校验
+        //jobj.put(&quot;re_user_name&quot;,realName);//真实姓名,若需要校验则必填
+        jobj.put(&quot;amount&quot;,String.valueOf(amount.multiply(new BigDecimal(100)).intValue()));//金额
+        jobj.put(&quot;desc&quot;,remark);
+        jobj.put(&quot;spbill_create_ip&quot;,ip);
+        jobj.put(&quot;sign&quot;,paramsSign(jobj,payParams.getApiKey()));//签名
+        String xml =jsonToXmlstr(jobj,new StringBuffer());
+        xml = &quot;&lt;xml&gt;&quot;+xml+&quot;&lt;/xml&gt;&quot;;
+        String result = null;
+        try {
+            result = HttpClientUtil.createSslPostRequest(TRANS_URL,xml,payParams.getSslCertPath(),payParams.getCertPwd());
+        } catch (Exception e) {
+             System.out.println(&quot;转账订单:&quot;+transferId+&quot;发生异常，错误信息:&quot;+e.getMessage());
+        }
+        JSONObject json = XmlTool.documentToJSONObject(result);
+        JSONObject data = (JSONObject)json.getJSONArray(&quot;xml&quot;).get(0);
+        if (&quot;SUCCESS&quot;.equals(MapUtils.getString(data,&quot;return_code&quot;)) &amp;&amp; &quot;SUCCESS&quot;.equals(MapUtils.getString(data,&quot;result_code&quot;))){
+            Map&lt;String,Object&gt; map = new HashMap&lt;&gt;();
+            map.put(&quot;payOrderId&quot;,MapUtils.getString(data,&quot;payment_no&quot;));
+            map.put(&quot;payTime&quot;,MapUtils.getString(data,&quot;payment_time&quot;));
+            return map;
+        }else {
+             System.out.println(&quot;转账失败&quot;+result);
+            throw new Exception(&quot;转账失败&quot;);
+        }
+    }
+
+    /**
+     * 微信支付Native(二维码) 跟wxpay支付方法同一接口，场景不同
+     * @param payParams
+     * @param logId
+     * @param totalPayment
+     * @param ip
+     * @param body
+     * @return
+     */
+    public String recharge(SysPayParams payParams,String logId, BigDecimal totalPayment, String ip, String body) throws Exception {
+        JSONObject jobj = new JSONObject();
+        jobj.put(&quot;appid&quot;,payParams.getAppId());//小程序id
+        jobj.put(&quot;mch_id&quot;,payParams.getMchId());//商户号
+        jobj.put(&quot;device_info&quot;,&quot;WEB&quot;);//设备号，非必填
+        jobj.put(&quot;nonce_str&quot;, buildUUID());//随机字符串
+        //jobj.put(&quot;sign_type&quot;,&quot;MD5&quot;);//签名方式
+        jobj.put(&quot;body&quot;,body);//商品描述，规范
+        //jobj.put(&quot;detail&quot;,&quot;&quot;);//非必填，规范
+        //jobj.put(&quot;attach&quot;,&quot;&quot;);//非必填，原样返回
+        jobj.put(&quot;out_trade_no&quot;,logId);//外部订单号
+        //计算支付金额，单位分 （总价-钱包付款部分）*100
+        jobj.put(&quot;total_fee&quot;,String.valueOf((totalPayment.multiply(BigDecimal.valueOf(100))).intValue()));//金额，单位分
+        jobj.put(&quot;spbill_create_ip&quot;,ip);//调用支付api的机器ip
+        jobj.put(&quot;notify_url&quot;,payParams.getRechargeNotifyUrl());//回调地址
+        jobj.put(&quot;trade_type&quot;,&quot;NATIVE&quot;);
+        jobj.put(&quot;product_id&quot;,logId);//必填，商品id
+        //jobj.put(&quot;limit_pay&quot;,&quot;no_credit&quot;);//非必填，限制用户不能使用信用卡
+        //jobj.put(&quot;receipt&quot;,&quot;&quot;);//开发票
+        //jobj.put(&quot;scene_info&quot;,&quot;&quot;);//场景信息上报
+        jobj.put(&quot;sign&quot;,paramsSign(jobj,payParams.getApiKey()));//签名
+
+        String xml =jsonToXmlstr(jobj,new StringBuffer());
+        xml = &quot;&lt;xml&gt;&quot;+xml+&quot;&lt;/xml&gt;&quot;;
+        String charset = &quot;utf-8&quot;;
+        String result = HttpClientUtil.createPostRequestXML(PAY_URL,xml,charset);
+        JSONObject json = XmlTool.documentToJSONObject(result);
+        JSONObject data = (JSONObject)json.getJSONArray(&quot;xml&quot;).get(0);
+        if (&quot;SUCCESS&quot;.equals(MapUtils.getString(data,&quot;return_code&quot;))){
+            //组装返回参数
+            String codeUrl = MapUtils.getString(data,&quot;code_url&quot;);
+            return codeUrl;
+        }else {
+            System.out.println(&quot;失败&quot;+result);
+            throw new Exception(&quot;下单失败&quot;);
+        }
+    }
+
+    public String buildUUID(){
+        return UUID.randomUUID().toString().replace(&quot;-&quot;,&quot;&quot;);
+    }
+    //签名
+    private String paramsSign(JSONObject jobj,String key){
+        TreeMap&lt;String,String&gt; map = new TreeMap&lt;String, String&gt;();
+        //参数名ASCII码从小到大排序,转treeMap排序
+        map.putAll((Map)jobj);
+        StringBuffer signStr = new StringBuffer();
+        for (Map.Entry entry:map.entrySet()) {
+            if (entry.getValue()!=null &amp;&amp; !&quot;&quot;.equals(entry.getValue().toString())) {
+                signStr.append(entry.getKey()).append(&quot;=&quot;).append(entry.getValue()).append(&quot;&amp;&quot;);
+            }
+        }
+        signStr.append(&quot;key=&quot;+key);
+        //md5加密转大写
+        String sign = computeUTF(signStr.toString()).toUpperCase();
+        return sign;
+    }
+
+    /**
+     * 验签
+     * @param jobj
+     * @return
+     */
+    public boolean checkSign(JSONObject jobj,String apiKey){
+        String paramSign = MapUtils.getString(jobj,&quot;sign&quot;);
+        jobj.remove(&quot;sign&quot;);
+        String sign = paramsSign(jobj,apiKey);
+        return sign.equals(paramSign);
+    }
+
+    /**
+     *
+     * @param str
+     * @return
+     */
+    public static String computeUTF(String str) {
+        MessageDigest messageDigest = null;
+
+        try {
+            messageDigest = MessageDigest.getInstance(&quot;MD5&quot;);
+            messageDigest.reset();
+            messageDigest.update(str.getBytes(&quot;utf-8&quot;));
+        } catch (NoSuchAlgorithmException var5) {
+            System.out.println(&quot;NoSuchAlgorithmException caught!&quot;);
+            System.exit(-1);
+        } catch (UnsupportedEncodingException var6) {
+            var6.printStackTrace();
+        }
+
+        byte[] byteArray = messageDigest.digest();
+        StringBuffer md5StrBuff = new StringBuffer();
+
+        for(int i = 0; i &lt; byteArray.length; ++i) {
+            if (Integer.toHexString(255 &amp; byteArray[i]).length() == 1) {
+                md5StrBuff.append(&quot;0&quot;).append(Integer.toHexString(255 &amp; byteArray[i]));
+            } else {
+                md5StrBuff.append(Integer.toHexString(255 &amp; byteArray[i]));
+            }
+        }
+
+        return md5StrBuff.toString();
+    }
+
+    /**
+     * json转xml
+     * @param jObj
+     * @param buffer
+     * @return
+     */
+    public String jsonToXmlstr(JSONObject jObj,StringBuffer buffer){
+        Set&lt;Map.Entry&lt;String, Object&gt;&gt; se = jObj.entrySet();
+        for(Iterator&lt;Map.Entry&lt;String, Object&gt;&gt; it = se.iterator(); it.hasNext(); )
+        {
+            Map.Entry&lt;String, Object&gt; en = it.next();
+            if(en.getValue().getClass().getName().equals(&quot;com.alibaba.fastjson.JSONObject&quot;)){
+                buffer.append(&quot;&lt;&quot;+en.getKey()+&quot;&gt;&quot;);
+                JSONObject jo = jObj.getJSONObject(en.getKey());
+                jsonToXmlstr(jo,buffer);
+                buffer.append(&quot;&lt;/&quot;+en.getKey()+&quot;&gt;&quot;);
+            }else if(en.getValue().getClass().getName().equals(&quot;com.alibaba.fastjson.JSONArray&quot;)){
+                JSONArray jarray = jObj.getJSONArray(en.getKey());
+                for (int i = 0; i &lt; jarray.size(); i++) {
+                    buffer.append(&quot;&lt;&quot;+en.getKey()+&quot;&gt;&quot;);
+                    JSONObject jsonobject =  jarray.getJSONObject(i);
+                    jsonToXmlstr(jsonobject,buffer);
+                    buffer.append(&quot;&lt;/&quot;+en.getKey()+&quot;&gt;&quot;);
+                }
+            }else if(en.getValue().getClass().getName().equals(&quot;java.lang.String&quot;)){
+                buffer.append(&quot;&lt;&quot;+en.getKey()+&quot;&gt;&quot;+en.getValue());
+                buffer.append(&quot;&lt;/&quot;+en.getKey()+&quot;&gt;&quot;);
+            }
+        }
+        return buffer.toString();
+    }
+
+    /**
+     * 退款回调的req_info解密
+     * @param reqInfo
+     * @param apiKey
+     * @return
+     * @throws Exception
+     */
+    public String decryptReqInfo(String reqInfo,String apiKey) throws Exception {
+        byte[] decodeBase64Data = Base64.getDecoder().decode(reqInfo);
+        Security.addProvider(new BouncyCastleProvider());
+        Cipher cipher = Cipher.getInstance(ALGORITHM_MODE_PADDING, &quot;BC&quot;);
+        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(computeUTF(apiKey).toLowerCase().getBytes(), ALGORITHM));
+        return new String(cipher.doFinal(decodeBase64Data));
+    }
+
+}
+</code></pre>
+<hr>
+<h3 id="回调处理">回调处理</h3>
+<pre><code>package util;
+
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.MapUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+/**
+ * @ClassName util.CallbackController
+ * @Description 回调处理
+ * @Author leo
+ * @Date 2019-08-08 15:02
+ **/
+public class CallbackController {
+    WxPayUtil wxPayUtil= new WxPayUtil();
+
+    public Object rechargeCallBack(HttpServletRequest request) throws IOException {
+        InputStream inStream = request.getInputStream();
+        ByteArrayOutputStream outSteam = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        while ((len = inStream.read(buffer)) != -1) {
+            outSteam.write(buffer, 0, len);
+        }
+        String resultxml = new String(outSteam.toByteArray(), &quot;utf-8&quot;);
+        JSONObject json = XmlTool.documentToJSONObject(resultxml);
+        outSteam.close();
+        inStream.close();
+        JSONObject params = (JSONObject) json.getJSONArray(&quot;xml&quot;).get(0);
+        String apiKey = &quot;&quot;;
+        if (wxPayUtil.checkSign(params,apiKey)) {
+            //todo 处理业务
+
+            //返回参数
+            JSONObject returnParam = new JSONObject();
+            returnParam.put(&quot;return_code&quot;, &quot;SUCCESS&quot;);
+            returnParam.put(&quot;return_msg&quot;, &quot;OK&quot;);
+            return &quot;&lt;xml&gt;&quot; + wxPayUtil.jsonToXmlstr(returnParam, new StringBuffer()) + &quot;&lt;/xml&gt;&quot;;
+        } else {
+            System.out.println(&quot;验签失败&quot;);
+            return &quot;fasle&quot;;
+        }
+    }
+
+    public Object refundCallBack(HttpServletRequest request) throws IOException {
+        InputStream inStream = request.getInputStream();
+        ByteArrayOutputStream outSteam = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        while ((len = inStream.read(buffer)) != -1) {
+            outSteam.write(buffer, 0, len);
+        }
+        String resultxml = new String(outSteam.toByteArray(), &quot;utf-8&quot;);
+        JSONObject json = XmlTool.documentToJSONObject(resultxml);
+        outSteam.close();
+        inStream.close();
+        JSONObject params = (JSONObject) json.getJSONArray(&quot;xml&quot;).get(0);
+        String apiKey = &quot;&quot;;
+        String reqInfo = params.getString(&quot;req_info&quot;);
+        String decodeXml;
+        try {
+            decodeXml = wxPayUtil.decryptReqInfo(reqInfo,apiKey);
+        } catch (Exception e) {
+            System.out.println(&quot;解密失败&quot;+reqInfo);
+            return &quot;false&quot;;
+        }
+        JSONObject data = XmlTool.documentToJSONObject(decodeXml);
+        JSONObject resultJson = (JSONObject) data.getJSONArray(&quot;root&quot;).get(0);
+        String flag = MapUtils.getString(resultJson,&quot;refund_status&quot;);
+        if (&quot;SUCCESS&quot;.equals(flag)) {
+            //todo 处理业务
+
+            //返回参数
+            JSONObject returnParam = new JSONObject();
+            returnParam.put(&quot;return_code&quot;, &quot;SUCCESS&quot;);
+            returnParam.put(&quot;return_msg&quot;, &quot;OK&quot;);
+            return &quot;&lt;xml&gt;&quot; + wxPayUtil.jsonToXmlstr(returnParam, new StringBuffer()) + &quot;&lt;/xml&gt;&quot;;
+        }
+        return false;
+    }
+}
+</code></pre>
+<hr>
+<h3 id="测试方法">测试方法</h3>
+<pre><code>import bean.SysPayParams;
+import util.WxPayUtil;
+
+import java.math.BigDecimal;
+
+/**
+ * @ClassName DemoTest
+ * @Description 测试类
+ * @Author leo
+ * @Date 2019-08-09 11:04
+ **/
+public class DemoTest {
+    public static void main(String[] args) throws Exception {
+        SysPayParams sysPayParams = new SysPayParams();
+        sysPayParams.setApiKey(&quot;&quot;);
+        sysPayParams.setAppId(&quot;&quot;);
+        sysPayParams.setMchId(&quot;&quot;);
+        sysPayParams.setNotifyUrl(&quot;&quot;);
+        sysPayParams.setRefundNotifyUrl(&quot;&quot;);
+        sysPayParams.setRechargeNotifyUrl(&quot;&quot;);
+        sysPayParams.setSslCertPath(&quot;&quot;);//证书地址
+        sysPayParams.setCertPwd(&quot;&quot;);//证书密码，默认是商户号
+        String outOrderId = &quot;&quot;;
+        String openId = &quot;&quot;;
+        String ip = &quot;&quot;;
+        String body = &quot;测试-充值&quot;;
+        BigDecimal amount = new BigDecimal(&quot;0.01&quot;);
+        WxPayUtil wxPayUtil = new WxPayUtil();
+        //二维码支付 返回二维码链接
+        String result = wxPayUtil.recharge(sysPayParams,outOrderId,amount,ip,body);
+        //微信支付 返回包装过的map方便前端直接调用
+        //Map result = wxPayUtil.wxPay(sysPayParams,outOrderId,amount,openId,ip,body);
+        String backOrderId = &quot;&quot;;
+        //退款
+        //wxPayUtil.refund(sysPayParams,outOrderId,backOrderId,amount,amount,body);
+        //转账，实时接口
+        //wxPayUtil.transfer(sysPayParams,outOrderId,openId,null,amount,ip,body);
+        System.out.println(result);
+    }
+}
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/E1t30QiTK/" class="tag">
+                    Java
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/dfsdepth-first-searchshen-du-you-xian-sou-suo/">
+                  <h3 class="post-title">
+                    DFS(Depth First Search)深度优先搜索
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

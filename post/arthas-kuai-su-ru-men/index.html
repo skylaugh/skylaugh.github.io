@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Arthas 快速入门 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Arthas 快速入门</h2>
+            <div class="post-date">2019-07-29</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/arthas-kuai-su-ru-men.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <h2 id="arthas阿尔萨斯-能为你做什么">Arthas（阿尔萨斯） 能为你做什么？</h2>
+<figure data-type="image" tabindex="1"><img src="https://skylaugh.github.io/post-images/1581413033495.png" alt="arthas" loading="lazy"></figure>
+<p><code>Arthas</code> 是Alibaba开源的Java诊断工具，深受开发者喜爱。</p>
+<p>当你遇到以下类似问题而束手无策时，<code>Arthas</code>可以帮助你解决：</p>
+<ol>
+<li>这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？</li>
+<li>我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？</li>
+<li>遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？</li>
+<li>线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！</li>
+<li>是否有一个全局视角来查看系统的运行状况？</li>
+<li>有什么办法可以监控到JVM的实时运行状态？</li>
+</ol>
+<hr>
+<h2 id="1-启动demo">1. 启动Demo</h2>
+<pre><code class="language-bash">wget https://alibaba.github.io/arthas/arthas-demo.jar
+java -jar arthas-demo.jar
+</code></pre>
+<p><code>arthas-demo</code>是一个简单的程序，每隔一秒生成一个随机数，再执行质因式分解，并打印出分解结果。</p>
+<p><code>arthas-demo</code>源代码：<a href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java">查看</a></p>
+<h2 id="2-启动arthas">2. 启动arthas</h2>
+<p>在命令行下面执行（使用和目标进程一致的用户启动，否则可能attach失败）：</p>
+<pre><code class="language-bash">wget https://alibaba.github.io/arthas/arthas-boot.jar
+java -jar arthas-boot.jar
+</code></pre>
+<ul>
+<li>执行该程序的用户需要和目标进程具有相同的权限。比如以<code>admin</code>用户来执行：<code>sudo su admin &amp;&amp; java -jar arthas-boot.jar</code> 或 <code>sudo -u admin -EH java -jar arthas-boot.jar</code>。</li>
+<li>如果attach不上目标进程，可以查看<code>~/logs/arthas/</code> 目录下的日志。</li>
+<li>如果下载速度比较慢，可以使用aliyun的镜像：<code>java -jar arthas-boot.jar --repo-mirror aliyun --use-http</code></li>
+<li><code>java -jar arthas-boot.jar -h</code> 打印更多参数信息。</li>
+</ul>
+<p>选择应用java进程：</p>
+<pre><code class="language-bash">$ $ java -jar arthas-boot.jar
+* [1]: 35542
+  [2]: 71560 arthas-demo.jar
+</code></pre>
+<p>Demo进程是第2个，则输入2，再输入<code>回车/enter</code>。Arthas会attach到目标进程上，并输出日志：</p>
+<pre><code class="language-bash">[INFO] Try to attach process 71560
+[INFO] Attach process 71560 success.
+[INFO] arthas-client connect 127.0.0.1 3658
+  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+ /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'
+|  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |
+`--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
+
+
+wiki: https://alibaba.github.io/arthas
+version: 3.0.5.20181127201536
+pid: 71560
+time: 2018-11-28 19:16:24
+
+$
+</code></pre>
+<h2 id="3-查看dashboard">3. 查看dashboard</h2>
+<p>输入<a href="dashboard.md">dashboard</a>，按<code>回车/enter</code>，会展示当前进程的信息，按<code>ctrl+c</code>可以中断执行。</p>
+<pre><code class="language-bash">$ dashboard
+ID     NAME                   GROUP          PRIORI STATE  %CPU    TIME   INTERRU DAEMON
+17     pool-2-thread-1        system         5      WAITIN 67      0:0    false   false
+27     Timer-for-arthas-dashb system         10     RUNNAB 32      0:0    false   true
+11     AsyncAppender-Worker-a system         9      WAITIN 0       0:0    false   true
+9      Attach Listener        system         9      RUNNAB 0       0:0    false   true
+3      Finalizer              system         8      WAITIN 0       0:0    false   true
+2      Reference Handler      system         10     WAITIN 0       0:0    false   true
+4      Signal Dispatcher      system         9      RUNNAB 0       0:0    false   true
+26     as-command-execute-dae system         10     TIMED_ 0       0:0    false   true
+13     job-timeout            system         9      TIMED_ 0       0:0    false   true
+1      main                   main           5      TIMED_ 0       0:0    false   false
+14     nioEventLoopGroup-2-1  system         10     RUNNAB 0       0:0    false   false
+18     nioEventLoopGroup-2-2  system         10     RUNNAB 0       0:0    false   false
+23     nioEventLoopGroup-2-3  system         10     RUNNAB 0       0:0    false   false
+15     nioEventLoopGroup-3-1  system         10     RUNNAB 0       0:0    false   false
+Memory             used   total max    usage GC
+heap               32M    155M  1820M  1.77% gc.ps_scavenge.count  4
+ps_eden_space      14M    65M   672M   2.21% gc.ps_scavenge.time(m 166
+ps_survivor_space  4M     5M    5M           s)
+ps_old_gen         12M    85M   1365M  0.91% gc.ps_marksweep.count 0
+nonheap            20M    23M   -1           gc.ps_marksweep.time( 0
+code_cache         3M     5M    240M   1.32% ms)
+Runtime
+os.name                Mac OS X
+os.version             10.13.4
+java.version           1.8.0_162
+java.home              /Library/Java/JavaVir
+                       tualMachines/jdk1.8.0
+                       _162.jdk/Contents/Hom
+                       e/jre
+</code></pre>
+<h2 id="4-通过thread命令来获取到arthas-demo进程的main-class">4. 通过thread命令来获取到<code>arthas-demo</code>进程的Main Class</h2>
+<p><code>thread 1</code>会打印线程ID 1的栈，通常是main函数的线程。</p>
+<pre><code class="language-bash">$ thread 1 | grep 'main('
+    at demo.MathGame.main(MathGame.java:17)
+</code></pre>
+<h2 id="5-通过jad来反编译main-class">5. 通过jad来反编译Main Class</h2>
+<pre><code class="language-java">$ jad demo.MathGame
+
+ClassLoader:
++-sun.misc.Launcher$AppClassLoader@3d4eac69
+  +-sun.misc.Launcher$ExtClassLoader@66350f69
+
+Location:
+/tmp/arthas-demo.jar
+
+/*
+ * Decompiled with CFR 0_132.
+ */
+package demo;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+public class MathGame {
+    private static Random random = new Random();
+    private int illegalArgumentCount = 0;
+
+    public static void main(String[] args) throws InterruptedException {
+        MathGame game = new MathGame();
+        do {
+            game.run();
+            TimeUnit.SECONDS.sleep(1L);
+        } while (true);
+    }
+
+    public void run() throws InterruptedException {
+        try {
+            int number = random.nextInt();
+            List&lt;Integer&gt; primeFactors = this.primeFactors(number);
+            MathGame.print(number, primeFactors);
+        }
+        catch (Exception e) {
+            System.out.println(String.format(&quot;illegalArgumentCount:%3d, &quot;, this.illegalArgumentCount) + e.getMessage());
+        }
+    }
+
+    public static void print(int number, List&lt;Integer&gt; primeFactors) {
+        StringBuffer sb = new StringBuffer(&quot;&quot; + number + &quot;=&quot;);
+        Iterator&lt;Integer&gt; iterator = primeFactors.iterator();
+        while (iterator.hasNext()) {
+            int factor = iterator.next();
+            sb.append(factor).append('*');
+        }
+        if (sb.charAt(sb.length() - 1) == '*') {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        System.out.println(sb);
+    }
+
+    public List&lt;Integer&gt; primeFactors(int number) {
+        if (number &lt; 2) {
+            ++this.illegalArgumentCount;
+            throw new IllegalArgumentException(&quot;number is: &quot; + number + &quot;, need &gt;= 2&quot;);
+        }
+        ArrayList&lt;Integer&gt; result = new ArrayList&lt;Integer&gt;();
+        int i = 2;
+        while (i &lt;= number) {
+            if (number % i == 0) {
+                result.add(i);
+                number /= i;
+                i = 2;
+                continue;
+            }
+            ++i;
+        }
+        return result;
+    }
+}
+
+Affect(row-cnt:1) cost in 970 ms.
+</code></pre>
+<h2 id="6-watch">6. watch</h2>
+<p>通过<a href="watch.md">watch</a>命令来查看<code>demo.MathGame#primeFactors</code>函数的返回值：</p>
+<pre><code class="language-bash">$ watch demo.MathGame primeFactors returnObj
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 107 ms.
+ts=2018-11-28 19:22:30; [cost=1.715367ms] result=null
+ts=2018-11-28 19:22:31; [cost=0.185203ms] result=null
+ts=2018-11-28 19:22:32; [cost=19.012416ms] result=@ArrayList[
+    @Integer[5],
+    @Integer[47],
+    @Integer[2675531],
+]
+ts=2018-11-28 19:22:33; [cost=0.311395ms] result=@ArrayList[
+    @Integer[2],
+    @Integer[5],
+    @Integer[317],
+    @Integer[503],
+    @Integer[887],
+]
+ts=2018-11-28 19:22:34; [cost=10.136007ms] result=@ArrayList[
+    @Integer[2],
+    @Integer[2],
+    @Integer[3],
+    @Integer[3],
+    @Integer[31],
+    @Integer[717593],
+]
+ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
+    @Integer[5],
+    @Integer[29],
+    @Integer[7651739],
+]
+</code></pre>
+<h2 id="7-退出arthas">7. 退出arthas</h2>
+<p>如果只是退出当前的连接，可以用<code>quit</code>或者<code>exit</code>命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。</p>
+<p>如果想完全退出arthas，可以执行<code>shutdown</code>命令。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/jbLONxtxV/" class="tag">
+                    tools
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/wei-yun-suan-zhi-an-wei-yu-andcao-zuo/">
+                  <h3 class="post-title">
+                    位运算之按位与(&amp;)操作
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

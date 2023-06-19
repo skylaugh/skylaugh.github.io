@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>链表反转 | 跬步</title>
+<meta name="description" content="不积跬步，无以至千里">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://skylaugh.github.io/favicon.ico?v=1687189624057">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://skylaugh.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://skylaugh.github.io">
+        <img src="https://skylaugh.github.io/images/avatar.png?v=1687189624057" class="site-logo">
+        <h1 class="site-title">跬步</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      不积跬步，无以至千里
+    </div>
+    <div class="site-footer">
+      <a href="mailto:skylaugh@foxmail.com">Email</a> | <a class="rss" href="https://skylaugh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">链表反转</h2>
+            <div class="post-date">2019-08-20</div>
+            
+              <div class="feature-container" style="background-image: url('https://skylaugh.github.io/post-images/lian-biao-fan-zhuan.jpg')">
+              </div>
+            
+            <div class="post-content">
+              <p>比较常见的一道算法题，使用额外空间使此问题变得十分简单，本文记录一下不使用额外空间的两种方法。</p>
+<h3 id="链表类">链表类</h3>
+<pre><code>public class ListNode {
+    Integer value;
+    ListNode next;
+    
+    public ListNode(Integer value){
+        this.value = value;
+    }
+    
+    @Override
+    public String toString(){
+        StringBuilder str = new StringBuilder(this.value == null?&quot;null&quot;:this.value.toString());
+        ListNode cur = this;
+        while (cur.next != null){
+            str = str.append(&quot;-&gt;&quot;).append(cur.next.value);
+            cur = cur.next;
+        }
+        return str.toString();
+    }
+}
+</code></pre>
+<p>我重写了一下toString方法，比较方便看结构。</p>
+<h3 id="循环方法">循环方法</h3>
+<pre><code>    public static ListNode reverseLoop(ListNode node){
+        ListNode prev = null;
+        ListNode head = node;
+        ListNode next;
+        while (head != null) {
+            next = head.next;
+            head.next = prev;
+            prev = head;
+            head = next;
+        }
+        return prev;
+    }
+</code></pre>
+<h3 id="递归方法">递归方法</h3>
+<pre><code>    public static ListNode reverseIter(ListNode head){
+        if(head == null || head.next == null) {
+            return head;
+        }
+        ListNode result = reverseIter(head.next);
+        head.next.next = head;
+        head.next = null;
+        return result;
+    }
+</code></pre>
+<h3 id="测试">测试</h3>
+<pre><code>    public static void main(String[] args){
+        ListNode node1 = new ListNode(1);
+        ListNode node2 = new ListNode(2);
+        ListNode node3 = new ListNode(3);
+        ListNode node4 = new ListNode(4);
+        ListNode node5 = new ListNode(5);
+        ListNode node6 = new ListNode(6);
+        ListNode node7 = new ListNode(7);
+        ListNode node8 = new ListNode(8);
+        ListNode node9 = new ListNode(null);
+        node1.next = node2;
+        node2.next = node3;
+        node3.next = node4;
+        node4.next = node5;
+        node5.next = node6;
+        node6.next = node7;
+        node7.next = node8;
+        node8.next = node9;
+        System.out.println(reverseLoop(node1));
+        System.out.println(reverseIter(node9));
+    }
+</code></pre>
+<p>输出结果</p>
+<pre><code>null-&gt;8-&gt;7-&gt;6-&gt;5-&gt;4-&gt;3-&gt;2-&gt;1
+1-&gt;2-&gt;3-&gt;4-&gt;5-&gt;6-&gt;7-&gt;8-&gt;null
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://skylaugh.github.io/tag/AFwlC_qiL/" class="tag">
+                    数据结构
+                  </a>
+                
+                  <a href="https://skylaugh.github.io/tag/NLraoO2c4/" class="tag">
+                    算法
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://skylaugh.github.io/post/bigdecimal-jin-xing-chu-fa-yun-suan-de-yi-ge-xiao-keng/">
+                  <h3 class="post-title">
+                    BigDecimal进行除法运算的一个小坑
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
